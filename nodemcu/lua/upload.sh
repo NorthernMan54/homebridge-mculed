@@ -1,4 +1,0 @@
-#
-#
-#
-nodemcu-uploader upload *lua

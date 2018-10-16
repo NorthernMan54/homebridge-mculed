@@ -40,9 +40,15 @@ local function wifi_ready()
 
   print("Heap Available: -mdns  " .. node.heap() ) -- 18720
 
-  led.mdns()
-  lua_mdns = require("lua-mdns")
-  lua_mdns.mdns_query("_"..config.mdnsName.."._tcp", hb_found)
+  tmr.softwd(600)
+  led.connected()
+  if string.find(config.Model, "LED") then
+    ms = require('led_strip')
+  end
+  package.loaded["main"] = nil
+  print("Heap Available: personaility  " .. node.heap() )
+  ms.start("null")
+  ms = nil
 end
 
 return {entry = function(msg)
