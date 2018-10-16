@@ -1,0 +1,41 @@
+{
+  "name": "homebridge-wssensor",
+  "version": "0.1.40",
+  "description": "Homebridge platform plugin that support's a network of nodemcu's to display Temperature and Humidity.",
+  "main": "ws.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthernMan54/homebridge-wssensor.git"
+  },
+  "keywords": [
+    "nodemcu",
+    "dht22",
+    "homebridge",
+    "bme280",
+    "yl-69",
+    "esp8266",
+    "homebridge-plugin"
+  ],
+  "engines": {
+    "node": ">=4.3.2",
+    "homebridge": ">=0.2.0"
+  },
+  "dependencies": {
+    "request": "^2.65.0",
+    "express": "^4.13.3",
+    "debug": "^2.2.0",
+    "mdns": ">=2.3.3",
+    "ws": "^=1.1.5",
+    "fakegato-history": "^=0.4.0",
+    "moment": "^2.20.1"
+  },
+  "author": "NorthernMan54",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/NorthernMan54/homebridge-wssensor/issues"
+  },
+  "homepage": "https://github.com/NorthernMan54/homebridge-wssensor#readme"
+}
