@@ -7,7 +7,7 @@ websocket.createServer(80, function (socket)
   print("New websocket client connected")
 
   function socket.onmessage(payload, opcode)
-    print("message", payload, opcode)
+    print("message",payload,opcode)
     if opcode == 1 then
       if payload == "ls" then
         local list = file.list()

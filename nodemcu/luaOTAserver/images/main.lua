@@ -49,7 +49,7 @@ local function wifi_ready()
   end
   package.loaded["main"] = nil
   print("Heap Available: personaility  " .. node.heap() )
-  --ms.start("null")
+  ms.start("null")
   ms = nil
   dofile("websocket.lc")
   dofile("wsserver.lc")

@@ -104,14 +104,12 @@ do
       end
 
       conn:on("receive", function(_, chunk)
-        print("receive",chunk)
         if buffer then
         buffer = buffer .. chunk
         while true do
           local extra, payload, opcode = decode(buffer)
           if not extra then return end
           buffer = extra
-          print("onmessage",payload, opcode)
           socket.onmessage(payload, opcode)
         end
       end
