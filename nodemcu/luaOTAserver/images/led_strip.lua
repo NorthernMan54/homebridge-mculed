@@ -77,13 +77,13 @@ function module.start(wsserver)
 
   local mytimer = tmr.create()
 
-  mytimer:register(10000, tmr.ALARM_AUTO,
-    function()
-      tmr.softwd(600)
-      setMode()
-  end)
+  --mytimer:register(10000, tmr.ALARM_AUTO,
+  --  function()
+  --    tmr.softwd(600)
+  --    setMode()
+  --end)
 
-  mytimer:start()
+  --mytimer:start()
 
   print("LED Strip complete")
 end

@@ -10,7 +10,7 @@ local function hb_found(ws)
   tmr.softwd(600)
   led.connected()
 
-  -- Load personaility module
+
 
   if string.find(config.Model, "ACL") then
     ms = require('accel')
@@ -19,13 +19,15 @@ local function hb_found(ws)
   elseif string.find(config.Model, "MS") then
     ms = require('motion')
   elseif string.find(config.Model, "LED") then
-    ms = require('led_strip')
+    --ms = require('led_strip')
   end
 
   package.loaded["main"] = nil
-  print("Heap Available: personaility  " .. node.heap() )
-  ms.start("ws://"..ws.ipv4..":"..ws.port)
+  print("Heap Available: websocket  " .. node.heap() )
+  --ms.start("ws://"..ws.ipv4..":"..ws.port)
   ms = nil
+
+
 end
 
 local function wifi_ready()
@@ -47,8 +49,10 @@ local function wifi_ready()
   end
   package.loaded["main"] = nil
   print("Heap Available: personaility  " .. node.heap() )
-  ms.start("null")
+  --ms.start("null")
   ms = nil
+  dofile("websocket.lc")
+  dofile("wsserver.lc")
 end
 
 return {entry = function(msg)
