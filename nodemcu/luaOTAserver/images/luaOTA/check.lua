@@ -29,10 +29,10 @@ setmetatable( self, {__index = function(self, func) --upval: loadfile
   -- The convention is that functions starting with "_" are treated as
   -- call-once / ephemeral; the rest are registered in self
   func = self.prefix .. func
-  log("pre: loadfile", func, node.heap())
+  --log("pre: loadfile", func, node.heap())
   local f, msg = loadfile( func..".lc")
   if msg then f, msg = loadfile(func..".lua") end
-  log("post: loadfile", func, node.heap())
+  --log("post: loadfile", func, node.heap())
   if msg then error (msg, 2) end
   if func:sub(8, 8) ~= "_" then self[func] = f end
   return f

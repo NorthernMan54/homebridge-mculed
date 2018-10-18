@@ -2,31 +2,64 @@
 
 local lua_mdns = nil
 
-local function hb_found(ws)
-  print("WS Socket available http://"..ws.ipv4..":"..ws.port)
-  lua_mdns = nil
-  print("Heap Available: pre personality  " .. node.heap() )
-  print("Reset watch dog")
-  tmr.softwd(600)
-  led.connected()
+local function start()
+  dofile("websocket.lc")
+  websocket.createServer(80, function (socket)
+    local data
+    --  node.output(function (msg)
+    --    return socket.send(msg, 1)
+    --  end, 1)
+    print("New websocket client connected")
 
-
-
-  if string.find(config.Model, "ACL") then
-    ms = require('accel')
-  elseif string.find(config.Model, "GD") then
-    ms = require('garage')
-  elseif string.find(config.Model, "MS") then
-    ms = require('motion')
-  elseif string.find(config.Model, "LED") then
-    --ms = require('led_strip')
-  end
-
-  package.loaded["main"] = nil
-  print("Heap Available: websocket  " .. node.heap() )
-  --ms.start("ws://"..ws.ipv4..":"..ws.port)
-  ms = nil
-
+    function socket.onmessage(payload, opcode)
+      print("message",payload,opcode)
+      local s; s, cmd = pcall(sjson.decode, payload)
+      print("decoded",cmd)
+      if opcode == 1 then
+        if payload == "ls" then
+          local list = file.list()
+          local lines = {}
+          for k, v in pairs(list) do
+            lines[#lines + 1] = k .. "\0" .. v
+          end
+          socket.send(table.concat(lines, "\0"), 2)
+          return
+        end
+        local command, name = payload:match("^([a-z]+):(.*)$")
+        if command == "load" then
+          file.open(name, "r")
+          socket.send(file.read(), 2)
+          file.close()
+        elseif command == "save" then
+          file.open(name, "w")
+          file.write(data)
+          data = nil
+          file.close()
+        elseif command == "compile" then
+          node.compile(name)
+        elseif command == "run" then
+          dofile(name)
+        elseif command == "eval" then
+          local fn, success, err
+          fn, err = loadstring(data, name)
+          if not fn then
+            fn = loadstring("print(" .. data .. ")", name)
+          end
+          data = nil
+          if fn then
+            success, err = pcall(fn)
+          end
+          if not success then
+            print(err)
+          end
+        else
+          print("Invalid command: " .. command)
+        end
+      elseif opcode == 2 then
+        data = payload
+      end
+    end
+  end)
 
 end
 
@@ -44,15 +77,14 @@ local function wifi_ready()
 
   tmr.softwd(600)
   led.connected()
-  if string.find(config.Model, "LED") then
-    ms = require('led_strip')
+  if string.find(config.Model, "CLED") then
+    mod = require('cled_strip')
   end
   package.loaded["main"] = nil
   print("Heap Available: personaility  " .. node.heap() )
-  ms.start("null")
-  ms = nil
-  dofile("websocket.lc")
-  dofile("wsserver.lc")
+  mod.start("null")
+  mdns.register(config.mdnsName)
+  start()
 end
 
 return {entry = function(msg)

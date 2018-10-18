@@ -93,8 +93,8 @@ ws2812.init(ws2812.MODE_SINGLE)
 ws2812.write(string.char(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
 print("Setting up PWM mode")
-pwm.setup(2,480,0)
-pwm.start(2)
+pwm.setup(config.pwm,480,0)
+pwm.start(config.pwm)
 
 
 

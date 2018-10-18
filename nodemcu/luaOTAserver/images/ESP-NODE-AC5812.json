@@ -15,8 +15,7 @@
     "main.lua",
     "json.lua",
     "config-NODE-AC5812.lua",
-    "led_strip.lua",
-    "wsserver.lua",
+    "cled_strip.lua",
     "websocket.lua"
   ]
 }
