@@ -4,18 +4,9 @@ local module = {}
 
 local count, colour = 0, 0
 
-function setMode()
-  ws2812_effects.stop()
-  ws2812_effects.set_mode(modes(count))
-  print("Changing mode", modes(count))
-  ws2812_effects.start()
-  count = count + 1
-  if count > 14 then count = 0
-    setColour()
-  end
-end
+local strip_buffer
 
-function modes(mode)
+local function modes(mode)
   -- the fire modes overwrite set_color
   if mode == 0 then return "static"
   elseif mode == 1 then return "blink"
@@ -36,7 +27,15 @@ function modes(mode)
   return "static"
 end
 
-function setColour()
+local function colours(x)
+  if x == 0 then return 255, 128, 128
+  elseif x == 1 then return 128, 255, 128
+  elseif x == 2 then return 128, 128, 255
+  end
+  return 255, 255, 255
+end
+
+local function setColours()
 
   ws2812_effects.stop()
   ws2812_effects.set_color(colours(colour))
@@ -47,19 +46,18 @@ function setColour()
   end
 end
 
-function colours(x)
-  if x == 0 then return 255, 0, 0
-  elseif x == 1 then return 0, 255, 0
-  elseif x == 2 then return 0, 0, 255
+local function setMode()
+  ws2812_effects.stop()
+  ws2812_effects.set_mode(modes(count))
+  print("Changing mode", modes(count))
+  ws2812_effects.start()
+  count = count + 1
+  if count > 14 then count = 0
+    setColours()
   end
-  return 255, 255, 255
 end
 
-
-
-
-
-function module.start(wsserver)
+local function demo()
   print("Running LED Strip")
   -- init the ws2812 module
 
@@ -71,30 +69,49 @@ function module.start(wsserver)
   ws2812_effects.set_speed(100)
   ws2812_effects.set_delay(100)
   ws2812_effects.set_brightness(50)
-  setColour()
+  setColours()
   setMode()
   ws2812_effects.start()
 
   local mytimer = tmr.create()
 
-  --mytimer:register(10000, tmr.ALARM_AUTO,
-  --  function()
-  --    tmr.softwd(600)
-  --    setMode()
-  --end)
+  mytimer:register(10000, tmr.ALARM_AUTO,
+    function()
+      tmr.softwd(600)
+      setMode()
+  end)
 
-  --mytimer:start()
-
-  print("LED Strip complete")
+  mytimer:start()
 end
 
-print("Turning off RGB LED")
-ws2812.init(ws2812.MODE_SINGLE)
-ws2812.write(string.char(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
+function module.on(value)
+  if value == true then
+    print("Turning on RGB LED")
+    strip_buffer:fill(128,128,128)
+    ws2812.write(strip_buffer)
+  else print("Turning off RGB LED")
+    --ws2812.init(ws2812.MODE_SINGLE)
+    strip_buffer:fill(0,0,0)
+    ws2812.write(strip_buffer)
+    print("Turn off PWM mode")
+    pwm.setup(config.pwm, 480, 0)
+    pwm.start(config.pwm)
+  end
+end
 
-print("Setting up PWM mode")
-pwm.setup(config.pwm,480,0)
-pwm.start(config.pwm)
+function module.setColour(hue, saturation, value)
+  ws2812_effects.set_color(color_utils.hsv2grb(hue, saturation, value))
+end
+
+function module.start(wsserver)
+  --ws2812.init(ws2812.MODE_SINGLE)
+  --strip_buffer = ws2812.newBuffer(24, 3)
+  --module.on(false)
+  demo()
+  --ws2812_effects.set_color(255,255,255)
+end
+
+
 
 
 

@@ -9,12 +9,18 @@ ws.on('open', function open() {
     array[i] = i / 2;
   }
 
-  function intervalFunc() {
+  var value = true;
 
-    ws.send("ls");
+  function intervalFunc() {
+    ws.send('{ "cmd": "set", "func": "on", "value": ' + value + ' }');
+    if (value) {
+      value = false;
+    } else {
+      value = true;
+    }
   }
 
-  setInterval(intervalFunc, 1500);
+  setInterval(intervalFunc, 5000);
 
 });
 

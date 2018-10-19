@@ -2,9 +2,24 @@
 
 local lua_mdns = nil
 
+local function dump(o)
+  if type(o) == 'table' then
+    local s = '{ '
+    for k, v in pairs(o) do
+      if type(k) ~= 'number' then k = '"'..k..'"' end
+      s = s .. '['..k..'] = ' .. dump(v) .. ','
+    end
+    return s .. '} '
+  else
+    return tostring(o)
+  end
+end
+
+
 local function start()
   dofile("websocket.lc")
   websocket.createServer(80, function (socket)
+    tmr.softwd(-1)
     local data
     --  node.output(function (msg)
     --    return socket.send(msg, 1)
@@ -12,51 +27,21 @@ local function start()
     print("New websocket client connected")
 
     function socket.onmessage(payload, opcode)
-      print("message",payload,opcode)
+      print("message", payload, opcode)
       local s; s, cmd = pcall(sjson.decode, payload)
-      print("decoded",cmd)
-      if opcode == 1 then
-        if payload == "ls" then
-          local list = file.list()
-          local lines = {}
-          for k, v in pairs(list) do
-            lines[#lines + 1] = k .. "\0" .. v
-          end
-          socket.send(table.concat(lines, "\0"), 2)
-          return
-        end
-        local command, name = payload:match("^([a-z]+):(.*)$")
-        if command == "load" then
-          file.open(name, "r")
-          socket.send(file.read(), 2)
-          file.close()
-        elseif command == "save" then
-          file.open(name, "w")
-          file.write(data)
-          data = nil
-          file.close()
-        elseif command == "compile" then
-          node.compile(name)
-        elseif command == "run" then
-          dofile(name)
-        elseif command == "eval" then
-          local fn, success, err
-          fn, err = loadstring(data, name)
-          if not fn then
-            fn = loadstring("print(" .. data .. ")", name)
-          end
-          data = nil
-          if fn then
-            success, err = pcall(fn)
-          end
-          if not success then
-            print(err)
-          end
+      print("decoded", dump(cmd))
+      print("Command", cmd["cmd"])
+      if cmd["cmd"] == "set" then
+        if cmd["func"] == "on" then
+          mod.on(cmd["value"])
+        elseif cmd["func"] == "brightness" then
+
         else
-          print("Invalid command: " .. command)
+          print("Unknown function", cmd["func"])
         end
-      elseif opcode == 2 then
-        data = payload
+      elseif cmd["cmd"] == "get" then
+      else
+        print("Unknown command", cmd["cmd"])
       end
     end
   end)
