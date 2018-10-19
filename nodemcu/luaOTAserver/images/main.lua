@@ -35,7 +35,9 @@ local function start()
         if cmd["func"] == "on" then
           mod.on(cmd["value"])
         elseif cmd["func"] == "brightness" then
-
+          mod.brightness(cmd["value"])
+        elseif cmd["func"] == "hsv" then
+          mod.setHSV(cmd["value"])
         else
           print("Unknown function", cmd["func"])
         end

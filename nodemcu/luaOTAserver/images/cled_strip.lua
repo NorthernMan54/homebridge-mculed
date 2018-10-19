@@ -2,9 +2,12 @@
 
 local module = {}
 
-local count, colour = 0, 0
+local strip_buffer = ws2812.newBuffer(24, 3)
+local last_color = { red = 255, green = 255, blue = 255, brightness = 80 }
+local current_color = { red = 255, green = 255, blue = 255, brightness = 255 }
 
-local strip_buffer
+
+local count, colour = 0, 0
 
 local function modes(mode)
   -- the fire modes overwrite set_color
@@ -84,30 +87,47 @@ local function demo()
   mytimer:start()
 end
 
+local function disable_led()
+  tmr.create():alarm(500, tmr.ALARM_SINGLE, function()
+    local pin = 4
+    gpio.mode(pin, gpio.OUTPUT)
+    gpio.write(pin, gpio.HIGH)
+  end)
+end
+
+
 function module.on(value)
   if value == true then
     print("Turning on RGB LED")
-    strip_buffer:fill(128,128,128)
+    ws2812.init(ws2812.MODE_SINGLE)
+    strip_buffer:fill(current_color.green, current_color.red, current_color.blue)
     ws2812.write(strip_buffer)
+    disable_led()
   else print("Turning off RGB LED")
-    --ws2812.init(ws2812.MODE_SINGLE)
-    strip_buffer:fill(0,0,0)
+    ws2812.init(ws2812.MODE_SINGLE)
+    strip_buffer:fill(0, 0, 0)
     ws2812.write(strip_buffer)
+    disable_led()
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
   end
 end
 
-function module.setColour(hue, saturation, value)
-  ws2812_effects.set_color(color_utils.hsv2grb(hue, saturation, value))
+function module.setHSV(hue, saturation, value)
+  print("setHSV",hue,saturation,value)
+  ws2812.init(ws2812.MODE_SINGLE)
+  current_color.green, current_color.red, current_color.blue = color_utils.hsv2grb(hue, saturation, value)
+  strip_buffer:fill(current_color.green, current_color.red, current_color.blue)
+  ws2812.write(strip_buffer)
+  disable_led()
 end
 
 function module.start(wsserver)
   --ws2812.init(ws2812.MODE_SINGLE)
   --strip_buffer = ws2812.newBuffer(24, 3)
-  --module.on(false)
-  demo()
+  module.on(false)
+  --demo()
   --ws2812_effects.set_color(255,255,255)
 end
 
