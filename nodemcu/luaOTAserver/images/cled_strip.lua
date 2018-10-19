@@ -4,7 +4,7 @@ local module = {}
 
 local strip_buffer = ws2812.newBuffer(24, 3)
 local last_color = { red = 255, green = 255, blue = 255, brightness = 80 }
-local current_color = { red = 255, green = 255, blue = 255, brightness = 255 }
+local current_color = { red = 255, green = 255, blue = 255, brightness = 50 }
 
 
 local count, colour = 0, 0
@@ -72,6 +72,7 @@ local function demo()
   ws2812_effects.set_speed(100)
   ws2812_effects.set_delay(100)
   ws2812_effects.set_brightness(50)
+  ws2812_effects.stop()
   setColours()
   setMode()
   ws2812_effects.start()
@@ -98,16 +99,43 @@ end
 
 function module.on(value)
   if value == true then
+    --ws2812.init(ws2812.MODE_SINGLE)
+    --strip_buffer:fill(current_color.red, current_color.green, current_color.blue)
     print("Turning on RGB LED")
-    ws2812.init(ws2812.MODE_SINGLE)
-    strip_buffer:fill(current_color.green, current_color.red, current_color.blue)
-    ws2812.write(strip_buffer)
-    disable_led()
-  else print("Turning off RGB LED")
-    ws2812.init(ws2812.MODE_SINGLE)
-    strip_buffer:fill(0, 0, 0)
-    ws2812.write(strip_buffer)
-    disable_led()
+    --ws2812.write(strip_buffer)
+    --disable_led()
+
+    ws2812.init()
+    -- create a buffer, 60 LEDs with 3 colour bytes
+    strip_buffer = ws2812.newBuffer(24, 3)
+    -- init the effects module, set colour to red and start blinking
+    ws2812_effects.init(strip_buffer)
+    ws2812_effects.stop()
+    ws2812_effects.set_speed(100)
+    ws2812_effects.set_delay(100)
+    ws2812_effects.set_brightness(current_color.brightness)
+    ws2812_effects.set_color(current_color.red, current_color.green, current_color.blue)
+    ws2812_effects.set_mode("static")
+    ws2812_effects.start()
+
+  else
+    --ws2812.init(ws2812.MODE_SINGLE)
+    --strip_buffer:fill(0, 0, 0)
+    --ws2812.write(strip_buffer)
+    print("Turning off RGB LED")
+    --disable_led()
+    ws2812.init()
+    -- create a buffer, 60 LEDs with 3 colour bytes
+    strip_buffer = ws2812.newBuffer(24, 3)
+    -- init the effects module, set colour to red and start blinking
+    ws2812_effects.init(strip_buffer)
+    ws2812_effects.stop()
+    ws2812_effects.set_speed(100)
+    ws2812_effects.set_delay(100)
+    ws2812_effects.set_brightness(0)
+    ws2812_effects.set_color(0,0,0)
+    ws2812_effects.set_mode("static")
+    ws2812_effects.start()
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)

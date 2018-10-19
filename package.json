@@ -2,7 +2,7 @@
   "name": "homebridge-mculedstrip",
   "version": "0.0.1",
   "description": "Homebridge platform plugin that support's a network of nodemcu's to display Temperature and Humidity.",
-  "main": "ws.js",
+  "main": "mculed.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
