@@ -1,0 +1,3 @@
+echo
+curl -X PUT http://$1/accessories --header "Content-Type:Application/json" --header "authorization: 031-45-154"
+echo

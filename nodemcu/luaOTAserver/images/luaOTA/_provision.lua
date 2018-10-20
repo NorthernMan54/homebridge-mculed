@@ -76,8 +76,11 @@ local function receiveRec(socket, rec) -- upval: self, buf, crypto
         if ( cmd.name ~= "init.lua" ) then
           gc(); gc()
           log("cm:", node.heap())
-          node.compile(cmd.name)
-          file.remove(cmd.name)
+          if PDEBUG and not string.find(cmd.name, "luaOTA") then
+          else
+            node.compile(cmd.name)
+            file.remove(cmd.name)
+          end
         end
       else
         file.remove(name)

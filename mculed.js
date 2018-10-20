@@ -44,7 +44,6 @@ function mculed(log, config, api) {
 mculed.prototype.configureAccessory = function(accessory) {
 
   this.log("configureAccessory %s", accessory.displayName);
-
   accessory.log = this.log;
 
   if (accessory.context.model.includes("CLED")) {
@@ -84,9 +83,26 @@ mculed.prototype.configureAccessory = function(accessory) {
     this.context.ws = new WebSocket(this.context.url);
   }.bind(accessory));
 
+  accessory.context.ws.on('message', function (message) {
+    this.log("Message from",this.context.name,message.toString());
+    onMessage.call(accessory,message.toString());
+  }.bind(accessory));
+
+  accessory.context.ws.on('open', function () {
+    this.log("Opened, getting status from",this.context.name);
+    this.context.ws.send('{ "cmd": "get", "func": "status" }');
+  }.bind(accessory));
+
   var name = accessory.context.name;;
   this.accessories[name] = accessory;
 }
+
+function onMessage(message){
+  this.log("THIS",this);
+  this.log("Message",message);
+}
+
+
 
 mculed.prototype.didFinishLaunching = function() {
 

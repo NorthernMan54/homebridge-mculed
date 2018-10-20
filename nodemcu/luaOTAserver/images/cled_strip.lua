@@ -4,14 +4,14 @@ local module = {}
 
 local strip_buffer = ws2812.newBuffer(24, 3)
 
-local state = { hue = 360, saturation = 100, ct = true, value = 20, brightness = 20, on = false }
+local state = { hue = 360, saturation = 100, colorTemp = 140; ct = true, value = 20, brightness = 20, on = false }
 local changeTimer = tmr.create()
 local disableLedTimer = tmr.create()
 
 local function hslToRgb(h1, s1, l1)
   local r, g, b
 
-  if l1 > 40 then l1 = 40 end
+  l1 = l1 / 5
   local h, s, l = h1 / 360, s1 / 100, l1 / 100
 
   if s == 0 then
@@ -116,9 +116,16 @@ function module.setBrightness(value)
   changeTimer:start()
 end
 
+-- Colour temperature just turns on LED's
+
 function module.setCT(value)
   state.ct = true;
+  state.colorTemp = value;
   changeTimer:start()
+end
+
+function module.getStatus()
+  return state
 end
 
 -- Module init

@@ -1,19 +1,5 @@
 --SAFETRIM
 
-local function dump(o)
-  if type(o) == 'table' then
-    local s = '{ '
-    for k, v in pairs(o) do
-      if type(k) ~= 'number' then k = '"'..k..'"' end
-      s = s .. '['..k..'] = ' .. dump(v) .. ','
-    end
-    return s .. '} '
-  else
-    return tostring(o)
-  end
-end
-
-
 local function start()
   dofile("websocket.lc")
   websocket.createServer(80, function (socket)
@@ -25,37 +11,45 @@ local function start()
     print("New websocket client connected")
 
     function socket.onmessage(payload, opcode)
-      print("message", payload, opcode)
+      print("received", payload, opcode)
       local s, cmd; s, cmd = pcall(sjson.decode, payload)
-      print("decoded", dump(cmd))
-      print("Command", cmd["cmd"])
-      if cmd["cmd"] == "set" then
-        if cmd["func"] == "on" then
-          mod.setOn(cmd["value"])
-        elseif cmd["func"] == "brightness" then
-          mod.setBrightness(cmd["value"])
-        elseif cmd["func"] == "hue" then
-          mod.setHue(cmd["value"])
-        elseif cmd["func"] == "saturation" then
-          mod.setSaturation(cmd["value"])
-        elseif cmd["func"] == "ct" then
-          mod.setCT(cmd["value"])
+      if type(cmd) == 'table' then
+        --print("decoded", sjson.encode(cmd))
+        print("Command", cmd["cmd"], cmd["func"])
+        if cmd["cmd"] == "set" then
+          if cmd["func"] == "on" then
+            mod.setOn(cmd["value"])
+          elseif cmd["func"] == "brightness" then
+            mod.setBrightness(cmd["value"])
+          elseif cmd["func"] == "hue" then
+            mod.setHue(cmd["value"])
+          elseif cmd["func"] == "saturation" then
+            mod.setSaturation(cmd["value"])
+          elseif cmd["func"] == "ct" then
+            mod.setCT(cmd["value"])
+          else
+            print("Unknown function", cmd["func"])
+          end
+        elseif cmd["cmd"] == "get" then
+          if cmd["func"] == "id" then
+            local majorVer, minorVer, devVer, chipid, flashid, flashsize, flashmode, flashspeed = node.info()
+            local response =
+            "{ \"Hostname\": \""..config.ID.."\", \"Model\": \""..config.Model.."\", \"Version\": \""..config.Version.."\", \"Firmware\": \""..majorVer.."."..minorVer.."."..devVer.."\" }"
+            print("Sending", response)
+            socket.send(response)
+          elseif cmd["func"] == "status" then
+            local state = sjson.encode(mod.getStatus())
+            print("Sending", state)
+            socket.send(state)
+          else
+            print("Unknown function", cmd["func"])
+          end
         else
-          print("Unknown function", cmd["func"])
-        end
-      elseif cmd["cmd"] == "get" then
-        if cmd["func"] == "id" then
-          local majorVer, minorVer, devVer, chipid, flashid, flashsize, flashmode, flashspeed = node.info()
-          local response =
-          "{ \"Hostname\": \""..config.ID.."\", \"Model\": \""..config.Model.."\", \"Version\": \""..config.Version.."\", \"Firmware\": \""..majorVer.."."..minorVer.."."..devVer.."\" }"
-          print("Sending", response)
-          socket.send(response)
-        elseif cmd["func"] == "status" then
-        else
-          print("Unknown function", cmd["func"])
+          print("Unknown command", cmd["cmd"])
         end
       else
-        print("Unknown command", cmd["cmd"])
+        -- Not a json message
+        print("Not a json message, ignoring")
       end
     end
   end)

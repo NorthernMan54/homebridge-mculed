@@ -21,7 +21,7 @@ ws.on('open', function open() {
     }
   }
 
-  setInterval(intervalFunc, 5000);
+  setInterval(intervalFunc, 750);
 
 });
 
