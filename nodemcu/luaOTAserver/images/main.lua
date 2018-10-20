@@ -1,7 +1,5 @@
 --SAFETRIM
 
-local lua_mdns = nil
-
 local function dump(o)
   if type(o) == 'table' then
     local s = '{ '
@@ -42,6 +40,12 @@ local function start()
           print("Unknown function", cmd["func"])
         end
       elseif cmd["cmd"] == "get" then
+        local majorVer, minorVer, devVer, chipid, flashid, flashsize, flashmode, flashspeed = node.info()
+        local response =
+        "{ \"Hostname\": \""..config.ID.."\", \"Model\": \""..config.Model.."\", \"Version\": \""..config.Version..
+        "\", \"Firmware\": \""..majorVer.."."..minorVer.."."..devVer.."\" }"
+        print("Sending", response)
+        socket.send(response)
       else
         print("Unknown command", cmd["cmd"])
       end
@@ -70,7 +74,7 @@ local function wifi_ready()
   package.loaded["main"] = nil
   print("Heap Available: personaility  " .. node.heap() )
   mod.start("null")
-  mdns.register(config.mdnsName)
+  mdns.register(config.ID, {service = config.mdnsName})
   start()
 end
 

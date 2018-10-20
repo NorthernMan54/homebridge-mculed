@@ -23,11 +23,9 @@
   },
   "dependencies": {
     "request": "^2.65.0",
-    "express": "^4.13.3",
     "debug": "^2.2.0",
     "mdns": ">=2.3.3",
     "ws": "^=1.1.5",
-    "fakegato-history": "^=0.4.0",
     "moment": "^2.20.1"
   },
   "author": "NorthernMan54",
