@@ -22,7 +22,7 @@ local function receiveRec(socket, rec) -- upval: self, buf, crypto
   local buf, file, log = buf, file, self.log
   local cmdlen = (rec:find('\n', 1, true) or 0) - 1
   local cmd, hash = rec:sub(1, cmdlen - 6), rec:sub(cmdlen - 5, cmdlen)
-  gpio.write(4, gpio.LOW)
+  --gpio.write(4, gpio.LOW)
   if cmdlen < 16 or
   hash ~= crypto.toHex(crypto.hmac("MD5", cmd, self.secret):sub(-3)) then
     return error("Invalid command signature")
@@ -59,7 +59,7 @@ local function receiveRec(socket, rec) -- upval: self, buf, crypto
       end
     end
 
-    gpio.write(4, gpio.HIGH)
+    --gpio.write(4, gpio.HIGH)
     if action == "cm" then
       log("cm:", node.heap())
       local s = file.open(cmd.name, "w+")
@@ -115,7 +115,7 @@ local function receiveRec(socket, rec) -- upval: self, buf, crypto
       end
 
     elseif action == "restart" then
-      gpio.write(4, gpio.HIGH)
+      --gpio.write(4, gpio.HIGH)
       cmd.a = nil
       cmd.secret = self.secret
       file.open(self.prefix.."config.json", "w+")
@@ -129,7 +129,7 @@ local function receiveRec(socket, rec) -- upval: self, buf, crypto
       return
     end
   end
-  gpio.write(4, gpio.HIGH)
+  --gpio.write(4, gpio.HIGH)
   self.socket_send(socket, resp, chunk)
   gc()
 end

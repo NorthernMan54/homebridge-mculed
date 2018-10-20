@@ -4,14 +4,15 @@ local module = {}
 
 local strip_buffer = ws2812.newBuffer(24, 3)
 
-local state = { Hue = 360, Saturation = 100, ColorTemperature = 140; pwm = true, Brightness = 20, On = false }
+local state = { Hue = 0, Saturation = 0, ColorTemperature = 140; pwm = true, Brightness = 20, On = false }
 local changeTimer = tmr.create()
---local disableLedTimer = tmr.create()
+local disableLedTimer = tmr.create()
 
 local function hslToRgb(h1, s1, l1)
   local r, g, b
 
-  l1 = l1 / 5
+  -- Hack for sm16703 issue with ws2812 drivers
+  l1 = l1 * .45
   local h, s, l = h1 / 360, s1 / 100, l1 / 100
 
   if s == 0 then
@@ -41,7 +42,6 @@ end
 local function on(value)
   --print("value,state.On,state.pwm", value, state.On, state.pwm)
   if value == true and state.On == true and state.pwm == false then
-    print("Turning on RGB LED")
     ws2812_effects.stop()
     ws2812_effects.set_speed(100)
     ws2812_effects.set_delay(100)
@@ -51,7 +51,8 @@ local function on(value)
     --print(hslToRgb(state.Hue, state.Saturation, state.Brightness))
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
-    --disableLedTimer:start()
+    print("Turning on RGB LED",strip_buffer:power())
+    disableLedTimer:start()
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
@@ -67,7 +68,7 @@ local function on(value)
     ws2812_effects.set_color(0, 0, 0)
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
-    --disableLedTimer:start()
+    disableLedTimer:start()
   else
     print("Turning off RGB LED")
     ws2812_effects.stop()
@@ -77,7 +78,7 @@ local function on(value)
     ws2812_effects.set_color(0, 0, 0)
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
-    --disableLedTimer:start()
+    disableLedTimer:start()
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
@@ -86,13 +87,13 @@ end
 
 changeTimer:register(50, tmr.ALARM_SEMI, function() on(true) end)
 
---disableLedTimer:register(500, tmr.ALARM_SEMI, function()
+disableLedTimer:register(500, tmr.ALARM_SEMI, function()
 --  local pin = 4
   --print("disable led")
---  ws2812_effects.stop()
+  ws2812_effects.stop()
   --gpio.mode(pin, gpio.OUTPUT)
   --gpio.write(pin, gpio.HIGH)
---end)
+end)
 
 function module.setHue(value)
   state.Hue = value;
@@ -120,6 +121,8 @@ end
 
 function module.setCT(value)
   state.pwm = true;
+  state.Hue = 0;
+  state.Saturation = 0;
   state.ColorTemperature = value;
   changeTimer:start()
 end

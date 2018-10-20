@@ -63,8 +63,9 @@ end
 
 local conn
 gpio.mode(0, gpio.OUTPUT)
-gpio.mode(4, gpio.OUTPUT)
-gpio.write(4, gpio.HIGH)
+-- GPIO 4 is used with ws2812 light strips
+--gpio.mode(4, gpio.OUTPUT)
+--gpio.write(4, gpio.HIGH)
 return function() -- the proper doTick() timer callback
   tick_count = tick_count + 1
   if ( tick_count % 2 == 0 ) then

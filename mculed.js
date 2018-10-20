@@ -118,28 +118,28 @@ function onMessage(response) {
           .getCharacteristic(Characteristic.Brightness).updateValue(message[k]);
         break;
       case "Saturation":
-        if (!message.pwm) {
+        //if (!message.pwm) {
           this.log("Setting %s saturation to %s", this.context.name, message[k]);
           this
             .getService(Service.Lightbulb)
             .getCharacteristic(Characteristic.Saturation).updateValue(message[k]);
-        }
+        //}
         break;
       case "Hue":
-        if (!message.pwm) {
+        //if (!message.pwm) {
           this.log("Setting %s hue to %s", this.context.name, message[k]);
           this
             .getService(Service.Lightbulb)
             .getCharacteristic(Characteristic.Hue).updateValue(message[k]);
-        }
+        //}
         break;
       case "ColorTemperature":
-        if (message.pwm) {
+        //if (message.pwm) {
           this.log("Setting %s ColorTemperature to %s", this.context.name, message[k]);
           this
             .getService(Service.Lightbulb)
             .getCharacteristic(Characteristic.ColorTemperature).updateValue(message[k]);
-        }
+        //}
         break;
       default:
         this.log.error("Unhandled message item", k);

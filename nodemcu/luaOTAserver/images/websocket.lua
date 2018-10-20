@@ -103,6 +103,10 @@ do
         end
       end
 
+      conn:on("disconnection", function(_, message)
+        print("Socket disconnected",message)
+      end)
+
       conn:on("receive", function(_, chunk)
         if buffer then
         buffer = buffer .. chunk

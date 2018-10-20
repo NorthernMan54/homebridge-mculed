@@ -79,7 +79,7 @@ local function wifi_ready()
     mod = require('cled_strip')
   end
   package.loaded["main"] = nil
-  print("Running" .. config.Model )
+  print("Running " .. config.Model )
   mod.init("null")
   mdns.register(config.ID, {service = config.mdnsName})
   start()
