@@ -48,7 +48,7 @@ local function start()
 end
 
 function module.boot()
-  print("Booting...")
+  print("Connecting to network")
   mode = 0
   start()
 end

@@ -4,9 +4,9 @@ local module = {}
 
 local strip_buffer = ws2812.newBuffer(24, 3)
 
-local state = { hue = 360, saturation = 100, colorTemp = 140; ct = true, value = 20, brightness = 20, on = false }
+local state = { Hue = 360, Saturation = 100, ColorTemperature = 140; pwm = true, Brightness = 20, On = false }
 local changeTimer = tmr.create()
-local disableLedTimer = tmr.create()
+--local disableLedTimer = tmr.create()
 
 local function hslToRgb(h1, s1, l1)
   local r, g, b
@@ -39,25 +39,25 @@ local function hslToRgb(h1, s1, l1)
 end
 
 local function on(value)
-  print("value,state.on,state.ct", value, state.on, state.ct)
-  if value == true and state.on == true and state.ct == false then
+  --print("value,state.On,state.pwm", value, state.On, state.pwm)
+  if value == true and state.On == true and state.pwm == false then
     print("Turning on RGB LED")
     ws2812_effects.stop()
     ws2812_effects.set_speed(100)
     ws2812_effects.set_delay(100)
     ws2812_effects.set_brightness(255)
-    ws2812_effects.set_color(hslToRgb(state.hue, state.saturation, state.brightness))
-    --print(state.hue, state.saturation, state.brightness)
-    print(hslToRgb(state.hue, state.saturation, state.brightness))
+    ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
+    --print(state.Hue, state.Saturation, state.Brightness)
+    --print(hslToRgb(state.Hue, state.Saturation, state.Brightness))
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
-    disableLedTimer:start()
+    --disableLedTimer:start()
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
-  elseif value == true and state.on == true and state.ct == true then
+  elseif value == true and state.On == true and state.pwm == true then
     print("Turning on White PWM LED")
-    pwm.setup(config.pwm, 480, state.brightness * 10)
+    pwm.setup(config.pwm, 480, state.Brightness * 10)
     pwm.start(config.pwm)
     print("Turning off RGB LED")
     ws2812_effects.stop()
@@ -67,7 +67,7 @@ local function on(value)
     ws2812_effects.set_color(0, 0, 0)
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
-    disableLedTimer:start()
+    --disableLedTimer:start()
   else
     print("Turning off RGB LED")
     ws2812_effects.stop()
@@ -77,50 +77,50 @@ local function on(value)
     ws2812_effects.set_color(0, 0, 0)
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
-    disableLedTimer:start()
+    --disableLedTimer:start()
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
   end
 end
 
-changeTimer:register(100, tmr.ALARM_SEMI, function() on(true) end)
+changeTimer:register(50, tmr.ALARM_SEMI, function() on(true) end)
 
-disableLedTimer:register(500, tmr.ALARM_SEMI, function()
-  local pin = 4
-  print("disable led")
-  ws2812_effects.stop()
+--disableLedTimer:register(500, tmr.ALARM_SEMI, function()
+--  local pin = 4
+  --print("disable led")
+--  ws2812_effects.stop()
   --gpio.mode(pin, gpio.OUTPUT)
   --gpio.write(pin, gpio.HIGH)
-end)
+--end)
 
 function module.setHue(value)
-  state.hue = value;
-  state.ct = false;
+  state.Hue = value;
+  state.pwm = false;
   changeTimer:start()
 end
 
 function module.setOn(value)
-  state.on = value;
+  state.On = value;
   changeTimer:start()
 end
 
 function module.setSaturation(value)
-  state.saturation = value;
-  state.ct = false;
+  state.Saturation = value;
+  state.pwm = false;
   changeTimer:start()
 end
 
 function module.setBrightness(value)
-  state.brightness = value;
+  state.Brightness = value;
   changeTimer:start()
 end
 
 -- Colour temperature just turns on LED's
 
 function module.setCT(value)
-  state.ct = true;
-  state.colorTemp = value;
+  state.pwm = true;
+  state.ColorTemperature = value;
   changeTimer:start()
 end
 

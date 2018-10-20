@@ -9,6 +9,12 @@ local function start()
     --    return socket.send(msg, 1)
     --  end, 1)
     print("New websocket client connected")
+    local responseTimer = tmr.create()
+    responseTimer:register(60, tmr.ALARM_SEMI, function()
+      local state = sjson.encode(mod.getStatus())
+      print("Sending", state)
+      socket.send(state)
+    end)
 
     function socket.onmessage(payload, opcode)
       print("received", payload, opcode)
@@ -30,6 +36,7 @@ local function start()
           else
             print("Unknown function", cmd["func"])
           end
+          responseTimer:start()
         elseif cmd["cmd"] == "get" then
           if cmd["func"] == "id" then
             local majorVer, minorVer, devVer, chipid, flashid, flashsize, flashmode, flashspeed = node.info()
@@ -66,15 +73,13 @@ local function wifi_ready()
   setup = nil
   wifi.eventmon.unregister(wifi.eventmon.STA_GOT_IP)
 
-  print("Heap Available: -mdns  " .. node.heap() ) -- 18720
-
   tmr.softwd(600)
   led.connected()
   if string.find(config.Model, "CLED") then
     mod = require('cled_strip')
   end
   package.loaded["main"] = nil
-  print("Heap Available: personaility  " .. node.heap() )
+  print("Running" .. config.Model )
   mod.init("null")
   mdns.register(config.ID, {service = config.mdnsName})
   start()
@@ -83,16 +88,10 @@ end
 return {entry = function(msg)
   -- Start of code, reboot if not connected within 60 seconds
   tmr.softwd(60)
-  print("Heap Available:  " .. node.heap()) -- 38984
+  print("Starting mculed") -- 38984
   config = require("config-"..wifi.sta.gethostname())
   package.loaded["config-"..wifi.sta.gethostname()] = nil
-  print("Heap Available: config " .. node.heap()) -- 37248 1500
   led = require("led")
-  print("Heap Available: led " .. node.heap()) -- 34200 3000ß
-  --local setup = require("setup")
-  --collectgarbage()
-  --print("Heap Available: setup " .. node.heap()) -- 23280 4000
-
   led.boot()
   wifi_ready()
 end}

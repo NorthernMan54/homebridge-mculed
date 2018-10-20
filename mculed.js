@@ -73,23 +73,23 @@ mculed.prototype.configureAccessory = function(accessory) {
 
   accessory.context.ws = new WebSocket(accessory.context.url);
 
-  accessory.context.ws.on('close', function () {
-    this.log("Repopening closed connection",this.context.name);
+  accessory.context.ws.on('close', function() {
+    this.log("Repopening closed connection", this.context.name);
     this.context.ws = new WebSocket(this.context.url);
   }.bind(accessory));
 
-  accessory.context.ws.on('error', function () {
-    this.log("Repopening error connection",this.context.name);
+  accessory.context.ws.on('error', function() {
+    this.log("Repopening error connection", this.context.name);
     this.context.ws = new WebSocket(this.context.url);
   }.bind(accessory));
 
-  accessory.context.ws.on('message', function (message) {
-    this.log("Message from",this.context.name,message.toString());
-    onMessage.call(accessory,message.toString());
+  accessory.context.ws.on('message', function(message) {
+    this.log("Message from", this.context.name, message.toString());
+    onMessage.call(accessory, message.toString());
   }.bind(accessory));
 
-  accessory.context.ws.on('open', function () {
-    this.log("Opened, getting status from",this.context.name);
+  accessory.context.ws.on('open', function() {
+    this.log("Opened, getting status from", this.context.name);
     this.context.ws.send('{ "cmd": "get", "func": "status" }');
   }.bind(accessory));
 
@@ -97,9 +97,54 @@ mculed.prototype.configureAccessory = function(accessory) {
   this.accessories[name] = accessory;
 }
 
-function onMessage(message){
-  this.log("THIS",this);
-  this.log("Message",message);
+function onMessage(response) {
+  //this.log("THIS",this);
+  //this.log("Message",response);
+
+  var message = JSON.parse(response);
+
+  for (var k in message) {
+    switch (k) {
+      case "On":
+        this.log("Setting %s on to %s", this.context.name, message[k]);
+        this
+          .getService(Service.Lightbulb)
+          .getCharacteristic(Characteristic.On).updateValue(message[k]);
+        break;
+      case "Brightness":
+        this.log("Setting %s brightness to %s", this.context.name, message[k]);
+        this
+          .getService(Service.Lightbulb)
+          .getCharacteristic(Characteristic.Brightness).updateValue(message[k]);
+        break;
+      case "Saturation":
+        if (!message.pwm) {
+          this.log("Setting %s saturation to %s", this.context.name, message[k]);
+          this
+            .getService(Service.Lightbulb)
+            .getCharacteristic(Characteristic.Saturation).updateValue(message[k]);
+        }
+        break;
+      case "Hue":
+        if (!message.pwm) {
+          this.log("Setting %s hue to %s", this.context.name, message[k]);
+          this
+            .getService(Service.Lightbulb)
+            .getCharacteristic(Characteristic.Hue).updateValue(message[k]);
+        }
+        break;
+      case "ColorTemperature":
+        if (message.pwm) {
+          this.log("Setting %s ColorTemperature to %s", this.context.name, message[k]);
+          this
+            .getService(Service.Lightbulb)
+            .getCharacteristic(Characteristic.ColorTemperature).updateValue(message[k]);
+        }
+        break;
+      default:
+        this.log.error("Unhandled message item", k);
+    }
+  }
 }
 
 
@@ -235,40 +280,70 @@ mculed.prototype.mcuModel = function(url, callback) {
 
 mculed.prototype.setOn = function(value, callback) {
 
-  this.log("Turn ON %s %s", this.context.name, value);
-  this.context.ws.send('{ "cmd": "set", "func": "on", "value": ' + value + ' }', function() { console.log("sent")});
+  if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
+    this.log("Turn ON %s %s", this.context.name, value);
+    this.context.ws.send('{ "cmd": "set", "func": "on", "value": ' + value + ' }', function() {
+      console.log("sent")
+    });
+  } else {
+    this.log("Skipping Turn On %s", this.context.name);
+  }
   callback();
 
 }
 
 mculed.prototype.setBrightness = function(value, callback) {
 
-  this.log("Turn BR %s %s", this.context.name, value);
-  this.context.ws.send('{ "cmd": "set", "func": "brightness", "value": ' + value + ' }', function() { console.log("sent")});
+  if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).value) {
+    this.log("Turn BR %s %s", this.context.name, value);
+    this.context.ws.send('{ "cmd": "set", "func": "brightness", "value": ' + value + ' }', function() {
+      console.log("sent")
+    });
+  } else {
+    this.log("Skipping Turn Brightness %s", this.context.name);
+  }
   callback();
 
 }
 
 mculed.prototype.setHue = function(value, callback) {
 
-  this.log("Turn HUE %s %s", this.context.name, value);
-    this.context.ws.send('{ "cmd": "set", "func": "hue", "value": ' + value + ' }', function() { console.log("sent")});
+  if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value) {
+    this.log("Turn HUE %s %s", this.context.name, value);
+    this.context.ws.send('{ "cmd": "set", "func": "hue", "value": ' + value + ' }', function() {
+      console.log("sent")
+    });
+  } else {
+    this.log("Skipping Turn Hue %s", this.context.name);
+  }
   callback();
 
 }
 
 mculed.prototype.setSaturation = function(value, callback) {
 
-  this.log("Turn SAT %s %s", this.context.name, value);
-    this.context.ws.send('{ "cmd": "set", "func": "saturation", "value": ' + value + ' }', function() { console.log("sent")});
+  if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value) {
+    this.log("Turn SAT %s %s", this.context.name, value, this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value);
+    this.context.ws.send('{ "cmd": "set", "func": "saturation", "value": ' + value + ' }', function() {
+      console.log("sent")
+    });
+  } else {
+    this.log("Skipping Turn SAT %s", this.context.name);
+  }
   callback();
 
 }
 
 mculed.prototype.setColorTemperature = function(value, callback) {
 
-  this.log("Turn CT %s %s", this.context.name, value);
-    this.context.ws.send('{ "cmd": "set", "func": "ct", "value": ' + value + ' }', function() { console.log("sent")});
+  if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.ColorTemperature).value) {
+    this.log("Turn CT %s %s", this.context.name, value);
+    this.context.ws.send('{ "cmd": "set", "func": "ct", "value": ' + value + ' }', function() {
+      console.log("sent")
+    });
+  } else {
+    this.log("Skipping Turn ColorTemperature %s", this.context.name);
+  }
   callback();
 
 }
