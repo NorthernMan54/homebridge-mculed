@@ -26,26 +26,34 @@ local function start()
 
     function socket.onmessage(payload, opcode)
       print("message", payload, opcode)
-      local s; s, cmd = pcall(sjson.decode, payload)
+      local s, cmd; s, cmd = pcall(sjson.decode, payload)
       print("decoded", dump(cmd))
       print("Command", cmd["cmd"])
       if cmd["cmd"] == "set" then
         if cmd["func"] == "on" then
-          mod.on(cmd["value"])
+          mod.setOn(cmd["value"])
         elseif cmd["func"] == "brightness" then
-          mod.brightness(cmd["value"])
-        elseif cmd["func"] == "hsv" then
-          mod.setHSV(cmd["value"])
+          mod.setBrightness(cmd["value"])
+        elseif cmd["func"] == "hue" then
+          mod.setHue(cmd["value"])
+        elseif cmd["func"] == "saturation" then
+          mod.setSaturation(cmd["value"])
+        elseif cmd["func"] == "ct" then
+          mod.setCT(cmd["value"])
         else
           print("Unknown function", cmd["func"])
         end
       elseif cmd["cmd"] == "get" then
-        local majorVer, minorVer, devVer, chipid, flashid, flashsize, flashmode, flashspeed = node.info()
-        local response =
-        "{ \"Hostname\": \""..config.ID.."\", \"Model\": \""..config.Model.."\", \"Version\": \""..config.Version..
-        "\", \"Firmware\": \""..majorVer.."."..minorVer.."."..devVer.."\" }"
-        print("Sending", response)
-        socket.send(response)
+        if cmd["func"] == "id" then
+          local majorVer, minorVer, devVer, chipid, flashid, flashsize, flashmode, flashspeed = node.info()
+          local response =
+          "{ \"Hostname\": \""..config.ID.."\", \"Model\": \""..config.Model.."\", \"Version\": \""..config.Version.."\", \"Firmware\": \""..majorVer.."."..minorVer.."."..devVer.."\" }"
+          print("Sending", response)
+          socket.send(response)
+        elseif cmd["func"] == "status" then
+        else
+          print("Unknown function", cmd["func"])
+        end
       else
         print("Unknown command", cmd["cmd"])
       end
@@ -73,7 +81,7 @@ local function wifi_ready()
   end
   package.loaded["main"] = nil
   print("Heap Available: personaility  " .. node.heap() )
-  mod.start("null")
+  mod.init("null")
   mdns.register(config.ID, {service = config.mdnsName})
   start()
 end

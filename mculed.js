@@ -45,34 +45,44 @@ mculed.prototype.configureAccessory = function(accessory) {
 
   this.log("configureAccessory %s", accessory.displayName);
 
+  accessory.log = this.log;
 
-  if (accessory.getService(Service.TemperatureSensor)) {
+  if (accessory.context.model.includes("CLED")) {
+    // Add YL-69 Moisture sensor
+    accessory
+      .getService(Service.Lightbulb)
+      .getCharacteristic(Characteristic.On)
+      .on('set', this.setOn.bind(accessory));
 
-    accessory.log = this.log;
-    //    accessory.loggingService = new FakeGatoHistoryService("weather", accessory,4032,this.refresh * 10/60);
-    accessory.loggingService = new FakeGatoHistoryService("weather", accessory, {
-      storage: this.storage,
-      minutes: this.refresh * 10 / 60
-    });
-
-    this.getDHTTemperature(accessory, function(err, temp) {
-      if (err) {
-        temp = err;
-      }
-      this.getService(Service.TemperatureSensor).getCharacteristic(Characteristic.CurrentTemperature).updateValue(temp);
-    }.bind(accessory));
-
+    accessory
+      .getService(Service.Lightbulb)
+      .getCharacteristic(Characteristic.Brightness)
+      .on('set', this.setBrightness.bind(accessory));
+    accessory
+      .getService(Service.Lightbulb)
+      .getCharacteristic(Characteristic.Hue)
+      .on('set', this.setHue.bind(accessory));
+    accessory
+      .getService(Service.Lightbulb)
+      .getCharacteristic(Characteristic.Saturation)
+      .on('set', this.setSaturation.bind(accessory));
+    accessory
+      .getService(Service.Lightbulb)
+      .getCharacteristic(Characteristic.ColorTemperature)
+      .on('set', this.setColorTemperature.bind(accessory));
   }
 
-  if (accessory.getService(Service.GarageDoorOpener))
-    accessory.getService(Service.GarageDoorOpener)
-    .getCharacteristic(Characteristic.TargetDoorState)
-    .on('set', this.setTargetDoorState.bind(this, accessory));
+  accessory.context.ws = new WebSocket(accessory.context.url);
 
-  if (accessory.getService(Service.Switch))
-    accessory.getService(Service.Switch)
-    .getCharacteristic(Characteristic.On)
-    .on('set', this.resetDevices.bind(this, accessory));
+  accessory.context.ws.on('close', function () {
+    this.log("Repopening closed connection",this.context.name);
+    this.context.ws = new WebSocket(this.context.url);
+  }.bind(accessory));
+
+  accessory.context.ws.on('error', function () {
+    this.log("Repopening error connection",this.context.name);
+    this.context.ws = new WebSocket(this.context.url);
+  }.bind(accessory));
 
   var name = accessory.context.name;;
   this.accessories[name] = accessory;
@@ -112,7 +122,7 @@ mculed.prototype.didFinishLaunching = function() {
       this.log("Service down: ", service);
       // Mark missing devices as unreachable
       this.deviceDown(service.name);
-    });
+    }.bind(this));
     browser.on('error', handleError);
     browser.start();
   } catch (ex) {
@@ -209,35 +219,40 @@ mculed.prototype.mcuModel = function(url, callback) {
 
 mculed.prototype.setOn = function(value, callback) {
 
-  this.log("Turn ON %s %s", this.name, value);
+  this.log("Turn ON %s %s", this.context.name, value);
+  this.context.ws.send('{ "cmd": "set", "func": "on", "value": ' + value + ' }', function() { console.log("sent")});
   callback();
 
 }
 
 mculed.prototype.setBrightness = function(value, callback) {
 
-  this.log("Turn BR %s %s", this.name, value);
+  this.log("Turn BR %s %s", this.context.name, value);
+  this.context.ws.send('{ "cmd": "set", "func": "brightness", "value": ' + value + ' }', function() { console.log("sent")});
   callback();
 
 }
 
 mculed.prototype.setHue = function(value, callback) {
 
-  this.log("Turn HUE %s %s", this.name, value);
+  this.log("Turn HUE %s %s", this.context.name, value);
+    this.context.ws.send('{ "cmd": "set", "func": "hue", "value": ' + value + ' }', function() { console.log("sent")});
   callback();
 
 }
 
 mculed.prototype.setSaturation = function(value, callback) {
 
-  this.log("Turn SAT %s %s", this.name, value);
+  this.log("Turn SAT %s %s", this.context.name, value);
+    this.context.ws.send('{ "cmd": "set", "func": "saturation", "value": ' + value + ' }', function() { console.log("sent")});
   callback();
 
 }
 
 mculed.prototype.setColorTemperature = function(value, callback) {
 
-  this.log("Turn CT %s %s", this.name, value);
+  this.log("Turn CT %s %s", this.context.name, value);
+    this.context.ws.send('{ "cmd": "set", "func": "ct", "value": ' + value + ' }', function() { console.log("sent")});
   callback();
 
 }
@@ -293,7 +308,7 @@ mculed.prototype.addMcuAccessory = function(device, model) {
         .on('set', this.setSaturation.bind(this));
       accessory
         .getService(Service.Lightbulb)
-        .getCharacteristic(Characteristic.Saturation)
+        .getCharacteristic(Characteristic.ColorTemperature)
         .on('set', this.setColorTemperature.bind(this));
     }
 

@@ -13,6 +13,7 @@ ws.on('open', function open() {
 
   function intervalFunc() {
     ws.send('{ "cmd": "set", "func": "on", "value": ' + value + ' }');
+    console.log("Sending",value);
     if (value) {
       value = false;
     } else {
