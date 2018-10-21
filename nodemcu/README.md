@@ -1,4 +1,4 @@
-# homebridge-wssensor ESP8266 LUA Code
+# homebridge-mculed ESP8266 LUA Code
 
 LUA programs for a nodeMCU device to read various sensors and integrate into homebridge-wssensor.  Supports direct notification and alerting of motion events from a PIR motion sensor.
 

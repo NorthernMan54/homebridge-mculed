@@ -1,27 +1,29 @@
-# homebridge-wssensor
-Plugin for NodeMCU Based sensors using WebSockets for realtime updates
+# homebridge-mculed
+Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led strips
 
 # Design Concept
 
 * Realtime device communications via WebSockets, and device discovery via mDNS
-* Homebridge Plugin creates a websocket server to receive updates from nodemcu devices.
-* Plugin advertises websocket server onto network via mDNS
-* NodeMCU discovers server by watching for mDNS advertisement
-* NodeMCU sends message to plugin containing sensor config
-* Plugin creates HK accessory for sensor ( Have ability to alias sensor name in config.json )
-* Plugin sends sensor state changes in realtime to plugin via WebSockets
-* Default publishing every minute?
-* Have sensor support multiple websocket servers?
-* Support for Legacy mcuiot mode?
-* Support for data logging to mcuiot-logger?
+* Nodemcu creates a websocket server
+* Nodemcu advertises websocket server onto network via mDNS
+* Plugin discovers server by watching for mDNS advertisement
+* NodeMCU sends message to plugin containing device config
+* Plugin creates HK accessory for device ( Have ability to alias sensor name in config.json )
+* Nodemcu sends device state changes in realtime to plugin via WebSockets
+
+# Backlog
+
+* [ ] Power off LED strip via MOSFET
+* [ ] Power nodemcu with DC-DC Step down from the 24V power supply
+* [ ] Websocket socket level events in Plugin
+* [ ] Websocket socket level events in NodeMCU
+* [ ] Create schematic for nodeMCU
+* [ ] Get a case
+* [ ] Complete documentation
 
 # Supported configurations
 
-* [x] AM312 or HC-SR501 Motion Sensor and BME280 or DHT22 Temperature sensor
-* [x] MPU6050 Gyro / Acceleration sensor
-* [x] Garage Door monitor / control
-* [ ] YL-69 Moisture Sensor / BME-280
-* [ ] Standalone BME280 Temperature Sensor
+* [x] Costco LED Strip - Intertek 4005244
 
 # Supported sensors
 
