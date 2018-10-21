@@ -15,6 +15,8 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 
 * [ ] Power off LED strip via MOSFET
 * [ ] Power nodemcu with DC-DC Step down from the 24V power supply
+* [ ] Watchdog timer, what should it do
+* [ ] What should the LED's do in a power cycle?
 * [ ] Websocket socket level events in Plugin
 * [ ] Websocket socket level events in NodeMCU
 * [ ] Create schematic for nodeMCU

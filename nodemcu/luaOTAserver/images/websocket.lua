@@ -11,7 +11,7 @@ do
   local applyMask = crypto.mask
   local toBase64 = crypto.toBase64
   local hash = crypto.hash
- 
+
   local function decode(chunk)
     if #chunk < 2 then return end
     local second = byte(chunk, 2)
@@ -105,6 +105,7 @@ do
 
       conn:on("disconnection", function(_, message)
         print("Socket disconnected",message)
+        socket = nil
       end)
 
       conn:on("receive", function(_, chunk)

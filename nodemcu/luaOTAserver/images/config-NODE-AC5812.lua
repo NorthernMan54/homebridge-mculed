@@ -8,7 +8,7 @@ module.Version = "2.2"
 
 module.ID = wifi.sta.gethostname()
 module.mdnsName = "mculed"
- 
+
 -- LED state
 module.ledState = 0 -- 0: fully disabled, 1: LEDs on, 2: Connected off (Boot/Error only)
 
@@ -22,6 +22,6 @@ module.ledBlue = 4  -- gpio2
 -- WS2812 = 4
 module.pwm = 5
 module.button = 1
-module.pwr = 6
+--module.pwr = 6
 
 return module
