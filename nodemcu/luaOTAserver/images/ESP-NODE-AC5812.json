@@ -13,7 +13,6 @@
     "led.lua",
     "setup.lua",
     "main.lua",
-    "json.lua",
     "config-NODE-AC5812.lua",
     "cled_strip.lua",
     "websocket.lua"

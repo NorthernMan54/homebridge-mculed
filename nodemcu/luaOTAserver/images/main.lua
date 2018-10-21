@@ -1,7 +1,11 @@
 --SAFETRIM
 
 local function start()
-  dofile("websocket.lc")
+  if PDEBUG then
+    dofile("websocket.lua")
+  else
+    dofile("websocket.lc")
+  end
   websocket.createServer(80, function (socket)
     tmr.softwd(-1)
     local data
