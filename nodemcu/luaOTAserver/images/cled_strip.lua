@@ -136,6 +136,17 @@ function module.getStatus()
   return state
 end
 
+-- Button press / power toggle
+
+function module.button()
+  if state.On then
+    state.On = false;
+  else
+    state = { Hue = 0, Saturation = 0, ColorTemperature = 140; pwm = true, Brightness = 100, On = true }
+  end
+  changeTimer:start()
+end
+
 -- Module init
 
 function module.init(wsserver)

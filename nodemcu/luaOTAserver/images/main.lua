@@ -64,6 +64,42 @@ local function start()
       end
     end
   end)
+  return("hello")
+end
+
+-- local button control, operates as toggle
+-- Borrowed from https://gist.github.com/marcelstoer/59563e791effa4acb65f#file-debounce-with-tmr-lua
+
+local function debounce(func)
+  local last = 0
+  local delay = 50000 -- 50ms * 1000 as tmr.now() has μs resolution
+
+  return function (...)
+    local now = tmr.now()
+    local delta = now - last
+    if delta < 0 then
+      delta = delta + 2147483647
+    end; -- proposed because of delta rolling over, https://github.com/hackhitchin/esp8266-co-uk/issues/2
+    if delta < delay then
+      return
+    end;
+
+    last = now
+    return func(...)
+  end
+end
+
+local function onChange()
+  print("button", gpio.read(config.button))
+  if gpio.read(config.button) == 0 then
+    mod.button()
+  end
+end
+
+local function localControl()
+
+  gpio.mode(config.button, gpio.INT, gpio.PULLUP)
+  gpio.trig(config.button, "both", debounce(onChange))
 
 end
 
@@ -86,7 +122,8 @@ local function wifi_ready()
   print("Running " .. config.Model )
   mod.init("null")
   mdns.register(config.ID, {service = config.mdnsName})
-  start()
+  localControl()
+  print("START",start())
 end
 
 return {entry = function(msg)

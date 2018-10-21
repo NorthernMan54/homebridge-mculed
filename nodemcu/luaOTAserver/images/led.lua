@@ -7,7 +7,7 @@ local function start()
   if config.ledState == 0 then
     return
   end
-
+ 
   gpio.mode(config.ledBlue, gpio.OUTPUT)
   gpio.mode(config.ledRed, gpio.OUTPUT)
 

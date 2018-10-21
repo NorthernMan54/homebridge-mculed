@@ -119,26 +119,26 @@ function onMessage(response) {
         break;
       case "Saturation":
         //if (!message.pwm) {
-          this.log("Setting %s saturation to %s", this.context.name, message[k]);
-          this
-            .getService(Service.Lightbulb)
-            .getCharacteristic(Characteristic.Saturation).updateValue(message[k]);
+        this.log("Setting %s saturation to %s", this.context.name, message[k]);
+        this
+          .getService(Service.Lightbulb)
+          .getCharacteristic(Characteristic.Saturation).updateValue(message[k]);
         //}
         break;
       case "Hue":
         //if (!message.pwm) {
-          this.log("Setting %s hue to %s", this.context.name, message[k]);
-          this
-            .getService(Service.Lightbulb)
-            .getCharacteristic(Characteristic.Hue).updateValue(message[k]);
+        this.log("Setting %s hue to %s", this.context.name, message[k]);
+        this
+          .getService(Service.Lightbulb)
+          .getCharacteristic(Characteristic.Hue).updateValue(message[k]);
         //}
         break;
       case "ColorTemperature":
         //if (message.pwm) {
-          this.log("Setting %s ColorTemperature to %s", this.context.name, message[k]);
-          this
-            .getService(Service.Lightbulb)
-            .getCharacteristic(Characteristic.ColorTemperature).updateValue(message[k]);
+        this.log("Setting %s ColorTemperature to %s", this.context.name, message[k]);
+        this
+          .getService(Service.Lightbulb)
+          .getCharacteristic(Characteristic.ColorTemperature).updateValue(message[k]);
         //}
         break;
       default:
@@ -336,7 +336,9 @@ mculed.prototype.setSaturation = function(value, callback) {
 
 mculed.prototype.setColorTemperature = function(value, callback) {
 
-  if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.ColorTemperature).value) {
+  if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.ColorTemperature).value ||
+    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value != 0 ||
+    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value != 0) {
     this.log("Turn CT %s %s", this.context.name, value);
     this.context.ws.send('{ "cmd": "set", "func": "ct", "value": ' + value + ' }', function() {
       console.log("sent")
