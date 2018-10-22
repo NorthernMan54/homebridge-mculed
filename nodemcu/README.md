@@ -1,40 +1,21 @@
 # homebridge-mculed ESP8266 LUA Code
 
-LUA programs for a nodeMCU device to read various sensors and integrate into homebridge-wssensor.  Supports direct notification and alerting of motion events from a PIR motion sensor.
+LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 # Hardware
 
 1. Bill of materials
    - nodeMCU / esp8266 dev kit
-
-Sensor options
-
-   - DHT22 Temperature / Humidity Sensor
-   - BME280 Bosch DIGITAL HUMIDITY, PRESSURE AND TEMPERATURE SENSOR
-   - AM312 PIR Monition Sensor  ( https://www.aliexpress.com/item/Mini-IR-Pyroelectric-Infrared-PIR-Motion-Human-Sensor-Automatic-Detector-Module-high-reliability-12mm-x-25mm/32749737125.html?spm=a2g0s.9042311.0.0.6ec74c4dwcSLq4 )
-   - MPU 6050 Acceleration/gyroscope sensor aka GY-521 Breakout board
-
-Garage Door
-  - I used a 1 channel 5 volt relay
-  - 2 Magnetic Reed contact switches
+   - Level Shifter
+   - DC to DC Power Converter
+   - Push Button switch
+   - FQP30N06L N-Channel MOSFET
 
 # Circuit Diagrams
 
-## BME-MS
+## CLED/Costco LED Strip
 
-![BME-MS](ESP8266%20-%20WSSensor_bb.jpg)
-
-![BME-MS](ESP8266%20-%20WSSensor_schem.jpg)
-
-## AM312
-
-Pinout
-
-```
--- Gnd
--- Signal
--- VCC +5v
-```
+![CLED](mculed_schem.png)
 
 # nodeMCU Firmware
 
@@ -57,7 +38,7 @@ module.SSID["SSID1"] = { ssid="SSID1", pwd = "password" }
 2. Set your device Model in config.lua - Either DHT-MS,  BME-MS, BME-GD, or ACL used by homebridge-wssensor to determine which sensor type to create in homebridge
 
 ```
-module.Model = "DHT-MS"
+module.Model = "CLED"
 or
 module.Model = "BME-MS"
 or
