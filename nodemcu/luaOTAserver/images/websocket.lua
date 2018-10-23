@@ -14,7 +14,7 @@ do
   local toBase64 = crypto.toBase64
   local hash = crypto.hash
 
-  --local function dump(o)
+  -- local function dump(o)
   --  if type(o) == 'table' then
   --    local s = '{ '
   --    for k, v in pairs(o) do
@@ -25,7 +25,7 @@ do
   --  else
   --    return tostring(o)
   --  end
-  --end
+  -- end
 
   local function decode(chunk)
     if #chunk < 2 then return end
@@ -95,21 +95,22 @@ do
     return toBase64(hash("sha1", key .. guid))
   end
 
-  local clients = {} -- Table of homebridge-mculed client connections
+  local clients = {} -- Table of websocket client connections
 
-  -- Broadcast the status update to all clients
+  -- Broadcast message to all websocket clients
 
-  function websocket.send(state)
+  function websocket.send(message)
     for i, client in pairs(clients) do
       print("Sending to client", i)
-      client.send(state)
+      client.send(message)
     end
   end
 
   function websocket.createServer(port, callback)
+    -- This is executed only once
     local connections = 0
     net.createServer(net.TCP):listen(port, function(conn)
-      -- This is executed once per websocket client connection
+      -- This is executed with every websocket client connection
       print("Client", conn:getpeer())
       local buffer = false
       local socket = {}
@@ -117,6 +118,7 @@ do
       local waiting = false
       connections = connections + 1
       local connection = connections
+
       local function onSend()
         if queue[1] then
           local data = table.remove(queue, 1)
@@ -125,7 +127,7 @@ do
         waiting = false
       end
 
-      function socket.send(...)       -- Client function
+      function socket.send(...) -- Client function
         local data = encode(...)
         if not waiting then
           waiting = true
@@ -151,7 +153,7 @@ do
           local extra, payload, opcode = decode(buffer)
           if not extra then return end
           buffer = extra
-          socket.onmessage(payload, opcode)     -- Pass message to calling application
+          socket.onmessage(payload, opcode) -- Pass message to calling application
         end
       end
       local _, e, method = string.find(chunk, "([A-Z]+) /[^\r]* HTTP/%d%.%d\r\n")
@@ -169,16 +171,16 @@ do
           "HTTP/1.1 101 Switching Protocols\r\n" ..
           "Upgrade: websocket\r\nConnection: Upgrade\r\n" ..
           "Sec-WebSocket-Accept: " .. acceptKey(key) .. "\r\n\r\n",
-        function () callback(socket) end)     -- Passback to caller
+        function () callback(socket) end) -- Passback to caller
         buffer = ""
       else
         conn:send(
           "HTTP/1.1 404 Not Found\r\nConnection: Close\r\n\r\n",
         conn.close)
       end
-    end)  -- End of receive event
+    end) -- End of receive event
 
-  end)    -- End of createServer Listen
+  end) -- End of createServer Listen
 end
 
 end

@@ -56,3 +56,21 @@ module.Model = "ACL"
 3. Test your device by running test.lua
 
 4. After you have completed testing, rename test.lua to init.lua
+
+# ESPlorer Snippets
+
+## Memory
+
+```
+print("\n------- GLOBALS --------\n")
+
+for k,v in pairs(_G) do print(k,v) end
+
+print("\n-------- REGISTRY -------\n")
+
+for k,v in pairs(debug.getregistry()) do print(k,v) end
+
+print("\n------- PACKAGES --------\n")
+
+table.foreach (package.loaded, print)
+```
