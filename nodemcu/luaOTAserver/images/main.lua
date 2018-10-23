@@ -1,25 +1,29 @@
 --SAFETRIM
 
+local mod
+
 local function start()
   if PDEBUG then
     dofile("websocket.lua")
   else
     dofile("websocket.lc")
   end
-      local responseTimer = tmr.create()
+
+  local responseTimer = tmr.create()
+  responseTimer:register(60, tmr.ALARM_SEMI, function()
+    local state = sjson.encode(mod.getStatus())
+    print("Sending", state)
+    websocket.send(state)         -- update State to all websocket clients
+  end)
+
   websocket.createServer(80, function (socket)
+    -- This gets executed once a websocket client connects, once per client
     tmr.softwd(-1)
     local data
     --  node.output(function (msg)
     --    return socket.send(msg, 1)
     --  end, 1)
     print("New websocket client connected")
-    --local responseTimer = tmr.create()
-    responseTimer:register(60, tmr.ALARM_SEMI, function()
-      local state = sjson.encode(mod.getStatus())
-      print("Sending", state)
-      socket.send(state)
-    end)
 
     function socket.onmessage(payload, opcode)
       print("received", payload, opcode)

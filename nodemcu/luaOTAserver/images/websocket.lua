@@ -1,3 +1,5 @@
+--SAFETRIM
+
 do
   local websocket = {}
   _G.websocket = websocket
@@ -11,6 +13,19 @@ do
   local applyMask = crypto.mask
   local toBase64 = crypto.toBase64
   local hash = crypto.hash
+
+  --local function dump(o)
+  --  if type(o) == 'table' then
+  --    local s = '{ '
+  --    for k, v in pairs(o) do
+  --      if type(k) ~= 'number' then k = '"'..k..'"' end
+  --      s = s .. '['..k..'] = ' .. dump(v) .. ','
+  --    end
+  --    return s .. '} '
+  --  else
+  --    return tostring(o)
+  --  end
+  --end
 
   local function decode(chunk)
     if #chunk < 2 then return end
@@ -80,12 +95,28 @@ do
     return toBase64(hash("sha1", key .. guid))
   end
 
+  local clients = {} -- Table of homebridge-mculed client connections
+
+  -- Broadcast the status update to all clients
+
+  function websocket.send(state)
+    for i, client in pairs(clients) do
+      print("Sending to client", i)
+      client.send(state)
+    end
+  end
+
   function websocket.createServer(port, callback)
+    local connections = 0
     net.createServer(net.TCP):listen(port, function(conn)
+      -- This is executed once per websocket client connection
+      print("Client", conn:getpeer())
       local buffer = false
       local socket = {}
       local queue = {}
       local waiting = false
+      connections = connections + 1
+      local connection = connections
       local function onSend()
         if queue[1] then
           local data = table.remove(queue, 1)
@@ -93,20 +124,25 @@ do
         end
         waiting = false
       end
-      function socket.send(...)
+
+      function socket.send(...)       -- Client function
         local data = encode(...)
         if not waiting then
           waiting = true
           conn:send(data, onSend)
         else
-          queue[#queue + 1] = data
+          queue[connection] = data
         end
       end
 
       conn:on("disconnection", function(_, message)
-        print("Socket disconnected",message)
+        print("Socket disconnected", connection)
+        clients[connection] = nil
+        conn = nil
         socket = nil
       end)
+
+      clients[connection] = socket
 
       conn:on("receive", function(_, chunk)
         if buffer then
@@ -115,7 +151,7 @@ do
           local extra, payload, opcode = decode(buffer)
           if not extra then return end
           buffer = extra
-          socket.onmessage(payload, opcode)
+          socket.onmessage(payload, opcode)     -- Pass message to calling application
         end
       end
       local _, e, method = string.find(chunk, "([A-Z]+) /[^\r]* HTTP/%d%.%d\r\n")
@@ -133,15 +169,16 @@ do
           "HTTP/1.1 101 Switching Protocols\r\n" ..
           "Upgrade: websocket\r\nConnection: Upgrade\r\n" ..
           "Sec-WebSocket-Accept: " .. acceptKey(key) .. "\r\n\r\n",
-        function () callback(socket) end)
+        function () callback(socket) end)     -- Passback to caller
         buffer = ""
       else
         conn:send(
           "HTTP/1.1 404 Not Found\r\nConnection: Close\r\n\r\n",
         conn.close)
       end
-    end)
-  end)
+    end)  -- End of receive event
+
+  end)    -- End of createServer Listen
 end
 
 end
