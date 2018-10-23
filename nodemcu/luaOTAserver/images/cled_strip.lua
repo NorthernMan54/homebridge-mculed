@@ -8,6 +8,8 @@ local state = { Hue = 0, Saturation = 0, ColorTemperature = 140; pwm = true, Bri
 local changeTimer = tmr.create()
 local disableLedTimer = tmr.create()
 
+-- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
+
 local function hslToRgb(h1, s1, l1)
   local r, g, b
 
