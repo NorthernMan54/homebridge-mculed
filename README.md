@@ -10,9 +10,11 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 * NodeMCU sends message to plugin containing device config
 * Plugin creates HK accessory for device ( Have ability to alias sensor name in config.json )
 * Nodemcu sends device state changes in realtime to plugin via WebSockets
+* OTA nodeMCU provisioning
 
 # Backlog
 
+* [X] OTA nodeMCU code provisioning
 * [ ] Power off LED strip via MOSFET -- Not sure if this works
 * [ ] Power nodemcu with DC-DC Step down from the 24V power supply
 * [ ] Watchdog timer, what should it do
@@ -25,41 +27,12 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 * [ ] Complete documentation
 * [ ] Remove excessive prints in nodeMCU code
 
+# Roadmap
+
 # Supported configurations
 
 * [x] Costco LED Strip - Intertek 4005244
 
-# Supported sensors
-
-* HC-SR501 Motion Sensor Module ( This one generates alot of false positives )
-* I used this one, https://www.aliexpress.com/item/Mini-IR-Pyroelectric-Infrared-PIR-Motion-Human-Sensor-Automatic-Detector-Module-high-reliability-12mm-x-25mm/32749737125.html?spm=a2g0s.9042311.0.0.6ec74c4dwcSLq4
-
-# Backlog - Plugin
-
-* [x] Homebridge Plugin creates a websocket server to receive updates from nodemcu devices.
-* [x] Plugin advertises websocket server onto network via mDNS
-* [x] Plugin creates HK accessory for sensor ( Have ability to alias sensor name in config.json )
-* [x] Plugin sends sensor state changes in realtime to HomeKit
-* [x] Plugin sets Low Battery when sensor has an error
-* [x] Plugin sets "No Response" when device is no longer responds on the network
-* [x] Default publishing every minute?
-* [ ] Remove redundant code from plugin
-* [X] Support fakeGato
-* [X] Switch to event based model
-* [ ] Support for Legacy mcuiot mode?
-* [ ] Support for data logging to mcuiot-logger?
-
-# Backlog - NodeMCU
-
-* [x] NodeMCU discovers server by watching for mDNS advertisement
-* [x] NodeMCU sends message to plugin containing sensor config
-* [x] Sensor sends state changes in realtime to plugin via WebSockets
-* [x] Allow sensor to warm up before publishing, I believe I read 1 minute
-* [x] Have sensor send not available status during warm up period -- Not required
-* [x] Support for OTA Updates
-* [ ] Have sensor support multiple websocket servers
-* [ ] Support for Legacy mcuiot mode
-* [x] Stop committing passwords to github!! -- Done
 
 # Installation - homebridge-wssensor
 
