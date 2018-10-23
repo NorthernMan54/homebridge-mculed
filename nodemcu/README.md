@@ -22,7 +22,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 1. Using http://nodemcu-build.com, create a custom firmware containing at least
    these modules:
 
-   `adc,bit,bme280,dht,file,gpio,i2c,mdns,net,node,tmr,uart,websocket,wifi`
+   `bit,color_utils,crypto,file,gpio,mdns,net,node,pwm,sjson,tmr,uart,websocket,wifi,ws2812,ws2812_effects`
 
 
 2. Please use esptool to install the float firmware onto your nodemcu.  There are alot of guides for this, so I won't repeat it here.
