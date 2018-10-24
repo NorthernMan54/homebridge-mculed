@@ -24,16 +24,11 @@ module.exports = function(homebridge) {
 
 function mculed(log, config, api) {
   this.log = log;
-  this.refresh = config['refresh'] || 60; // Update every minute
-
-
   this.accessories = {}; // MAC -> Accessory
 
   if (typeof(config.aliases) !== "undefined" && config.aliases !== null) {
     this.aliases = config.aliases;
   }
-
-  this.log_event_counter = {};
 
   if (api) {
     this.api = api;
@@ -98,8 +93,6 @@ mculed.prototype.configureAccessory = function(accessory) {
 }
 
 function onMessage(response) {
-  //this.log("THIS",this);
-  //this.log("Message",response);
 
   var message = JSON.parse(response);
 
@@ -190,22 +183,6 @@ mculed.prototype.didFinishLaunching = function() {
     handleError(ex);
   }
 
-}
-
-mculed.prototype.devicePolling = function() {
-  for (var id in this.accessories) {
-    var device = this.accessories[id];
-    if (device.reachable) {
-      if (device.getService(Service.TemperatureSensor)) {
-        this.getDHTTemperature(device, function(err, temp) {
-          if (err) {
-            temp = err;
-          }
-          this.getService(Service.TemperatureSensor).getCharacteristic(Characteristic.CurrentTemperature).updateValue(temp);
-        }.bind(device));
-      }
-    }
-  }
 }
 
 // Am using the Identify function to validate a device, and if it doesn't respond
@@ -373,7 +350,6 @@ mculed.prototype.addMcuAccessory = function(device, model) {
     var accessory = new Accessory(name, uuid, 10);
 
     self.log("Adding MCULED Device:", name, displayName, model);
-    accessory.reachable = true;
     accessory.context.model = model;
     accessory.context.url = url;
     accessory.context.name = name;
@@ -439,7 +415,6 @@ mculed.prototype.addResetSwitch = function() {
     var accessory = new Accessory(name, uuid, 10);
 
     self.log("Adding Reset Switch:");
-    accessory.reachable = true;
     accessory.context.name = name;
     //        accessory.context.model = model;
     //        accessory.context.url = url;
