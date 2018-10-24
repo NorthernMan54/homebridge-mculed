@@ -15,7 +15,8 @@
     "ws2812",
     "led",
     "esp8266",
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "sm16703p"
   ],
   "engines": {
     "node": ">=4.3.2",
@@ -24,8 +25,9 @@
   "dependencies": {
     "request": "^2.65.0",
     "debug": "^2.2.0",
-    "mdns": ">=2.3.3",
+    "bonjour": "^=3.5.0",
     "ws": "^=1.1.5",
+    "ip": "^=1.1.5",
     "moment": "^2.20.1"
   },
   "author": "NorthernMan54",

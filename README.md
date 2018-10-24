@@ -15,9 +15,10 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 # Backlog - plugin
 
 * [ ] Websocket socket level events in Plugin
-* [ ] Plugin has a circular json issue in accessory
+* [x] Migrate from mDNS to bonjour
+* [x] Plugin has a circular json issue in accessory
 * [ ] Complete documentation
-* [ ] Aliases don't appear to work
+* [x] Aliases don't appear to work
 * [ ] Collapse the OTA Update server to nodeJS
 * [ ] Identify method needs rework
 
@@ -32,6 +33,7 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 * [ ] Watchdog timer, what should it do
 * [ ] What should the LED's do in a power cycle?
 * [ ] Get a case with push button's
+* [ ] Program second button to flip primary colors
 * [ ] Complete documentation
 * [ ] Remove excessive prints in nodeMCU code
 * [ ] Power off LED strip via MOSFET -- Not sure if this works
@@ -40,7 +42,7 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 
 # Supported configurations
 
-* [x] Costco LED Strip - Intertek 4005244
+* [x] Costco LED Strip - Intertek 4005244 - This strip is based on the sm16703p LED controller chip
 
 
 # Installation - homebridge-mculed
@@ -55,22 +57,12 @@ sudo npm install -g homebridge-mculed
 {
   "platform": "mculed",
   "name": "mculed",
-  "port": 4050,
-  "refresh": "60",
-  "storage": "fs",
-  "leak": "10",
   "aliases": {
     "NODE-2BA0FF": "Porch Motion"
   }
 }
 ```
 
-* `port`      - Listener port for sensor to send data to
-* `refresh`   - Polling frequency, defaults to 60 seconds
-* `storage`   - Storage of chart graphing data for history graphing, either fs or googleDrive, defaults to fs
-* `leak`      - Leak sensor alarm trigger percentage, defaults to 10%
-* `service`   - Bonjour service name for discovery, defaults to "mculed"
-* `duration`  - Duration of motion sensor events, defaults to 10 seconds
 * `aliases`   - Friendly names for your sensor's
 
 # Configuration - NodeMCU
