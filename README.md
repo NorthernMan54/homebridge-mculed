@@ -16,6 +16,7 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 
 * [x] Migrate from mDNS to bonjour
 * [x] Plugin has a circular json issue in accessory
+* [ ] After reboot of the device, socket connection does not re-establish
 * [ ] Websocket socket level events in Plugin
 * [ ] Complete documentation
 * [x] Aliases don't appear to work
