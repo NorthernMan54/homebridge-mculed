@@ -153,7 +153,12 @@ do
           local extra, payload, opcode = decode(buffer)
           if not extra then return end
           buffer = extra
-          socket.onmessage(payload, opcode) -- Pass message to calling application
+
+          if opcode = 9 then  -- WebSocket ping message
+            socket.send("",0xA)   -- Pong message
+          else
+            socket.onmessage(payload, opcode) -- Pass message to calling application
+          end
         end
       end
       local _, e, method = string.find(chunk, "([A-Z]+) /[^\r]* HTTP/%d%.%d\r\n")

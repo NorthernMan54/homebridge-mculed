@@ -89,6 +89,11 @@ mculed.prototype.configureAccessory = function(accessory) {
     sockets[accessory.context.name].send('{ "cmd": "get", "func": "status" }');
   }.bind(this));
 
+  accessory.context.keepalive = setInterval(function ping() {
+    this.log.debug("ping", accessory.context.name);
+    sockets[accessory.context.name].ping();
+  }.bind(this), 10000);
+
   this.accessories[accessory.context.name] = accessory;
 }
 

@@ -17,7 +17,7 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 * [x] Migrate from mDNS to bonjour
 * [x] Plugin has a circular json issue in accessory
 * [ ] After reboot of the device, socket connection does not re-establish
-* [ ] Implement websocket ping/pong
+* [ ] Implement websocket ping
 * [ ] Websocket socket level events in Plugin
 * [ ] Complete documentation
 * [x] Aliases don't appear to work
@@ -30,7 +30,7 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 * [x] Initial lua code load via script
 * [x] Websocket socket level events in NodeMCU
 * [x] NodeMCU Memory leak from closed socket connections
-* [ ] Implement websocket ping/pong
+* [ ] Implement websocket pong
 * [ ] Program second button to flip primary colors
 * [ ] Remove excessive prints in nodeMCU code
 * [ ] Watchdog timer, what should it do
