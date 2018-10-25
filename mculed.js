@@ -67,16 +67,28 @@ mculed.prototype.configureAccessory = function(accessory) {
       .on('set', this.setColorTemperature.bind(accessory));
   }
 
+  openSocket.call(this, accessory);
+  this.accessories[accessory.context.name] = accessory;
+}
+
+function openSocket(accessory) {
   sockets[accessory.context.name] = new WebSocket(accessory.context.url);
 
   sockets[accessory.context.name].on('close', function() {
     this.log("Repopening closed connection", accessory.context.name);
-    sockets[accessory.context.name] = new WebSocket(this.context.url);
+    setTimeout(function() {
+      openSocket.call(this, accessory)
+    }.bind(this), 10000);
+    //openSocket.call(this, accessory);
+    //sockets[accessory.context.name] = WebSocket(accessory.context.url);
   }.bind(this));
 
   sockets[accessory.context.name].on('error', function() {
     this.log("Repopening error connection", accessory.context.name);
-    sockets[accessory.context.name] = new WebSocket(this.context.url);
+    setTimeout(function() {
+      openSocket.call(this, accessory)
+    }.bind(this), 10000);
+    //sockets[accessory.context.name] = WebSocket(accessory.context.url);
   }.bind(this));
 
   sockets[accessory.context.name].on('message', function(message) {
@@ -89,13 +101,19 @@ mculed.prototype.configureAccessory = function(accessory) {
     sockets[accessory.context.name].send('{ "cmd": "get", "func": "status" }');
   }.bind(this));
 
+  clearInterval(accessory.context.keepalive);
   accessory.context.keepalive = setInterval(function ping() {
-    this.log.debug("ping", accessory.context.name);
-    sockets[accessory.context.name].ping();
+    this.log.debug("ping", accessory.context.name, sockets[accessory.context.name].readyState);
+    if (sockets[accessory.context.name].readyState == WebSocket.OPEN) {
+      sockets[accessory.context.name].ping(" ");
+    } else { //
+      accessory
+        .getService(Service.Lightbulb)
+        .getCharacteristic(Characteristic.On).updateValue(new Error("Not responding"));
+    }
   }.bind(this), 10000);
-
-  this.accessories[accessory.context.name] = accessory;
 }
+
 
 function onMessage(accessory, response) {
 
@@ -116,28 +134,25 @@ function onMessage(accessory, response) {
           .getCharacteristic(Characteristic.Brightness).updateValue(message[k]);
         break;
       case "Saturation":
-        //if (!message.pwm) {
         this.log("Setting %s saturation to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.Saturation).updateValue(message[k]);
-        //}
         break;
       case "Hue":
-        //if (!message.pwm) {
         this.log("Setting %s hue to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.Hue).updateValue(message[k]);
-        //}
         break;
       case "ColorTemperature":
-        //if (message.pwm) {
         this.log("Setting %s ColorTemperature to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.ColorTemperature).updateValue(message[k]);
-        //}
+        break;
+      case "pwm":
+        // No need to action pwm
         break;
       default:
         this.log.error("Unhandled message item", k);
