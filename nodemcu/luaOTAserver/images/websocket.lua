@@ -154,8 +154,8 @@ do
           if not extra then return end
           buffer = extra
 
-          if opcode = 9 then  -- WebSocket ping message
-            socket.send("",0xA)   -- Pong message
+          if opcode == 9 then  -- WebSocket ping message
+            socket.send(" ",0xA)   -- Pong message
           else
             socket.onmessage(payload, opcode) -- Pass message to calling application
           end
