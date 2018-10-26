@@ -21,7 +21,7 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 * [x] Websocket socket level events in Plugin
 * [x] Not responding for closed socket
 * [x] Handle device not turned on
-* [ ] Complete documentation
+* [ ] Complete plugin documentation
 * [ ] Aliases don't appear to work
 
 # Backlog - nodemcu
@@ -41,7 +41,7 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 * [ ] Power nodemcu with DC-DC Step down from the 24V power supply
 * [ ] Create a board level layout to use on a perf board
 * [ ] Construct production unit
-* [ ] Complete documentation
+* [ ] Complete nodemcu documentation
 * [ ] Power off LED strip via MOSFET -- Not sure if this works
 
 # Roadmap
