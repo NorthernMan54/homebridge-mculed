@@ -8,7 +8,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
    - nodeMCU / esp8266 dev kit
    - Level Shifter
    - DC to DC Power Converter
-   - Push Button switch
+   - 2 x Push Button switch
    - FQP30N06L N-Channel MOSFET
 
 # Circuit Diagrams
@@ -35,23 +35,17 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 module.SSID["SSID1"] = { ssid="SSID1", pwd = "password" }
 ```
 
-2. Set your device Model in config.lua - Either DHT-MS,  BME-MS, BME-GD, or ACL used by homebridge-wssensor to determine which sensor type to create in homebridge
+2. Set your device Model in config.lua - Either CLED used by homebridge-mculed to determine which which type to create in homebridge
 
 ```
 module.Model = "CLED"
-or
-module.Model = "BME-MS"
-or
-module.Model = "BME-GD"
-or
-module.Model = "ACL"
 ```
 
 # Lua Program installation
 
 1. I used nodemcu-uploader which is available here https://github.com/kmpm/nodemcu-uploader
 
-2. Run the script upload.sh, this will upload all the lua files to your esp8266
+2. Run the script initialupload.sh, this will upload all the lua files to your esp8266
 
 3. Test your device by running test.lua
 

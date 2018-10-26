@@ -1,5 +1,5 @@
 # homebridge-mculed
-Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led strips
+Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB+W led strips
 
 # Design Concept
 
@@ -20,8 +20,9 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 * [x] Implement websocket ping
 * [x] Websocket socket level events in Plugin
 * [x] Not responding for closed socket
+* [x] Handle device not turned on
 * [ ] Complete documentation
-* [x] Aliases don't appear to work
+* [ ] Aliases don't appear to work
 
 # Backlog - nodemcu
 
@@ -36,6 +37,7 @@ Homebridge Plugin for NodeMCU Based ws2812 led strip controller for RGB+W led st
 * [ ] What should the LED's do in a power cycle?
 * [x] Get a case with push button's
 * [x] Create schematic for nodeMCU
+* [ ] Create layout for perfboard
 * [ ] Power nodemcu with DC-DC Step down from the 24V power supply
 * [ ] Create a board level layout to use on a perf board
 * [ ] Construct production unit
@@ -62,19 +64,19 @@ sudo npm install -g homebridge-mculed
 
 ```
 {
-  "platform": "mculed",
-  "name": "mculed",
-  "aliases": {
-    "NODE-2BA0FF": "Porch Motion"
+    "platform": "mculed",
+    "name": "mculed",
+    "aliases": {
+      "NODE-AC5812": "Kitchen Sink"
+    }
   }
-}
 ```
 
 * `aliases`   - Friendly names for your sensor's
 
 # Configuration - NodeMCU
 
-See README in nodemcu directory
+See [README](nodemcu/README.md) in nodemcu directory
 
 # Credits
 

@@ -72,23 +72,19 @@ mculed.prototype.configureAccessory = function(accessory) {
 }
 
 function openSocket(accessory) {
-  sockets[accessory.context.name] = new WebSocket(accessory.context.url);
+  sockets[accessory.context.name] = new WebSocket(accessory.context.url, {
+    "timeout": 10000
+  });
 
   sockets[accessory.context.name].on('close', function() {
     this.log("Repopening closed connection", accessory.context.name);
     setTimeout(function() {
       openSocket.call(this, accessory)
     }.bind(this), 10000);
-    //openSocket.call(this, accessory);
-    //sockets[accessory.context.name] = WebSocket(accessory.context.url);
   }.bind(this));
 
   sockets[accessory.context.name].on('error', function() {
-    this.log("Repopening error connection", accessory.context.name);
-    setTimeout(function() {
-      openSocket.call(this, accessory)
-    }.bind(this), 10000);
-    //sockets[accessory.context.name] = WebSocket(accessory.context.url);
+    this.log.error("Socket error connection", accessory.context.name);
   }.bind(this));
 
   sockets[accessory.context.name].on('message', function(message) {
@@ -114,9 +110,7 @@ function openSocket(accessory) {
   }.bind(this), 10000);
 }
 
-
 function onMessage(accessory, response) {
-
   var message = JSON.parse(response);
 
   for (var k in message) {
@@ -161,9 +155,7 @@ function onMessage(accessory, response) {
 }
 
 mculed.prototype.didFinishLaunching = function() {
-
   // TODO: this.addResetSwitch();
-
   this.log("Starting bonjour listener");
 
   try {
@@ -189,14 +181,10 @@ mculed.prototype.didFinishLaunching = function() {
           this.log("Error Adding MCULED Device", service.name, err.message);
         }
       }.bind(this));
-
-
     }.bind(this));
-
   } catch (ex) {
     handleError(ex);
   }
-
 }
 
 mculed.prototype.mcuModel = function(url, callback) {
@@ -217,82 +205,81 @@ mculed.prototype.mcuModel = function(url, callback) {
 }
 
 mculed.prototype.setOn = function(value, callback) {
-
   if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
     this.log("Turn ON %s %s", this.context.name, value);
-    sockets[this.context.name].send('{ "cmd": "set", "func": "on", "value": ' + value + ' }', function() {
-      console.log("sent")
-    });
+    wsSend.call(this, '{ "cmd": "set", "func": "on", "value": ' + value + ' }', function(err) {
+      callback(err);
+    }.bind(this));
   } else {
     this.log("Skipping Turn On %s", this.context.name);
+    callback();
   }
-  callback();
-
 }
 
 mculed.prototype.setBrightness = function(value, callback) {
-
   if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).value) {
     this.log("Turn BR %s %s", this.context.name, value);
-    sockets[this.context.name].send('{ "cmd": "set", "func": "brightness", "value": ' + value + ' }', function() {
-      console.log("sent")
-    });
+    wsSend.call(this, '{ "cmd": "set", "func": "brightness", "value": ' + value + ' }', function(err) {
+      callback(err);
+    }.bind(this));
   } else {
     this.log("Skipping Turn Brightness %s", this.context.name);
+    callback();
   }
-  callback();
-
 }
 
 mculed.prototype.setHue = function(value, callback) {
-
   if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value) {
     this.log("Turn HUE %s %s", this.context.name, value);
-    sockets[this.context.name].send('{ "cmd": "set", "func": "hue", "value": ' + value + ' }', function() {
-      console.log("sent")
-    });
+    wsSend.call(this, '{ "cmd": "set", "func": "hue", "value": ' + value + ' }', function(err) {
+      callback(err);
+    }.bind(this));
   } else {
     this.log("Skipping Turn Hue %s", this.context.name);
+    callback();
   }
-  callback();
-
 }
 
 mculed.prototype.setSaturation = function(value, callback) {
-
   if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value) {
     this.log("Turn SAT %s %s", this.context.name, value, this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value);
-    sockets[this.context.name].send('{ "cmd": "set", "func": "saturation", "value": ' + value + ' }', function() {
-      console.log("sent")
-    });
+    wsSend.call(this, '{ "cmd": "set", "func": "saturation", "value": ' + value + ' }', function(err) {
+      callback(err);
+    }.bind(this));
   } else {
     this.log("Skipping Turn SAT %s", this.context.name);
+    callback();
   }
-  callback();
-
 }
 
-mculed.prototype.setColorTemperature = function(value, callback) {
+function wsSend(message, callback) {
+  this.log.debug("send", this.context.name, sockets[this.context.name].readyState);
+  if (sockets[this.context.name].readyState == WebSocket.OPEN) {
+    sockets[this.context.name].send(message, callback);
+  } else { //
+    callback(new Error("Not responding"));
+  }
+}
 
+
+
+mculed.prototype.setColorTemperature = function(value, callback) {
   if (value != this.getService(Service.Lightbulb).getCharacteristic(Characteristic.ColorTemperature).value ||
     this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value != 0 ||
     this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value != 0) {
     this.log("Turn CT %s %s", this.context.name, value);
-    sockets[this.context.name].send('{ "cmd": "set", "func": "ct", "value": ' + value + ' }', function() {
-      console.log("sent")
-    });
+    wsSend.call(this, '{ "cmd": "set", "func": "ct", "value": ' + value + ' }', function(err) {
+      callback(err);
+    }.bind(this));
   } else {
     this.log("Skipping Turn ColorTemperature %s", this.context.name);
   }
   callback();
-
 }
 
 
 mculed.prototype.addMcuAccessory = function(device, model) {
-
   if (!this.accessories[device.name]) {
-
     var uuid = UUIDGen.generate(device.name);
     var displayName;
     if (this.aliases)
