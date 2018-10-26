@@ -15,7 +15,9 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 ## CLED/Costco LED Strip
 
-![CLED](mculed_schem.png)
+![CLED](mculed_schem.jpg)
+
+![CLED](mculed_bb.jpg)
 
 # nodeMCU Firmware
 
