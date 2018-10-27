@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mculed",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Homebridge platform plugin that support's a network of nodemcu's to display Temperature and Humidity.",
   "main": "mculed.js",
   "scripts": {
