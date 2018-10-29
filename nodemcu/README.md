@@ -19,6 +19,8 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 ![CLED](mculed_bb.jpg)
 
+![CLED](IMG_2825.JPG)
+
 # nodeMCU Firmware
 
 1. Using http://nodemcu-build.com, create a custom firmware containing at least
