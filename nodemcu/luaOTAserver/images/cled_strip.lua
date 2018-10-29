@@ -38,7 +38,7 @@ local function hslToRgb(h1, s1, l1)
 
   -- Power limiter, not used
 
-  local tp = 765 / ( r + g + b )
+  local tp = 500 / ( r + g + b )
 
   if tp > 1 then tp = 1 end
 
@@ -103,7 +103,7 @@ changeTimer:register(50, tmr.ALARM_SEMI, function() on(true) end)
 disableLedTimer:register(500, tmr.ALARM_SEMI, function()
   --  local pin = 4
   --print("disable led")
-  ws2812_effects.stop()
+  --ws2812_effects.stop()
   --gpio.mode(pin, gpio.OUTPUT)
   --gpio.write(pin, gpio.HIGH)
 end)
