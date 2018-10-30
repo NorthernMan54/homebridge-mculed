@@ -6,7 +6,9 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 1. Bill of materials
    - nodeMCU / esp8266 dev kit
-   - Level Shifter
+   - 74HCT245
+   - 1000uf 25V capacitor
+   - 470 Ohm Resistor
    - DC to DC Power Converter
    - 2 x Push Button switch
    - FQP30N06L N-Channel MOSFET
@@ -15,9 +17,9 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 ## CLED/Costco LED Strip
 
-![CLED](mculed_schem.jpg)
+![CLED](mculed_v2_schem.jpg)
 
-![CLED](mculed_bb.jpg)
+![CLED](mculed_v2_bb.jpg)
 
 ![CLED](IMG_2825.JPG)
 

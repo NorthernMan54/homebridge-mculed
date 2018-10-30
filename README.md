@@ -37,12 +37,12 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 * [ ] What should the LED's do in a power cycle?
 * [x] Get a case with push button's
 * [x] Create schematic for nodeMCU
-* [ ] Create layout for perfboard
+* [x] Create layout for perfboard
 * [ ] Power nodemcu with DC-DC Step down from the 24V power supply
-* [ ] Create a board level layout to use on a perf board
-* [ ] Construct production unit
+* [x] Create a board level layout to use on a perf board
+* [x] Construct production unit
 * [ ] Complete nodemcu documentation
-* [ ] Power off LED strip via MOSFET -- Not sure if this works
+* [x] Power off LED strip via MOSFET -- Not possible
 
 # Roadmap
 
