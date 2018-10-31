@@ -1,6 +1,6 @@
 #! /bin/sh
 
-SLEEP=5
+SLEEP=1
 
 echo "\nRED"
 curl -X PUT http://127.0.01:51826/characteristics --header "Content-Type:Application/json" --header "authorization: 031-45-154" --data "{ \"characteristics\": [{ \"aid\": 2, \"iid\": 11, \"value\": 0 },{ \"aid\": 2, \"iid\": 12, \"value\": 100 }] }"

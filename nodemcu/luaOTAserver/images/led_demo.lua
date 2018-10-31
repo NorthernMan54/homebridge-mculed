@@ -78,7 +78,7 @@ local function demo()
 
   local mytimer = tmr.create()
 
-  mytimer:register(10000, tmr.ALARM_AUTO,
+  mytimer:register(5000, tmr.ALARM_AUTO,
     function()
       tmr.softwd(600)
       setMode()

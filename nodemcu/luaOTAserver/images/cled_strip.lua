@@ -38,7 +38,7 @@ local function hslToRgb(h1, s1, l1)
 
   -- Power limiter, not used
 
-  local tp = 500 / ( r + g + b )
+  local tp = 255*3 / ( r + g + b )
 
   if tp > 1 then tp = 1 end
 
