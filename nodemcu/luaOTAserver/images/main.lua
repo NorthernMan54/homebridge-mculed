@@ -13,7 +13,7 @@ local function start()
   responseTimer:register(60, tmr.ALARM_SEMI, function()
     local state = sjson.encode(mod.getStatus())
     print("Sending", state)
-    websocket.send(state)         -- update State to all websocket clients
+    websocket.send(state) -- update State to all websocket clients
   end)
 
   websocket.createServer(80, function (socket)
@@ -77,11 +77,11 @@ end
 
 local function localControl(callback)
 
-  local function debounce(b,func)
+  local function debounce(func)
     local last = 0
     local delay = 50000 -- 50ms * 1000 as tmr.now() has μs resolution
 
-    return function (b)
+    return function (...)
       local now = tmr.now()
       local delta = now - last
       if delta < 0 then
@@ -92,27 +92,27 @@ local function localControl(callback)
       end;
 
       last = now
-      return func(b)
+      return func(...)
     end
   end
 
-  local function onChange(button)
-    print("button -",  gpio.read(button),button)
-    if gpio.read(button) == 0 then
-      if button == config.onButton then
-        print("Button", button, gpio.read(button))
-        mod.onButton()
-      else
-        print("Cbutton", button, gpio.read(button))
-        mod.colorButton()
-      end
+  local function onChange()
+    if gpio.read(config.onButton) == 0 then
+      mod.onButton()
+      callback:start()
+    end
+  end
+
+  local function colorChange()
+    if gpio.read(config.colorButton) == 0 then
+      mod.colorButton()
       callback:start()
     end
   end
   gpio.mode(config.onButton, gpio.INT, gpio.PULLUP)
   gpio.mode(config.colorButton, gpio.INT, gpio.PULLUP)
-  gpio.trig(config.onButton, "both", debounce(config.onButton,onChange))
-  gpio.trig(config.colorButton, "both", debounce(config.colorButton,onChange))
+  gpio.trig(config.onButton, "both", debounce(onChange))
+  gpio.trig(config.colorButton, "both", debounce(colorChange))
 end
 
 local function wifi_ready()
