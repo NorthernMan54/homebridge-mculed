@@ -64,6 +64,9 @@ mculed.prototype.configureAccessory = function(accessory) {
     accessory
       .getService(Service.Lightbulb)
       .getCharacteristic(Characteristic.ColorTemperature)
+      .setProps({
+        minValue: 0
+      })
       .on('set', this.setColorTemperature.bind(accessory));
   }
 
@@ -97,16 +100,16 @@ function openSocket(accessory) {
     sockets[accessory.context.name].send('{ "cmd": "get", "func": "status" }');
   }.bind(this));
 
-//  accessory.context.keepalive = setInterval(function ping() {
-//    this.log.debug("ping", accessory.context.name, sockets[accessory.context.name].readyState);
-//    if (sockets[accessory.context.name].readyState == WebSocket.OPEN) {
-//      sockets[accessory.context.name].ping(" ");
-//    } else { //
-//      accessory
-//        .getService(Service.Lightbulb)
-//        .getCharacteristic(Characteristic.On).updateValue(new Error("Not responding"));
-//    }
-//  }.bind(this), 10000);
+  //  accessory.context.keepalive = setInterval(function ping() {
+  //    this.log.debug("ping", accessory.context.name, sockets[accessory.context.name].readyState);
+  //    if (sockets[accessory.context.name].readyState == WebSocket.OPEN) {
+  //      sockets[accessory.context.name].ping(" ");
+  //    } else { //
+  //      accessory
+  //        .getService(Service.Lightbulb)
+  //        .getCharacteristic(Characteristic.On).updateValue(new Error("Not responding"));
+  //    }
+  //  }.bind(this), 10000);
 }
 
 function onMessage(accessory, response) {
@@ -447,6 +450,7 @@ mculed.prototype.resetDevices = function(accessory, status, callback) {
 
 function handleError(err) {
   switch (err.errorCode) {
-    default: console.warn(err);
+    default:
+      console.warn(err);
   }
 }

@@ -4,7 +4,7 @@ local mod
 
 local function start()
   if PDEBUG then
-    dofile("websocket.lua")
+    dofile("websocket.lc")
   else
     dofile("websocket.lc")
   end
@@ -77,11 +77,11 @@ end
 
 local function localControl(callback)
 
-  local function debounce(func)
+  local function debounce(b,func)
     local last = 0
     local delay = 50000 -- 50ms * 1000 as tmr.now() has μs resolution
 
-    return function (...)
+    return function (b)
       local now = tmr.now()
       local delta = now - last
       if delta < 0 then
@@ -92,20 +92,27 @@ local function localControl(callback)
       end;
 
       last = now
-      return func(...)
+      return func(b)
     end
   end
 
-  local function onChange()
-    --print("button", gpio.read(config.button))
-    if gpio.read(config.button) == 0 then
-      mod.button()
+  local function onChange(button)
+    print("button -",  gpio.read(button),button)
+    if gpio.read(button) == 0 then
+      if button == config.onButton then
+        print("Button", button, gpio.read(button))
+        mod.onButton()
+      else
+        print("Cbutton", button, gpio.read(button))
+        mod.colorButton()
+      end
       callback:start()
     end
   end
-  gpio.mode(config.button, gpio.INT, gpio.PULLUP)
-  gpio.trig(config.button, "both", debounce(onChange))
-
+  gpio.mode(config.onButton, gpio.INT, gpio.PULLUP)
+  gpio.mode(config.colorButton, gpio.INT, gpio.PULLUP)
+  gpio.trig(config.onButton, "both", debounce(config.onButton,onChange))
+  gpio.trig(config.colorButton, "both", debounce(config.colorButton,onChange))
 end
 
 local function wifi_ready()

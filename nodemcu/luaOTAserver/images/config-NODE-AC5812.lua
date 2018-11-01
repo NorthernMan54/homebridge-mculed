@@ -21,7 +21,8 @@ module.ledBlue = 4  -- gpio2
 
 -- WS2812 = 4
 module.pwm = 5
-module.button = 1
+module.onButton = 1
+module.colorButton = 2
 --module.pwr = 6
 
 return module

@@ -2,11 +2,10 @@
 
 local module = {}
 
-local strip_buffer = ws2812.newBuffer(25, 3)
+local strip_buffer = ws2812.newBuffer(24, 3)
 
 local state = { Hue = 0, Saturation = 0, ColorTemperature = 140; pwm = true, Brightness = 20, On = false }
 local changeTimer = tmr.create()
-local disableLedTimer = tmr.create()
 
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
@@ -61,14 +60,11 @@ local function on(value)
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
     print("Turning on RGB LED",hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
-    disableLedTimer:start()
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
   elseif value == true and state.On == true and state.pwm == true then
     print("Turning on White PWM LED", state.Brightness)
-    --gpio.mode(config.pwr, gpio.OUTPUT)
-    --gpio.write(config.pwr, gpio.HIGH)
     pwm.setup(config.pwm, 480, state.Brightness * 10)
     pwm.start(config.pwm)
     print("Turning off RGB LED")
@@ -79,11 +75,8 @@ local function on(value)
     ws2812_effects.set_color(0, 0, 0)
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
-    disableLedTimer:start()
   else
     print("Turning off RGB LED")
-    --gpio.mode(config.pwr, gpio.OUTPUT)
-    --gpio.write(config.pwr, gpio.LOW)
     ws2812_effects.stop()
     ws2812_effects.set_speed(100)
     ws2812_effects.set_delay(100)
@@ -91,7 +84,6 @@ local function on(value)
     ws2812_effects.set_color(0, 0, 0)
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
-    disableLedTimer:start()
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
@@ -100,28 +92,26 @@ end
 
 changeTimer:register(50, tmr.ALARM_SEMI, function() on(true) end)
 
-disableLedTimer:register(500, tmr.ALARM_SEMI, function()
-  --  local pin = 4
-  --print("disable led")
-  --ws2812_effects.stop()
-  --gpio.mode(pin, gpio.OUTPUT)
-  --gpio.write(pin, gpio.HIGH)
-end)
-
 function module.setHue(value)
   state.Hue = value;
   state.pwm = false;
+  state.ColorTemperature = 0;
   changeTimer:start()
 end
 
 function module.setOn(value)
   state.On = value;
+  state.pwm = true;
+  state.Hue = 0;
+  state.Saturation = 0;
+  state.ColorTemperature = 140;
   changeTimer:start()
 end
 
 function module.setSaturation(value)
   state.Saturation = value;
   state.pwm = false;
+  state.ColorTemperature = 0;
   changeTimer:start()
 end
 
@@ -146,11 +136,25 @@ end
 
 -- Button press / power toggle
 
-function module.button()
+function module.onButton()
   if state.On then
     state.On = false;
   else
     state = { Hue = 0, Saturation = 0, ColorTemperature = 140; pwm = true, Brightness = 100, On = true }
+  end
+  changeTimer:start()
+end
+
+-- Button press / power toggle
+
+function module.colorButton()
+  if state.On then
+    state = { Hue = state.Hue+360/12, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = state.Brightness, On = true }
+    if state.Hue > 359 then
+      state.Hue = 0
+    end
+  else
+    state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
   end
   changeTimer:start()
 end
