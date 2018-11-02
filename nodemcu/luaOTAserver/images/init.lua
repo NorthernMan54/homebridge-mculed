@@ -2,7 +2,7 @@
 
 print("Last failure", node.bootreason());
 DEBUG = false
-PDEBUG = true
+PDEBUG = false
 tmr.create():alarm(1000, tmr.ALARM_SINGLE, function()
   -- turn off led strip
   ws2812.init(ws2812.MODE_SINGLE)

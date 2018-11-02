@@ -37,29 +37,23 @@ local function hslToRgb(h1, s1, l1)
 
   -- Power limiter, not used
 
-  local tp = 255*3 / ( r + g + b )
+  local tp = 255 * 3 / ( r + g + b )
 
   if tp > 1 then tp = 1 end
 
-  --print("RGB tp l1",r,g,b,tp,l1 / 100)
   return math.floor(r * tp * l1 / 100), math.floor(g * tp * l1 / 100), math.floor(b * tp * l1 / 100)
 end
 
 local function on(value)
-  --print("value,state.On,state.pwm", value, state.On, state.pwm)
   if value == true and state.On == true and state.pwm == false then
     ws2812_effects.stop()
-    --gpio.mode(config.pwr, gpio.OUTPUT)
-    --gpio.write(config.pwr, gpio.HIGH)
     ws2812_effects.set_speed(100)
     ws2812_effects.set_delay(100)
     ws2812_effects.set_brightness(255)
     ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
-    --print(state.Hue, state.Saturation, state.Brightness)
-    --print("RGB",hslToRgb(state.Hue, state.Saturation, state.Brightness))
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
-    print("Turning on RGB LED",hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
+    print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
@@ -149,7 +143,7 @@ end
 
 function module.colorButton()
   if state.On then
-    state = { Hue = state.Hue+360/12, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = state.Brightness, On = true }
+    state = { Hue = state.Hue + 360 / 12, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = state.Brightness, On = true }
     if state.Hue > 359 then
       state.Hue = 0
     end

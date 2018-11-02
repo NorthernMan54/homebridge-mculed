@@ -14,8 +14,8 @@ module.ledState = 0 -- 0: fully disabled, 1: LEDs on, 2: Connected off (Boot/Err
 
 -- GPIO Pins
 
-module.ledRed = 0   -- gpio16
-module.ledBlue = 4  -- gpio2
+module.ledRed = 0 -- gpio16
+module.ledBlue = 4 -- gpio2
 
 -- Costco LED strip
 
@@ -23,6 +23,5 @@ module.ledBlue = 4  -- gpio2
 module.pwm = 5
 module.onButton = 1
 module.colorButton = 2
---module.pwr = 6
 
 return module
