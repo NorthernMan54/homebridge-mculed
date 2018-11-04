@@ -64,6 +64,7 @@ mculed.prototype.configureAccessory = function(accessory) {
 
   openSocket.call(this, accessory);
   this.accessories[accessory.context.name] = accessory;
+  debug("CONTEXT",accessory.context);
 };
 
 function openSocket(accessory) {
@@ -278,7 +279,7 @@ mculed.prototype.addMcuAccessory = function(device, model) {
       displayName = device.name;
     }
 
-    var accessory = new Accessory(device.name, uuid, 10);
+    var accessory = new Accessory(displayName, uuid, 10);
 
     this.log("Adding MCULED Device:", device.name, displayName, model);
     accessory.context.model = model;
