@@ -23,9 +23,9 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 ![Breadboard](IMG_2846-2.JPG)
 
-![Perfboard](IMG_2857.JPG)
+![Perfboard](IMG_2857.jpg)
 
-![Perfboard](IMG_2862.JPG)
+![Perfboard](IMG_2862.jpg)
 
 
 
