@@ -21,7 +21,13 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 ![CLED](mculed_v2_perf_bb.jpg)
 
-![CLED](IMG_2846-2.JPG)
+![Breadboard](IMG_2846-2.JPG)
+
+![Perfboard](IMG_2857.JPG)
+
+![Perfboard](IMG_2862.JPG)
+
+
 
 # nodeMCU Firmware
 
