@@ -1,4 +1,4 @@
-// Homebridge platform plugin supporting
+// Homebridge platform plugin supporting LED Light Strips
 
 'use strict';
 
@@ -8,6 +8,7 @@ const WebSocket = require('ws');
 var ip = require('ip');
 var Accessory, Service, Characteristic, UUIDGen;
 var sockets = {};
+var keepAlive = {};
 
 module.exports = function(homebridge) {
   Accessory = homebridge.platformAccessory;
@@ -22,7 +23,7 @@ function mculed(log, config, api) {
   this.log = log;
   this.accessories = {}; // MAC -> Accessory
 
-  if (typeof (config.aliases) !== "undefined" && config.aliases !== null) {
+  if (typeof(config.aliases) !== "undefined" && config.aliases !== null) {
     this.aliases = config.aliases;
   }
 
@@ -36,7 +37,7 @@ mculed.prototype.configureAccessory = function(accessory) {
   this.log("configureAccessory %s", accessory.displayName);
   accessory.log = this.log;
 
-  if (accessory.context.model.includes("CLED")) {
+  if (typeof(accessory.context.model) !== "undefined" && accessory.context.model.includes("CLED")) {
     accessory
       .getService(Service.Lightbulb)
       .getCharacteristic(Characteristic.On)
@@ -62,9 +63,16 @@ mculed.prototype.configureAccessory = function(accessory) {
       .on('set', this.setColorTemperature.bind(accessory));
   }
 
-  openSocket.call(this, accessory);
+  if (typeof(accessory.context.url) !== "undefined") {
+    openSocket.call(this, accessory);
+  }
+
+  if (accessory.context.name === "MCULED Reset Switch") {
+    accessory.getService(Service.Switch)
+      .getCharacteristic(Characteristic.On)
+      .on('set', this.resetDevices.bind(this, accessory));
+  }
   this.accessories[accessory.context.name] = accessory;
-  debug("CONTEXT",accessory.context);
 };
 
 function openSocket(accessory) {
@@ -89,20 +97,20 @@ function openSocket(accessory) {
   }.bind(this));
 
   sockets[accessory.context.name].on('open', function() {
-    this.log("Opened, getting status from", accessory.context.name);
+    this.log.debug("Connection opened, getting status from", accessory.context.name);
     sockets[accessory.context.name].send('{ "cmd": "get", "func": "status" }');
   }.bind(this));
 
-  //  accessory.context.keepalive = setInterval(function ping() {
-  //    this.log.debug("ping", accessory.context.name, sockets[accessory.context.name].readyState);
-  //    if (sockets[accessory.context.name].readyState == WebSocket.OPEN) {
-  //      sockets[accessory.context.name].ping(" ");
-  //    } else { //
-  //      accessory
-  //        .getService(Service.Lightbulb)
-  //        .getCharacteristic(Characteristic.On).updateValue(new Error("Not responding"));
-  //    }
-  //  }.bind(this), 10000);
+  keepAlive[accessory.context.name] = setInterval(function ping() {
+    // this.log.debug("ping", accessory.context.name, sockets[accessory.context.name].readyState);
+    if (sockets[accessory.context.name].readyState === WebSocket.OPEN) {
+      sockets[accessory.context.name].ping(" ");
+    } else { //
+      accessory
+        .getService(Service.Lightbulb)
+        .getCharacteristic(Characteristic.On).updateValue(new Error("Not responding"));
+    }
+  }, 10000);
 }
 
 function onMessage(accessory, response) {
@@ -111,31 +119,31 @@ function onMessage(accessory, response) {
   for (var k in message) {
     switch (k) {
       case "On":
-        this.log("Setting %s on to %s", accessory.context.name, message[k]);
+        // this.log("Setting %s on to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.On).updateValue(message[k]);
         break;
       case "Brightness":
-        this.log("Setting %s brightness to %s", accessory.context.name, message[k]);
+        // this.log("Setting %s brightness to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.Brightness).updateValue(message[k]);
         break;
       case "Saturation":
-        this.log("Setting %s saturation to %s", accessory.context.name, message[k]);
+        // this.log("Setting %s saturation to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.Saturation).updateValue(message[k]);
         break;
       case "Hue":
-        this.log("Setting %s hue to %s", accessory.context.name, message[k]);
+        // this.log("Setting %s hue to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.Hue).updateValue(message[k]);
         break;
       case "ColorTemperature":
-        this.log("Setting %s ColorTemperature to %s", accessory.context.name, message[k]);
+        // this.log("Setting %s ColorTemperature to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.ColorTemperature).updateValue(message[k]);
@@ -150,7 +158,7 @@ function onMessage(accessory, response) {
 }
 
 mculed.prototype.didFinishLaunching = function() {
-  // TODO: this.addResetSwitch();
+  this.addResetSwitch();
   this.log("Starting bonjour listener");
 
   try {
@@ -186,6 +194,10 @@ mculed.prototype.mcuModel = function(url, callback) {
 
   ws.on('open', function open() {
     ws.send('{ "cmd": "get", "func": "id" }');
+  });
+
+  ws.on('error', function error(err) {
+    callback(err);
   });
 
   ws.on('message', function incoming(data) {
@@ -246,7 +258,7 @@ mculed.prototype.setSaturation = function(value, callback) {
 };
 
 function wsSend(message, callback) {
-  this.log.debug("send", this.context.name, sockets[this.context.name].readyState);
+  // this.log.debug("send", this.context.name, sockets[this.context.name].readyState);
   if (sockets[this.context.name].readyState === WebSocket.OPEN) {
     sockets[this.context.name].send(message, callback);
   } else { //
@@ -275,7 +287,7 @@ mculed.prototype.addMcuAccessory = function(device, model) {
     if (this.aliases) {
       displayName = this.aliases[device.name];
     }
-    if (typeof (displayName) === "undefined") {
+    if (typeof(displayName) === "undefined") {
       displayName = device.name;
     }
 
@@ -356,20 +368,14 @@ mculed.prototype.deviceDown = function(name) {
 
 mculed.prototype.removeAccessory = function(name) {
   this.log("removeAccessory %s", name);
-  var extensions = {
-    a: "",
-    b: "LS",
-    c: "GD"
-  };
-  for (var extension in extensions) {
-    this.log("removeAccessory %s", name + extensions[extension]);
-    if (this.accessories[name + extensions[extension]]) {
-      var accessory = this.accessories[name + extensions[extension]];
-      this.api.unregisterPlatformAccessories("homebridge-mculed", "mculed", [accessory]);
-      delete this.accessories[name + extensions[extension]];
-      this.log("removedAccessory %s", name + extensions[extension]);
-    }
-  }
+
+  var accessory = this.accessories[name];
+  this.api.unregisterPlatformAccessories("homebridge-mculed", "mculed", [accessory]);
+  delete this.accessories[name];
+  sockets[name].terminate();
+  sockets[name] = null;
+  clearInterval(keepAlive[name]);
+  this.log("removedAccessory %s", name);
 };
 
 mculed.prototype.configurationRequestHandler = function(context, request, callback) {
@@ -379,49 +385,40 @@ mculed.prototype.configurationRequestHandler = function(context, request, callba
 // Am using the Identify function to validate a device, and if it doesn't respond
 // remove it from the config
 
-mculed.prototype.Identify = function(accessory, status, callback, that) {
-  var self = this;
-
-  if (that) {
-    self = that;
-  }
-
-  //    self.log("Object: %s", JSON.stringify(accessory, null, 4));
-
-  self.log("Identify Request %s", accessory.displayName);
+mculed.prototype.Identify = function(accessory, status, callback) {
+  this.log("Identify Request %s", accessory.displayName);
 
   if (accessory.context.url) {
-    //    httpRequest(accessory.context.url, "", "GET", function(err, response, responseBody) {
-    //      if (err) {
-    //        self.log("Identify failed %s", accessory.displayName, err.message);
-    //        self.removeAccessory(accessory.displayName);
-    //        callback(err, accessory.displayName);
-    //      } else {
-    //        self.log("Identify successful %s", accessory.displayName);
-    //        callback(null, accessory.displayName);
-    //      }
-    //    });
+    mculed.prototype.mcuModel.call(this, accessory.context.url, function(err, response) {
+      if (err) {
+        this.log("Identify failed %s", accessory.displayName, err.message);
+        this.removeAccessory(accessory.context.name);
+        callback(err, accessory.displayName);
+      } else {
+        this.log("Identify successful %s", accessory.displayName);
+        callback(null, accessory.displayName);
+      }
+    }.bind(this));
   } else {
     callback(null, accessory.displayName);
   }
 };
 
 mculed.prototype.resetDevices = function(accessory, status, callback) {
-  var self = this;
   this.log("Reset Devices", status);
   callback(null, status);
 
-  if (status === "1") {
-    for (var id in self.accessories) {
-      var device = self.accessories[id];
-      this.log("Reseting", id, device.displayName);
-      mculed.prototype.Identify(device, status, function(err, status) {
-        self.log("Done", status, err);
-      }, self);
+  if (status) {
+    for (var id in this.accessories) {
+      var device = this.accessories[id];
+      this.log("Checking", id, device.displayName);
+      mculed.prototype.Identify.call(this, device, status, function(err, status) {
+        this.log("Done", status, err);
+      }.bind(this));
     }
     setTimeout(function() {
       accessory.getService(Service.Switch)
-        .setCharacteristic(Characteristic.On, 0);
+        .setCharacteristic(Characteristic.On, false);
     }, 3000);
   }
 };
