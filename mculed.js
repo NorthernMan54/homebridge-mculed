@@ -19,6 +19,20 @@ module.exports = function(homebridge) {
   homebridge.registerPlatform("homebridge-mculed", "mculed", mculed);
 };
 
+/**
+ * Homebridge plugin to connect to nodeMCU devices via websockets
+ * @param {aliases} config - Friendly names for your devices
+ * @example
+ * config.json sample
+ * {
+ *    "platform": "mculed",
+ *    "name": "mculed",
+ *    "aliases": {
+ *     "NODE-AC5812": "Kitchen Sink"
+ *   }
+ * }
+ */
+
 function mculed(log, config, api) {
   this.log = log;
   this.accessories = {}; // MAC -> Accessory
@@ -32,6 +46,12 @@ function mculed(log, config, api) {
     this.api.on('didFinishLaunching', this.didFinishLaunching.bind(this));
   }
 }
+
+/**
+ * Called on startup of Homebridge, once per accessory
+ * @kind function
+ * @name configureAccessory
+ */
 
 mculed.prototype.configureAccessory = function(accessory) {
   this.log("configureAccessory %s", accessory.displayName);
@@ -75,6 +95,10 @@ mculed.prototype.configureAccessory = function(accessory) {
   this.accessories[accessory.context.name] = accessory;
 };
 
+/**
+ * This function opens a socket connection to the nodeMCU device
+ */
+
 function openSocket(accessory) {
   sockets[accessory.context.name] = new WebSocket(accessory.context.url, {
     "timeout": 10000
@@ -112,6 +136,10 @@ function openSocket(accessory) {
     }
   }, 10000);
 }
+
+/**
+ * Parsing of messages received nodeMCU devices
+ */
 
 function onMessage(accessory, response) {
   var message = JSON.parse(response);
@@ -157,6 +185,14 @@ function onMessage(accessory, response) {
   }
 }
 
+/**
+ * Called on startup of Homebridge, after initialization is complete
+ * Discover mculed devices using mDNS/Bonjour
+ * Creates homebridge device, once per discovered accessory
+ * @kind function
+ * @name didFinishLaunching
+ */
+
 mculed.prototype.didFinishLaunching = function() {
   this.addResetSwitch();
   this.log("Starting bonjour listener");
@@ -189,6 +225,12 @@ mculed.prototype.didFinishLaunching = function() {
   }
 };
 
+/**
+ * Call nodeMCU device and return configuration string
+ * @kind function
+ * @name mcuModel
+ */
+
 mculed.prototype.mcuModel = function(url, callback) {
   const ws = new WebSocket(url);
 
@@ -209,6 +251,12 @@ mculed.prototype.mcuModel = function(url, callback) {
   }.bind(this));
 };
 
+/**
+ * Turn on nodeMCU device
+ * @kind function
+ * @name setOn
+ */
+
 mculed.prototype.setOn = function(value, callback) {
   if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
     this.log("Turn ON %s %s", this.context.name, value);
@@ -220,6 +268,12 @@ mculed.prototype.setOn = function(value, callback) {
     callback();
   }
 };
+
+/**
+ * Set brightness of nodeMCU device
+ * @kind function
+ * @name setBrightness
+ */
 
 mculed.prototype.setBrightness = function(value, callback) {
   if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).value) {
@@ -233,6 +287,12 @@ mculed.prototype.setBrightness = function(value, callback) {
   }
 };
 
+/**
+ * Set hue of nodeMCU device
+ * @kind function
+ * @name setHue
+ */
+
 mculed.prototype.setHue = function(value, callback) {
   if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value) {
     this.log("Turn HUE %s %s", this.context.name, value);
@@ -244,6 +304,12 @@ mculed.prototype.setHue = function(value, callback) {
     callback();
   }
 };
+
+/**
+ * Set color saturation of nodeMCU device
+ * @kind function
+ * @name setSaturation
+ */
 
 mculed.prototype.setSaturation = function(value, callback) {
   if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value) {
@@ -257,6 +323,10 @@ mculed.prototype.setSaturation = function(value, callback) {
   }
 };
 
+/**
+ * Send message to nodeMCU device
+ */
+
 function wsSend(message, callback) {
   // this.log.debug("send", this.context.name, sockets[this.context.name].readyState);
   if (sockets[this.context.name].readyState === WebSocket.OPEN) {
@@ -265,6 +335,12 @@ function wsSend(message, callback) {
     callback(new Error("Not responding"));
   }
 }
+
+/**
+ * Set color temperature of nodeMCU device
+ * @kind function
+ * @name setColorTemperature
+ */
 
 mculed.prototype.setColorTemperature = function(value, callback) {
   if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.ColorTemperature).value ||
@@ -279,6 +355,12 @@ mculed.prototype.setColorTemperature = function(value, callback) {
     callback();
   }
 };
+
+/**
+ * Set brightness of nodeMCU device
+ * @kind function
+ * @name setBrightness
+ */
 
 mculed.prototype.addMcuAccessory = function(device, model) {
   if (!this.accessories[device.name]) {
@@ -325,6 +407,12 @@ mculed.prototype.addMcuAccessory = function(device, model) {
     }
   }
 };
+
+/**
+ * Reset switch checks if each device is on the network and if it isn't found, removes it
+ * @kind function
+ * @name addResetSwitch
+ */
 
 mculed.prototype.addResetSwitch = function() {
   var self = this;
@@ -382,8 +470,13 @@ mculed.prototype.configurationRequestHandler = function(context, request, callba
   this.log("configurationRequestHandler");
 };
 
-// Am using the Identify function to validate a device, and if it doesn't respond
-// remove it from the config
+
+/**
+ * Am using the Identify function to validate a device, and if it doesn't respond
+ * remove it from the config
+ * @kind function
+ * @name Identify
+ */
 
 mculed.prototype.Identify = function(accessory, status, callback) {
   this.log("Identify Request %s", accessory.displayName);

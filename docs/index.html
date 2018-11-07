@@ -1,1 +1,1073 @@
-Blah Blah Blah
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>homebridge-mculed 0.0.3 | Documentation</title>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
+  <link href='assets/style.css' type='text/css' rel='stylesheet' />
+  <link href='assets/github.css' type='text/css' rel='stylesheet' />
+  <link href='assets/split.css' type='text/css' rel='stylesheet' />
+  <meta name='description' content='Homebridge platform plugin that support&#39;s a network of nodemcu&#39;s to control various devices.'>
+</head>
+<body class='documentation m0'>
+    <div class='flex'>
+      <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
+        <div class='py1 px2'>
+          <h3 class='mb0 no-anchor'>homebridge-mculed</h3>
+          <div class='mb1'><code>0.0.3</code></div>
+          <input
+            placeholder='Filter'
+            id='filter-input'
+            class='col12 block input'
+            type='text' />
+          <div id='toc'>
+            <ul class='list-reset h5 py1-ul'>
+              
+                
+                <li><a
+                  href='#mculed'
+                  class="">
+                  mculed
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#configureaccessory'
+                  class="">
+                  configureAccessory
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#opensocket'
+                  class="">
+                  openSocket
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#onmessage'
+                  class="">
+                  onMessage
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#didfinishlaunching'
+                  class="">
+                  didFinishLaunching
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#mcumodel'
+                  class="">
+                  mcuModel
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#seton'
+                  class="">
+                  setOn
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#setbrightness'
+                  class="">
+                  setBrightness
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#setbrightness'
+                  class="">
+                  setBrightness
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#sethue'
+                  class="">
+                  setHue
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#setsaturation'
+                  class="">
+                  setSaturation
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#wssend'
+                  class="">
+                  wsSend
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#setcolortemperature'
+                  class="">
+                  setColorTemperature
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#addresetswitch'
+                  class="">
+                  addResetSwitch
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#identify'
+                  class="">
+                  Identify
+                  
+                </a>
+                
+                </li>
+              
+            </ul>
+          </div>
+          <div class='mt1 h6 quiet'>
+            <a href='http://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
+          </div>
+        </div>
+      </div>
+      <div id='split-right' class='relative overflow-auto height-viewport-100'>
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='mculed'>
+      mculed
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L36-L48'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Homebridge plugin to connect to nodeMCU devices via websockets</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>mculed(log: any, config: aliases, api: any)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>log</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>config</span> <code class='quiet'>(aliases)</code>
+	    Friendly names for your devices
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>api</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'>config.json sample
+{
+   <span class="hljs-string">"platform"</span>: <span class="hljs-string">"mculed"</span>,
+   <span class="hljs-string">"name"</span>: <span class="hljs-string">"mculed"</span>,
+   <span class="hljs-string">"aliases"</span>: {
+    <span class="hljs-string">"NODE-AC5812"</span>: <span class="hljs-string">"Kitchen Sink"</span>
+  }
+}</pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='configureaccessory'>
+      configureAccessory
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L56-L96'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Called on startup of Homebridge, once per accessory</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>configureAccessory()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='opensocket'>
+      openSocket
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L102-L138'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>This function opens a socket connection to the nodeMCU device</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>openSocket(accessory: any)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>accessory</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='onmessage'>
+      onMessage
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L144-L186'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Parsing of messages received nodeMCU devices</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>onMessage(accessory: any, response: any)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>accessory</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>response</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='didfinishlaunching'>
+      didFinishLaunching
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L196-L226'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Called on startup of Homebridge, after initialization is complete
+Discover mculed devices using mDNS/Bonjour
+Creates homebridge device, once per discovered accessory</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>didFinishLaunching()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='mcumodel'>
+      mcuModel
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L234-L252'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Call nodeMCU device and return configuration string</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>mcuModel()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='seton'>
+      setOn
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L260-L270'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Turn on nodeMCU device</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setOn()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='setbrightness'>
+      setBrightness
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L278-L288'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Set brightness of nodeMCU device</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setBrightness()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='setbrightness'>
+      setBrightness
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L365-L409'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Set brightness of nodeMCU device</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setBrightness()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='sethue'>
+      setHue
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L296-L306'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Set hue of nodeMCU device</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setHue()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='setsaturation'>
+      setSaturation
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L314-L324'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Set color saturation of nodeMCU device</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setSaturation()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='wssend'>
+      wsSend
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L330-L337'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Send message to nodeMCU device</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>wsSend(message: any, callback: any)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>message</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>callback</span> <code class='quiet'>(any)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='setcolortemperature'>
+      setColorTemperature
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L345-L357'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Set color temperature of nodeMCU device</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>setColorTemperature()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='addresetswitch'>
+      addResetSwitch
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L417-L443'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Reset switch checks if each device is on the network and if it isn't found, removes it</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>addResetSwitch()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='identify'>
+      Identify
+    </h3>
+    
+    
+      <a class='fr fill-darken0 round round pad1x quiet h5' href='https://github.com/NorthernMan54/homebridge-mculed/blob/cfea1042a72e548ae75520e4e874d271926c8e16/mculed.js#L481-L498'>
+      <span>mculed.js</span>
+      </a>
+    
+  </div>
+  
+
+  <p>Am using the Identify function to validate a device, and if it doesn't respond
+remove it from the config</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>Identify()</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+      </div>
+    </div>
+  <script src='assets/anchor.js'></script>
+  <script src='assets/split.js'></script>
+  <script src='assets/site.js'></script>
+</body>
+</html>
