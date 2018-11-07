@@ -242,6 +242,8 @@ mculed.prototype.didFinishLaunching = function() {
  * Call nodeMCU device and return configuration string
  * @kind function
  * @name mcuModel
+ * @param {string} url - URL of nodeMCU device
+ * @param {function} callback - Callback function to call when message or received
  */
 
 mculed.prototype.mcuModel = function(url, callback) {
