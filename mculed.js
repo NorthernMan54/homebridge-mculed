@@ -186,6 +186,19 @@ function onMessage(accessory, response) {
 }
 
 /**
+ * Send message to nodeMCU device
+ */
+
+function wsSend(message, callback) {
+  // this.log.debug("send", this.context.name, sockets[this.context.name].readyState);
+  if (sockets[this.context.name].readyState === WebSocket.OPEN) {
+    sockets[this.context.name].send(message, callback);
+  } else { //
+    callback(new Error("Not responding"));
+  }
+}
+
+/**
  * Called on startup of Homebridge, after initialization is complete
  * Discover mculed devices using mDNS/Bonjour
  * Creates homebridge device, once per discovered accessory
@@ -324,19 +337,6 @@ mculed.prototype.setSaturation = function(value, callback) {
 };
 
 /**
- * Send message to nodeMCU device
- */
-
-function wsSend(message, callback) {
-  // this.log.debug("send", this.context.name, sockets[this.context.name].readyState);
-  if (sockets[this.context.name].readyState === WebSocket.OPEN) {
-    sockets[this.context.name].send(message, callback);
-  } else { //
-    callback(new Error("Not responding"));
-  }
-}
-
-/**
  * Set color temperature of nodeMCU device
  * @kind function
  * @name setColorTemperature
@@ -442,18 +442,6 @@ mculed.prototype.addResetSwitch = function() {
   }
 };
 
-// Mark down accessories as unreachable
-
-mculed.prototype.deviceDown = function(name) {
-  var self = this;
-  if (self.accessories[name]) {
-    var accessory = this.accessories[name];
-    self.mcuModel(accessory.context.url, function(model) {
-      //          accessory.updateReachability(false);
-    });
-  }
-};
-
 mculed.prototype.removeAccessory = function(name) {
   this.log("removeAccessory %s", name);
 
@@ -469,7 +457,6 @@ mculed.prototype.removeAccessory = function(name) {
 mculed.prototype.configurationRequestHandler = function(context, request, callback) {
   this.log("configurationRequestHandler");
 };
-
 
 /**
  * Am using the Identify function to validate a device, and if it doesn't respond
