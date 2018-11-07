@@ -74,8 +74,9 @@ sudo npm install -g homebridge-mculed
     }
   }
 ```
-
 * `aliases`   - Friendly names for your sensor's
+
+# [Documentation](https://northernman54.github.io/homebridge-mculed/)
 
 # Configuration - NodeMCU
 
