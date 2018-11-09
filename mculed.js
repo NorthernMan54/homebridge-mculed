@@ -291,14 +291,22 @@ mculed.prototype.setOn = function(value, callback) {
  */
 
 mculed.prototype.setBrightness = function(value, callback) {
-  if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).value) {
-    this.log("Turn BR %s %s", this.context.name, value);
-    wsSend.call(this, '{ "cmd": "set", "func": "brightness", "value": ' + value + ' }', function(err) {
-      callback(err);
-    });
+  // If device is off, turn it on
+  if (!this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
+    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).setValue(true, function() {
+      debug("Callback-setBrightness");
+      this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).setValue(value, callback);
+    }.bind(this));
   } else {
-    this.log("Skipping Turn Brightness %s", this.context.name);
-    callback();
+    if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).value) {
+      this.log("Turn BR %s %s", this.context.name, value);
+      wsSend.call(this, '{ "cmd": "set", "func": "brightness", "value": ' + value + ' }', function(err) {
+        callback(err);
+      });
+    } else {
+      this.log("Skipping Turn Brightness %s", this.context.name);
+      callback();
+    }
   }
 };
 
@@ -309,14 +317,22 @@ mculed.prototype.setBrightness = function(value, callback) {
  */
 
 mculed.prototype.setHue = function(value, callback) {
-  if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value) {
-    this.log("Turn HUE %s %s", this.context.name, value);
-    wsSend.call(this, '{ "cmd": "set", "func": "hue", "value": ' + value + ' }', function(err) {
-      callback(err);
-    });
+  // If device is off, turn it on
+  if (!this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
+    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).setValue(true, function() {
+      debug("Callback-setHue");
+      this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).setValue(value, callback);
+    }.bind(this));
   } else {
-    this.log("Skipping Turn Hue %s", this.context.name);
-    callback();
+    if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value) {
+      this.log("Turn HUE %s %s", this.context.name, value);
+      wsSend.call(this, '{ "cmd": "set", "func": "hue", "value": ' + value + ' }', function(err) {
+        callback(err);
+      });
+    } else {
+      this.log("Skipping Turn Hue %s", this.context.name);
+      callback();
+    }
   }
 };
 
@@ -327,14 +343,22 @@ mculed.prototype.setHue = function(value, callback) {
  */
 
 mculed.prototype.setSaturation = function(value, callback) {
-  if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value) {
-    this.log("Turn SAT %s %s", this.context.name, value, this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value);
-    wsSend.call(this, '{ "cmd": "set", "func": "saturation", "value": ' + value + ' }', function(err) {
-      callback(err);
-    });
+  // If device is off, turn it on
+  if (!this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
+    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).setValue(true, function() {
+      debug("Callback-setSaturation");
+      this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).setValue(value, callback);
+    }.bind(this));
   } else {
-    this.log("Skipping Turn SAT %s", this.context.name);
-    callback();
+    if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value) {
+      this.log("Turn SAT %s %s", this.context.name, value, this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value);
+      wsSend.call(this, '{ "cmd": "set", "func": "saturation", "value": ' + value + ' }', function(err) {
+        callback(err);
+      });
+    } else {
+      this.log("Skipping Turn SAT %s", this.context.name);
+      callback();
+    }
   }
 };
 
@@ -345,16 +369,24 @@ mculed.prototype.setSaturation = function(value, callback) {
  */
 
 mculed.prototype.setColorTemperature = function(value, callback) {
-  if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.ColorTemperature).value ||
-    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value !== 0 ||
-    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value !== 0) {
-    this.log("Turn CT %s %s", this.context.name, value);
-    wsSend.call(this, '{ "cmd": "set", "func": "ct", "value": ' + value + ' }', function(err) {
-      callback(err);
-    });
+  // If device is off, turn it on
+  if (!this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
+    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).setValue(true, function() {
+      debug("Callback-setSaturation");
+      this.getService(Service.Lightbulb).getCharacteristic(Characteristic.ColorTemperature).setValue(value, callback);
+    }.bind(this));
   } else {
-    this.log("Skipping Turn ColorTemperature %s", this.context.name);
-    callback();
+    if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.ColorTemperature).value ||
+      this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value !== 0 ||
+      this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value !== 0) {
+      this.log("Turn CT %s %s", this.context.name, value);
+      wsSend.call(this, '{ "cmd": "set", "func": "ct", "value": ' + value + ' }', function(err) {
+        callback(err);
+      });
+    } else {
+      this.log("Skipping Turn ColorTemperature %s", this.context.name);
+      callback();
+    }
   }
 };
 
