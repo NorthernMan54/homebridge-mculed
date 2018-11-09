@@ -27,7 +27,12 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 ![Perfboard](IMG_2862.jpg)
 
+# Tools
 
+* nodemcu-uploader - Install instructions are here https://github.com/kmpm/nodemcu-uploader
+* lua - Install instructions are here https://www.lua.org/download.html
+* esptool - Install instructions are here https://github.com/espressif/esptool
+* esplorer - Install instructions are here https://esp8266.ru/esplorer/
 
 # nodeMCU Firmware
 
@@ -41,7 +46,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 # Configuration
 
-1. WIFI Setup - Copy passwords_sample.lua to passwords.lua and add your wifi SSID and passwords.  Please note
+1. WIFI Setup - Copy luaOTA/passwords_sample.lua to luaOTA/passwords.lua and add your wifi SSID and passwords.  Please note
    that the configuration supports multiple wifi networks, one per config line.
 ```
 module.SSID["SSID1"] = { ssid="SSID1", pwd = "password" }

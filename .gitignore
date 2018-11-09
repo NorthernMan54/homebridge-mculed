@@ -60,4 +60,3 @@ typings/
 # Files containing passwords
 *passwords.lua
 package-lock.json
-config.json

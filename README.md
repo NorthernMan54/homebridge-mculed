@@ -1,6 +1,9 @@
 # homebridge-mculed
 Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB+W led strips
 
+![Device](lua/IMG_2874.jpg)
+
+
 # Design Concept
 
 * Realtime device communications via WebSockets, and device discovery via mDNS
@@ -22,7 +25,7 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 * [x] Not responding for closed socket
 * [x] Handle device not turned on
 * [x] Identify method and reset button needs rework
-* [ ] Complete plugin documentation
+* [x] Complete plugin documentation
 * [x] Aliases don't appear to work
 
 # Backlog - nodemcu
@@ -33,16 +36,16 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 * [x] NodeMCU Memory leak from closed socket connections
 * [x] Implement websocket pong
 * [x] Program second button to flip primary colors
-* [ ] Remove excessive prints in nodeMCU code
+* [x] Remove excessive prints in nodeMCU code
 * [x] Watchdog timer, what should it do - Reset after 5 minutes without HB connection
-* [ ] What should the LED's do in a power cycle?
+* [x] What should the LED's do in a power cycle?
 * [x] Get a case with push button's
 * [x] Create schematic for nodeMCU
 * [x] Create layout for perfboard
 * [x] Power nodemcu with DC-DC Step down from the 24V power supply
 * [x] Create a board level layout to use on a perf board
 * [x] Construct production unit
-* [ ] Complete nodemcu documentation
+* [x] Complete nodemcu documentation
 * [x] Power off LED strip via MOSFET -- Not possible
 * [ ] Revisit perfboard layout, break perf board between nodemcu and output section, and rotate output section 90 degrees
 * [ ] Build 3 more units cottage porch lights, xmas 1 and xmas 2
@@ -78,9 +81,9 @@ sudo npm install -g homebridge-mculed
 
 # [Documentation](https://northernman54.github.io/homebridge-mculed/)
 
-# Configuration - NodeMCU
+# Provisioning/Configuration - NodeMCU
 
-See [README](nodemcu/README.md) in nodemcu directory
+See [README](lua/README.md) in lua directory
 
 # Credits
 
