@@ -4,9 +4,10 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 
 ![Device](lua/IMG_2874.jpg)
 
-#Table of Contents
+# Table of Contents
 
 <!--ts-->
+   * [Table of Contents](#table-of-contents)
    * [Design Concept](#design-concept)
    * [Backlog and Roadmap](#backlog-and-roadmap)
       * [Backlog - plugin](#backlog---plugin)
