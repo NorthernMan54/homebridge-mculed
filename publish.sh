@@ -1,7 +1,7 @@
 #! /bin/sh
 
 if ~/npm/bin/nsp check --filter 2; then
-  rm *orig* *toc\.*
+  rm *orig* *toc\.* lua/*orig* lua/*toc\.*
   npm run-script document
   git add .
   git commit -m "$1"

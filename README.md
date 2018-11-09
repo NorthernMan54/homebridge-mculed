@@ -4,12 +4,15 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 
 ![Device](lua/IMG_2874.jpg)
 
+#Table of Contents
+
 <!--ts-->
    * [Design Concept](#design-concept)
-   * [Backlog - plugin](#backlog---plugin)
-   * [Backlog - nodemcu](#backlog---nodemcu)
-   * [Roadmap](#roadmap)
-   * [Supported configurations](#supported-configurations)
+   * [Backlog and Roadmap](#backlog-and-roadmap)
+      * [Backlog - plugin](#backlog---plugin)
+      * [Backlog - nodemcu](#backlog---nodemcu)
+      * [Roadmap](#roadmap)
+   * [Supported configurations/devices](#supported-configurationsdevices)
    * [Installation - homebridge-mculed](#installation---homebridge-mculed)
    * [Configuration - homebridge-mculed](#configuration---homebridge-mculed)
    * [<a href="https://northernman54.github.io/homebridge-mculed/" rel="nofollow">Documentation</a>](#documentation)
@@ -31,7 +34,9 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 * Nodemcu sends device state changes in realtime to plugin via WebSockets
 * OTA nodeMCU provisioning
 
-# Backlog - plugin
+# Backlog and Roadmap
+
+## Backlog - plugin
 
 * [x] Migrate from mDNS to bonjour
 * [x] Plugin has a circular json issue in accessory, likely timeout
@@ -44,7 +49,7 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 * [x] Complete plugin documentation
 * [x] Aliases don't appear to work
 
-# Backlog - nodemcu
+## Backlog - nodemcu
 
 * [x] OTA nodeMCU code provisioning
 * [x] Initial lua code load via script
@@ -66,12 +71,12 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 * [ ] Revisit perfboard layout, break perf board between nodemcu and output section, and rotate output section 90 degrees
 * [ ] Build 3 more units cottage porch lights, xmas 1 and xmas 2
 
-# Roadmap
+## Roadmap
 
 * [ ] Collapse the OTA Update server to nodeJS
 
 
-# Supported configurations
+# Supported configurations/devices
 
 * [x] Costco LED Strip - Intertek 4005244 - This strip is based on the sm16703p LED controller chip
 
