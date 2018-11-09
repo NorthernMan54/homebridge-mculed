@@ -1,6 +1,24 @@
-# homebridge-mculed ESP8266 LUA Code
+**homebridge-mculed** ESP8266 LUA Code
 
 LUA programs for a nodeMCU device to control a RGB+W LED Strip
+
+<!--ts-->
+   * [Hardware](#hardware)
+   * [Circuit Diagrams](#circuit-diagrams)
+      * [Schematic](#schematic)
+      * [Breadboard layout](#breadboard-layout)
+      * [Perfboard layout](#perfboard-layout)
+      * [Completed unit](#completed-unit)
+   * [Tools](#tools)
+   * [nodeMCU Firmware](#nodemcu-firmware)
+   * [Configuration](#configuration)
+   * [Provisioning and Running](#provisioning-and-running)
+   * [ESPlorer Snippets](#esplorer-snippets)
+      * [Memory](#memory)
+
+<!-- Added by: sgracey, at:  -->
+
+<!--te-->
 
 # Hardware
 
@@ -15,15 +33,20 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 # Circuit Diagrams
 
-## CLED/Costco LED Strip
+## Schematic
 
 ![CLED](mculed_v2_schem.jpg)
+
+## Breadboard layout
 
 ![CLED](mculed_v2_perf_bb.jpg)
 
 ![Breadboard](IMG_2846-2.JPG)
 
+## Perfboard layout
+
 ![Perfboard](IMG_2857.jpg)
+## Completed unit
 
 ![Perfboard](IMG_2862.jpg)
 

@@ -1,8 +1,24 @@
-# homebridge-mculed
+**homebridge-mculed**
+
 Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB+W led strips
 
 ![Device](lua/IMG_2874.jpg)
 
+<!--ts-->
+   * [Design Concept](#design-concept)
+   * [Backlog - plugin](#backlog---plugin)
+   * [Backlog - nodemcu](#backlog---nodemcu)
+   * [Roadmap](#roadmap)
+   * [Supported configurations](#supported-configurations)
+   * [Installation - homebridge-mculed](#installation---homebridge-mculed)
+   * [Configuration - homebridge-mculed](#configuration---homebridge-mculed)
+   * [<a href="https://northernman54.github.io/homebridge-mculed/" rel="nofollow">Documentation</a>](#documentation)
+   * [Provisioning/Configuration - NodeMCU](#provisioningconfiguration---nodemcu)
+   * [Credits](#credits)
+
+<!-- Added by: sgracey, at:  -->
+
+<!--te-->
 
 # Design Concept
 
