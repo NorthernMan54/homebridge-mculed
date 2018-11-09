@@ -59,7 +59,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 3.  Copy ESP-NODE-AC545f.json to your nodeMCU's name, and update the file to include your config file.
 
-# Lua Program installation
+# Provisioning and Running
 
 1.  Run the script lua/luaScript/initialUpload.sh, this will upload all the lua ota provisioning files to your esp8266
 
