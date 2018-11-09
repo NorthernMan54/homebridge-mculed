@@ -52,21 +52,23 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 module.SSID["SSID1"] = { ssid="SSID1", pwd = "password" }
 ```
 
-2. Set your device Model in config.lua - Either CLED used by homebridge-mculed to determine which which type to create in homebridge
+2. Copy config-NODE-AC545F.lua to your nodemcu's name, and change the config to your model
 
 ```
 module.Model = "CLED"
 ```
 
+3. Copy ESP-NODE-AC545f.json to your nodemcu's name, and update the file to include your config file.
+
 # Lua Program installation
 
 1. I used nodemcu-uploader which is available here https://github.com/kmpm/nodemcu-uploader
 
-2. Run the script initialupload.sh, this will upload all the lua files to your esp8266
+2. Run the script lua/luaScript/initialUpload.sh, this will upload all the lua ota provisioning files to your esp8266
 
-3. Test your device by running test.lua
+3. Start the OTA server with the script, startOtaServer.sh
 
-4. After you have completed testing, rename test.lua to init.lua
+4. Using esplorer, on the nodemcu, run the lua program initOta.lua
 
 # ESPlorer Snippets
 
