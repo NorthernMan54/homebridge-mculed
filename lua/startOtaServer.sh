@@ -15,4 +15,4 @@ elif [[ "$OS" == 'Linux' ]]; then
   mdns=$!
 fi
 
-lua luaOTAserver.lua images
+lua luaOTAserver.lua luaScript
