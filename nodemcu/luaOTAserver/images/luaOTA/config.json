@@ -1,0 +1,7 @@
+{
+  "leave": 1,
+  "app": "main",
+  "port": 8266,
+  "secret": "yoursecret",
+  "server": "mculedProv"
+}
