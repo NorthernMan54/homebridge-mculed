@@ -155,6 +155,7 @@ do
           buffer = extra
 
           if opcode == 9 then  -- WebSocket ping message
+            tmr.softwd(600)
             socket.send(" ",0xA)   -- Pong message
           else
             socket.onmessage(payload, opcode) -- Pass message to calling application
