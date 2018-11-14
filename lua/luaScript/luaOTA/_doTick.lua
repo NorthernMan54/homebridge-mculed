@@ -73,8 +73,8 @@ return function() -- the proper doTick() timer callback
   else
     gpio.write(0, gpio.LOW)
   end
-  --log("entering tick", tick_count, sta.getconfig(false), sta.getip())
-  if (tick_count < 20) then -- (wait up to 10 secs for Wifi connection)
+  log("entering tick", tick_count, sta.getconfig(false), sta.getip())
+  if (tick_count < 30) then -- (wait up to 10 secs for Wifi connection)
     local status, ip = sta.status(), {sta.getip()}
     if (status == wifi.STA_GOTIP) then
       log("Connected:", unpack(ip))
@@ -86,13 +86,13 @@ return function() -- the proper doTick() timer callback
       lua_mdns = require("luaOTA/_mdns")
       lua_mdns.mdns_query("_"..config.server.."._tcp", hb_found)
 
-      tick_count = 20
+      tick_count = 30
     end
 
-  elseif (tick_count == 20) then -- assume timeout and exec app CB
+  elseif (tick_count == 30) then -- assume timeout and exec app CB
     return self.startApp("OK: Timeout on waiting for wifi station setup")
 
-  elseif (tick_count == 36) then -- wait up to 2.5 secs for TCP response
+  elseif (tick_count == 46) then -- wait up to 2.5 secs for TCP response
     gpio.write(0, gpio.HIGH)
     tmr.unregister(0)
     if ( conn ~= nil ) then

@@ -7,10 +7,13 @@
     "luaOTA/_mdns.lua",
     "luaOTA/check.lua",
     "luaOTA/default.lua",
-    "initOta.lua",
     "luaOTA/passwords.lua",
+    "init.lua",
+    "initOta.lua",
     "led.lua",
     "main.lua",
-    "cled_strip.lua"
+    "config-NODE-AC4957.lua",
+    "cled_strip.lua",
+    "websocket.lua"
   ]
 }
