@@ -1,7 +1,7 @@
 #! /bin/sh
 
 SLEEP=1
-AID=3
+AID=5
 
 echo "\nRED"
 curl -X PUT http://127.0.01:51826/characteristics --header "Content-Type:Application/json" --header "authorization: 031-45-154" --data "{ \"characteristics\": [{ \"aid\": $AID, \"iid\": 9, \"value\": true }] }"
