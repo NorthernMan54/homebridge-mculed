@@ -1,0 +1,19 @@
+{
+  "secret": "yoursecret",
+  "files": [
+    "luaOTA/_doTick.lua",
+    "luaOTA/_init.lua",
+    "luaOTA/_provision.lua",
+    "luaOTA/_mdns.lua",
+    "luaOTA/check.lua",
+    "luaOTA/default.lua",
+    "luaOTA/passwords.lua",
+    "init.lua",
+    "initOta.lua",
+    "led.lua",
+    "main.lua",
+    "config-NODE-AC54C1.lua",
+    "cled_strip.lua",
+    "websocket.lua"
+  ]
+}

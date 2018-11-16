@@ -6,6 +6,7 @@ local strip_buffer = ws2812.newBuffer(24, 3)
 
 local state = { Hue = 0, Saturation = 0, ColorTemperature = 140; pwm = true, Brightness = 20, On = false }
 local changeTimer = tmr.create()
+local disableLedTimer = tmr.create()
 
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
@@ -44,6 +45,14 @@ local function hslToRgb(h1, s1, l1)
   return math.floor(r * tp * l1 / 100), math.floor(g * tp * l1 / 100), math.floor(b * tp * l1 / 100)
 end
 
+disableLedTimer:register(500, tmr.ALARM_SEMI, function()
+  local pin = 4
+  --print("disable led")
+  ws2812_effects.stop()
+  gpio.mode(pin, gpio.OUTPUT)
+  gpio.write(pin, gpio.HIGH)
+end)
+
 local function on(value)
   if value == true and state.On == true and state.pwm == false then
     ws2812_effects.stop()
@@ -78,6 +87,7 @@ local function on(value)
     ws2812_effects.set_color(0, 0, 0)
     ws2812_effects.set_mode("static")
     ws2812_effects.start()
+    disableLedTimer:start()
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
