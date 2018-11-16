@@ -49,8 +49,8 @@ disableLedTimer:register(500, tmr.ALARM_SEMI, function()
   local pin = 4
   --print("disable led")
   ws2812_effects.stop()
-  gpio.mode(pin, gpio.OUTPUT)
-  gpio.write(pin, gpio.HIGH)
+  --gpio.mode(pin, gpio.OUTPUT)
+  --gpio.write(pin, gpio.HIGH)
 end)
 
 local function on(value)
@@ -94,7 +94,7 @@ local function on(value)
   end
 end
 
-changeTimer:register(50, tmr.ALARM_SEMI, function() on(true) end)
+changeTimer:register(150, tmr.ALARM_SEMI, function() on(true) end)
 
 function module.setHue(value)
   state.Hue = value;
