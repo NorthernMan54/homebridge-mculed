@@ -46,7 +46,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 ## Unit 1 - Completed unit
 ![Perfboard](IMG_2862.jpg)
 ## Unit 2 - Completed unit
-![Perfboard](IMG_2890.jpg)
+![Perfboard](IMG_2890.JPG)
 # Tools
 
 -   nodeMCU-uploader - Install instructions are here <https://github.com/kmpm/nodeMCU-uploader>
