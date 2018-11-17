@@ -27,7 +27,8 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
     -   74HCT245
     -   1000uf 25V capacitor
     -   470 Ohm Resistor
-    -   DC to DC Power Converter
+    -   ~~DC to DC Power Converter~~
+    -   78M05 Voltage Regulator
     -   2 x Push Button switch
     -   FQP30N06L N-Channel MOSFET
 
@@ -35,7 +36,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 ## Schematic
 
-![CLED](mculed_v2_schem.jpg)
+![CLED](mculed_v2_perf_schem.jpg)
 
 ## Breadboard layout
 
