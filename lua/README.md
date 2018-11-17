@@ -35,24 +35,15 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 # Circuit Diagrams
 
 ## Schematic
-
 ![CLED](mculed_v2_perf_schem.jpg)
-
 ## Breadboard layout
-
 ![CLED](mculed_v2_perf_bb.jpg)
-
 ## Actual Breadboard layout
-
 ![Breadboard](IMG_2846-2.JPG)
-
 ## Unit 1 - layout
-
 ![Perfboard](IMG_2857.jpg)
 ## Unit 1 - Completed unit
-
 ![Perfboard](IMG_2862.jpg)
-
 # Tools
 
 -   nodeMCU-uploader - Install instructions are here <https://github.com/kmpm/nodeMCU-uploader>
