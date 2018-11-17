@@ -42,12 +42,14 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 ![CLED](mculed_v2_perf_bb.jpg)
 
+## Actual Breadboard layout
+
 ![Breadboard](IMG_2846-2.JPG)
 
-## Perfboard layout
+## Unit 1 - layout
 
 ![Perfboard](IMG_2857.jpg)
-## Completed unit
+## Unit 1 - Completed unit
 
 ![Perfboard](IMG_2862.jpg)
 
