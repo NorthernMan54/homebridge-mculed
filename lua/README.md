@@ -31,6 +31,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
     -   78M05 Voltage Regulator
     -   2 x Push Button switch
     -   FQP30N06L N-Channel MOSFET
+    -   Case - Hammond 1593NBK
 
 # Circuit Diagrams
 
@@ -44,6 +45,8 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 ![Perfboard](IMG_2857.jpg)
 ## Unit 1 - Completed unit
 ![Perfboard](IMG_2862.jpg)
+## Unit 2 - Completed unit
+![Perfboard](IMG_2890.jpg)
 # Tools
 
 -   nodeMCU-uploader - Install instructions are here <https://github.com/kmpm/nodeMCU-uploader>
