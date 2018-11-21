@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mculed",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Homebridge platform plugin that support's a network of nodemcu's to control various devices.",
   "main": "mculed.js",
   "scripts": {
