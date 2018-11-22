@@ -1,0 +1,43 @@
+{
+  "name": "xmas",
+  "version": "0.0.7",
+  "description": "Homebridge platform plugin that support's a network of nodemcu's to control various devices.",
+  "main": "xmas.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "document": "documentation build mculed.js -f html -o docs --config documentation.yml;./gh-md-toc --insert README.md;./gh-md-toc --insert lua/README.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NorthernMan54/homebridge-mculed.git"
+  },
+  "keywords": [
+    "nodemcu",
+    "ws2812",
+    "led",
+    "esp8266",
+    "homebridge-plugin",
+    "sm16703p"
+  ],
+  "engines": {
+    "node": ">=4.3.2",
+    "homebridge": ">=0.2.0"
+  },
+  "devDependencies": {
+    "ava": "0.25.0",
+    "coveralls": "3.0.2",
+    "documentation": "8.1.2",
+    "nyc": "13.1.0",
+    "xo": "0.23.0"
+  },
+  "dependencies": {
+    "debug": "^2.2.0",
+    "requestretry": "^=1.13.0"
+  },
+  "author": "NorthernMan54",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/NorthernMan54/homebridge-mculed/issues"
+  },
+  "homepage": "https://github.com/NorthernMan54/homebridge-mculed#readme"
+}
