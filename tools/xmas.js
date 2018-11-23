@@ -4,7 +4,6 @@ var request = require('requestretry');
 var debug = require('debug')('xmas');
 
 var pin = "031-45-154";
-var hue = 0;
 var seq = 0;
 
 var device = {};
@@ -80,8 +79,8 @@ function HAPcontrol(host, port, body, callback) {
       try {
         rsp = JSON.parse(response.body);
       } catch (ex) {
-        debug("Homebridge Response Failed %s:%s", host, port, response.statusCode, response.statusMessage);
-        debug("Homebridge Response Failed %s:%s", host, port, response.body, ex);
+        console.error("Homebridge Response Failed %s:%s", host, port, response.statusCode, response.statusMessage);
+        console.error("Homebridge Response Failed %s:%s", host, port, response.body, ex);
 
         if (callback) callback(new Error(ex));
       }
