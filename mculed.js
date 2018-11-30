@@ -5,6 +5,7 @@
 var debug = require('debug')('MCULED');
 var bonjour = require('bonjour')();
 const WebSocket = require('ws');
+const packageConfig = require('./package.json');
 var ip = require('ip');
 var Accessory, Service, Characteristic, UUIDGen;
 var sockets = {};
@@ -45,6 +46,11 @@ function mculed(log, config, api) {
     this.api = api;
     this.api.on('didFinishLaunching', this.didFinishLaunching.bind(this));
   }
+
+  this.log.info(
+    '%s v%s, node %s, homebridge v%s',
+    packageConfig.name, packageConfig.version, process.version, api.serverVersion
+  );
 }
 
 /**
