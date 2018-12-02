@@ -10,6 +10,7 @@ var ip = require('ip');
 var Accessory, Service, Characteristic, UUIDGen;
 var sockets = {};
 var keepAlive = {};
+var accessories = {}; // Name -> Accessory
 
 module.exports = function(homebridge) {
   Accessory = homebridge.platformAccessory;
@@ -36,7 +37,7 @@ module.exports = function(homebridge) {
 
 function mculed(log, config, api) {
   this.log = log;
-  this.accessories = {}; // MAC -> Accessory
+  // this.accessories = {}; // MAC -> Accessory
 
   if (typeof(config.aliases) !== "undefined" && config.aliases !== null) {
     this.aliases = config.aliases;
@@ -63,34 +64,42 @@ mculed.prototype.configureAccessory = function(accessory) {
   this.log("configureAccessory %s", accessory.displayName);
   accessory.log = this.log;
 
-  if (typeof(accessory.context.model) !== "undefined" && accessory.context.model.includes("CLED")) {
-    accessory
-      .getService(Service.Lightbulb)
-      .getCharacteristic(Characteristic.On)
-      .on('set', this.setOn.bind(accessory));
-    accessory
-      .getService(Service.Lightbulb)
-      .getCharacteristic(Characteristic.Brightness)
-      .on('set', this.setBrightness.bind(accessory));
-    accessory
-      .getService(Service.Lightbulb)
-      .getCharacteristic(Characteristic.Hue)
-      .on('set', this.setHue.bind(accessory));
-    accessory
-      .getService(Service.Lightbulb)
-      .getCharacteristic(Characteristic.Saturation)
-      .on('set', this.setSaturation.bind(accessory));
-    accessory
-      .getService(Service.Lightbulb)
-      .getCharacteristic(Characteristic.ColorTemperature)
-      .setProps({
-        minValue: 0
-      })
-      .on('set', this.setColorTemperature.bind(accessory));
-  }
-
-  if (typeof(accessory.context.url) !== "undefined") {
-    openSocket.call(this, accessory);
+  if (typeof(accessory.context.model) !== "undefined") {
+    // Only for real devices
+    if (accessory.context.model.includes("XCLED")) {
+      accessory
+        .getService(Service.Switch)
+        .getCharacteristic(Characteristic.On)
+        .on('set', this.setXmasOn.bind(accessory));
+    } else if (accessory.context.model.includes("CLED")) {
+      accessory
+        .getService(Service.Lightbulb)
+        .getCharacteristic(Characteristic.On)
+        .on('set', this.setOn.bind(accessory));
+      accessory
+        .getService(Service.Lightbulb)
+        .getCharacteristic(Characteristic.Brightness)
+        .on('set', this.setBrightness.bind(accessory));
+      accessory
+        .getService(Service.Lightbulb)
+        .getCharacteristic(Characteristic.Hue)
+        .on('set', this.setHue.bind(accessory));
+      accessory
+        .getService(Service.Lightbulb)
+        .getCharacteristic(Characteristic.Saturation)
+        .on('set', this.setSaturation.bind(accessory));
+      accessory
+        .getService(Service.Lightbulb)
+        .getCharacteristic(Characteristic.ColorTemperature)
+        .setProps({
+          minValue: 0
+        })
+        .on('set', this.setColorTemperature.bind(accessory));
+      // Only open a socket connection for CLED devices
+      if (typeof(accessory.context.url) !== "undefined") {
+        openSocket.call(this, accessory);
+      }
+    }
   }
 
   if (accessory.context.name === "MCULED Reset Switch") {
@@ -98,7 +107,7 @@ mculed.prototype.configureAccessory = function(accessory) {
       .getCharacteristic(Characteristic.On)
       .on('set', this.resetDevices.bind(this, accessory));
   }
-  this.accessories[accessory.context.name] = accessory;
+  accessories[accessory.context.name] = accessory;
 };
 
 /**
@@ -234,6 +243,7 @@ mculed.prototype.didFinishLaunching = function() {
       mculed.prototype.mcuModel.call(this, "http://" + service.host + ":" + service.port + "/", function(err, model) {
         if (!err) {
           this.addMcuAccessory(service, model);
+          this.addXmasMcuAccessory(service, model);
         } else {
           this.log("Error Adding MCULED Device", service.name, err.message);
         }
@@ -288,6 +298,38 @@ mculed.prototype.setOn = function(value, callback) {
     this.log("Skipping Turn On %s", this.context.name);
     callback();
   }
+};
+
+/**
+ * Turn on and rotate thru the primary colors
+ * @kind function
+ * @name setXmasOn
+ */
+
+mculed.prototype.setXmasOn = function(value, callback) {
+  if (value) {
+    // Find parent accessory
+
+    var parent = accessories[this.context.parent];
+    // Rotate thru primary colors
+
+    var hue = parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value + 120;
+    if (hue > 359) {
+      hue = 0;
+    }
+    parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).setValue(hue);
+    parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).setValue(100);
+    parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).setValue(100);
+
+    // Turn off virtual switch after 3 seconds
+
+    setTimeout(function() {
+      this.getService(Service.Switch)
+        .setCharacteristic(Characteristic.On, false);
+    }.bind(this), 3000);
+  }
+
+  callback(null, value);
 };
 
 /**
@@ -402,8 +444,64 @@ mculed.prototype.setColorTemperature = function(value, callback) {
  * @name setBrightness
  */
 
+mculed.prototype.addXmasMcuAccessory = function(device, model) {
+  // Add a virtual xmas color switch
+  // debug(JSON.stringify(accessories, null, 4));
+
+  if (!accessories["X" + device.name]) {
+    var uuid = UUIDGen.generate("X" + device.name);
+    var displayName;
+    if (this.aliases) {
+      displayName = "Christmas " + this.aliases[device.name];
+    }
+    if (typeof(displayName) === "undefined") {
+      displayName = "Christmas " + device.name;
+    }
+
+    var accessory = new Accessory(displayName, uuid, 10);
+
+    this.log("Adding MCULED Device:", "Christmas " + device.name, displayName, model);
+    accessory.context.model = "X" + model;
+    accessory.context.url = "http://" + device.host + ":" + device.port + "/";
+    accessory.context.name = "X" + device.name;
+    accessory.context.displayName = displayName;
+    accessory.context.parent = device.name;
+
+    if (model.includes("CLED")) {
+      accessory
+        .addService(Service.Switch);
+    }
+
+    accessory.getService(Service.AccessoryInformation)
+      .setCharacteristic(Characteristic.Manufacturer, "MCULED")
+      .setCharacteristic(Characteristic.Model, "X" + model)
+      .setCharacteristic(Characteristic.SerialNumber, "Christmas" + device.name)
+      .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
+
+    mculed.prototype.configureAccessory.call(this, accessory);
+    accessories["X" + device.name] = accessory;
+    this.api.registerPlatformAccessories("homebridge-mculed", "mculed", [accessory]);
+  } else {
+    accessory = accessories["X" + device.name];
+
+    // Fix for devices moving on the network
+    if (accessory.context.url !== "http://" + device.host + ":" + device.port + "/") {
+      debug("URL Changed", "Christmas " + device.name);
+      accessory.context.url = "http://" + device.host + ":" + device.port + "/";
+    } else {
+      debug("URL Same", "Christmas " + device.name);
+    }
+  }
+};
+
+/**
+ * Set brightness of nodeMCU device
+ * @kind function
+ * @name setBrightness
+ */
+
 mculed.prototype.addMcuAccessory = function(device, model) {
-  if (!this.accessories[device.name]) {
+  if (!accessories[device.name]) {
     var uuid = UUIDGen.generate(device.name);
     var displayName;
     if (this.aliases) {
@@ -433,10 +531,10 @@ mculed.prototype.addMcuAccessory = function(device, model) {
       .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
 
     mculed.prototype.configureAccessory.call(this, accessory);
-    this.accessories[device.name] = accessory;
+    accessories[device.name] = accessory;
     this.api.registerPlatformAccessories("homebridge-mculed", "mculed", [accessory]);
   } else {
-    accessory = this.accessories[device.name];
+    accessory = accessories[device.name];
 
     // Fix for devices moving on the network
     if (accessory.context.url !== "http://" + device.host + ":" + device.port + "/") {
@@ -460,7 +558,7 @@ mculed.prototype.addResetSwitch = function() {
 
   var uuid = UUIDGen.generate(name);
 
-  if (!self.accessories[name]) {
+  if (!accessories[name]) {
     var accessory = new Accessory(name, uuid, 10);
 
     self.log("Adding Reset Switch:");
@@ -477,7 +575,7 @@ mculed.prototype.addResetSwitch = function() {
       .setCharacteristic(Characteristic.Model, name)
       .setCharacteristic(Characteristic.SerialNumber, "123456");
 
-    self.accessories[name] = accessory;
+    accessories[name] = accessory;
     self.api.registerPlatformAccessories("homebridge-mculed", "mculed", [accessory]);
   }
 };
@@ -485,9 +583,9 @@ mculed.prototype.addResetSwitch = function() {
 mculed.prototype.removeAccessory = function(name) {
   this.log("removeAccessory %s", name);
 
-  var accessory = this.accessories[name];
+  var accessory = accessories[name];
   this.api.unregisterPlatformAccessories("homebridge-mculed", "mculed", [accessory]);
-  delete this.accessories[name];
+  delete accessories[name];
   sockets[name].terminate();
   sockets[name] = null;
   clearInterval(keepAlive[name]);
@@ -529,8 +627,8 @@ mculed.prototype.resetDevices = function(accessory, status, callback) {
   callback(null, status);
 
   if (status) {
-    for (var id in this.accessories) {
-      var device = this.accessories[id];
+    for (var id in accessories) {
+      var device = accessories[id];
       this.log("Checking", id, device.displayName);
       mculed.prototype.Identify.call(this, device, status, function(err, status) {
         this.log("Done", status, err);

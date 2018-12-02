@@ -49,6 +49,7 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
 * [x] Identify method and reset button needs rework
 * [x] Complete plugin documentation
 * [x] Aliases don't appear to work
+* [x] Add a Christmas button to rotate thru primary colors
 
 ## Backlog - nodemcu
 
@@ -109,6 +110,6 @@ See [README](lua/README.md) in lua directory
 
 # Credits
 
-* TerryE and Marcelstoer - For nodemcu/lua updates - https://github.com/nodemcu/nodemcu-firmware/tree/master/lua_examples/luaOTA
+* TerryE and Marcelstoer - For nodemcu/lua OTA updates - https://github.com/nodemcu/nodemcu-firmware/tree/master/lua_examples/luaOTA
 * Frank Edelhaeuser - Borrowed lua mDNS Discovery code, and updated to support NodeMCU
 * creationix - Borrowed LUA WebSocket Server code - https://github.com/creationix/nodemcu-webide/tree/master/mcu
