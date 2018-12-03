@@ -26,7 +26,8 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 1.  Bill of materials
     -   nodeMCU / esp8266 dev kit
-    -   74HCT245
+    -   ~~Level Shifter~~ - I received inconsistent behavior when using this and switch to 74HCT245
+    -   74HCT245 - Level Shifter replacement
     -   1000uf 25V capacitor
     -   470 Ohm Resistor
     -   DC to DC Power Converter
