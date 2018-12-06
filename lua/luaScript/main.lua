@@ -41,6 +41,8 @@ local function start()
             mod.setHue(cmd["value"])
           elseif cmd["func"] == "saturation" then
             mod.setSaturation(cmd["value"])
+          elseif cmd["func"] == "mode" then
+            mod.setMode(cmd["value"],cmd["param"])
           elseif cmd["func"] == "ct" then
             mod.setCT(cmd["value"])
           else

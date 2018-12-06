@@ -149,6 +149,16 @@ function module.onButton()
   changeTimer:start()
 end
 
+-- Set effect mode and parameter
+
+function module.setMode(value,param)
+  state.pwm = true;
+  state.Hue = 0;
+  state.Saturation = 0;
+  state.ColorTemperature = value;
+  changeTimer:start()
+end
+
 -- Button press / power toggle
 
 function module.colorButton()
