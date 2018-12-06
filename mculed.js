@@ -313,11 +313,13 @@ mculed.prototype.setXmasOn = function(value, callback) {
     var parent = accessories[this.context.parent];
     // Rotate thru primary colors
 
-    var hue = parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).value + 120;
-    if (hue > 359) {
-      hue = 0;
+    this.context.value = this.context.value + 120;
+
+    if (this.context.value > 359) {
+      this.context.value = 0;
     }
-    parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).setValue(hue);
+
+    parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).setValue(this.context.value);
     parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).setValue(100);
     parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).setValue(100);
 
@@ -466,6 +468,7 @@ mculed.prototype.addXmasMcuAccessory = function(device, model) {
     accessory.context.name = "X" + device.name;
     accessory.context.displayName = displayName;
     accessory.context.parent = device.name;
+    accessory.context.value = 0;
 
     if (model.includes("CLED")) {
       accessory
