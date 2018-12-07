@@ -12,88 +12,85 @@ local effectsTimer = tmr.create()
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
 local function hslToRgb(h1, s1, l1)
-  local r, g, b
+  -- print("h1,s1,l1", h1, s1, l1)
+  -- print("Result", color_utils.hsv2grb(h1, s1 * 2.55, l1 * 255))
+return {color_utils.hsv2grb(h1, s1 * 2.55, l1 * 255)}
+  -- local r, g, b
 
-  local h, s, l = h1 / 360, s1 / 100, l1 / 100 * .5
+  -- local h, s, l = h1 / 360, s1 / 100, l1 / 100 * .5
 
-  if s == 0 then
-    r, g, b = 255, 255, 255 -- achromatic
-  else
-    local function hue2rgb(p, q, t)
-      if t < 0 then t = t + 1 end
-      if t > 1 then t = t - 1 end
-      if t < 1 / 6 then return p + (q - p) * 6 * t end
-      if t < 1 / 2 then return q end
-      if t < 2 / 3 then return p + (q - p) * (2 / 3 - t) * 6 end
-      return p
-    end
+  -- if s == 0 then
+  -- r, g, b = 255, 255, 255 -- achromatic
+  -- else
+  -- local function hue2rgb(p, q, t)
+  -- if t < 0 then t = t + 1 end
+  -- if t > 1 then t = t - 1 end
+  -- if t < 1 / 6 then return p + (q - p) * 6 * t end
+  -- if t < 1 / 2 then return q end
+  -- if t < 2 / 3 then return p + (q - p) * (2 / 3 - t) * 6 end
+  -- return p
+  -- end
 
-    local q
-    if l < 0.5 then q = l * (1 + s) else q = l + s - l * s end
-    local p = 2 * l - q
+  -- local q
+  -- if l < 0.5 then q = l * (1 + s) else q = l + s - l * s end
+  -- local p = 2 * l - q
 
-    r = hue2rgb(p, q, h + 1 / 3) * 255
-    g = hue2rgb(p, q, h) * 255
-    b = hue2rgb(p, q, h - 1 / 3) * 255
-  end
+  -- r = hue2rgb(p, q, h + 1 / 3) * 255
+  -- g = hue2rgb(p, q, h) * 255
+  -- b = hue2rgb(p, q, h - 1 / 3) * 255
+  -- end
 
   -- Power limiter, not used
 
-  local tp = 255 * 3 / ( r + g + b )
+  -- local tp = 255 * 3 / ( r + g + b )
 
-  if tp > 1 then tp = 1 end
+  -- if tp > 1 then tp = 1 end
 
-  return math.floor(r * tp * l1 / 100), math.floor(g * tp * l1 / 100), math.floor(b * tp * l1 / 100)
+  -- return math.floor(r * tp * l1 / 100), math.floor(g * tp * l1 / 100), math.floor(b * tp * l1 / 100)
 end
 
 disableLedTimer:register(500, tmr.ALARM_SEMI, function()
   local pin = 4
-  --print("disable led")
+  -- print("disable led")
   ws2812_effects.stop()
-  --gpio.mode(pin, gpio.OUTPUT)
-  --gpio.write(pin, gpio.HIGH)
+  -- gpio.mode(pin, gpio.OUTPUT)
+  -- gpio.write(pin, gpio.HIGH)
 end)
 
+local function pwmControl(value)
+  pwm.setup(config.pwm, 480, value)
+  pwm.start(config.pwm)
+end
+
+local function rgbControl(speed, delay, brightness, color, mode)
+  -- print("Color", unpack(color))
+  ws2812_effects.set_speed(speed)
+  ws2812_effects.set_delay(delay)
+  ws2812_effects.set_brightness(brightness)
+  ws2812_effects.set_color(unpack(color))
+  ws2812_effects.set_mode(mode)
+end
+
 local function on(value)
+  ws2812_effects.stop()
   if value == true and state.On == true and state.pwm == false then
-    ws2812_effects.stop()
-    ws2812_effects.set_speed(100)
-    ws2812_effects.set_delay(100)
-    ws2812_effects.set_brightness(255)
-    ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
-    ws2812_effects.set_mode("static")
-    ws2812_effects.start()
-    print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
-    print("Turn off PWM mode")
-    pwm.setup(config.pwm, 480, 0)
-    pwm.start(config.pwm)
+    -- print("hslToRgb",hslToRgb(state.Hue, state.Saturation, state.Brightness))
+    rgbControl(100, 100, 255, hslToRgb(state.Hue, state.Saturation, state.Brightness), "static")
+    pwmControl(0)
   elseif value == true and state.On == true and state.pwm == true then
-    print("Turning on White PWM LED", state.Brightness)
-    pwm.setup(config.pwm, 480, state.Brightness * 10)
-    pwm.start(config.pwm)
-    print("Turning off RGB LED")
-    ws2812_effects.stop()
-    ws2812_effects.set_speed(100)
-    ws2812_effects.set_delay(100)
-    ws2812_effects.set_brightness(0)
-    ws2812_effects.set_color(0, 0, 0)
-    ws2812_effects.set_mode("static")
-    ws2812_effects.start()
+    -- print("Turning on White PWM LED", state.Brightness)
+    -- print("hslToRgb",hslToRgb(state.Hue, state.Saturation, state.Brightness))
+    pwmControl(state.Brightness * 10)
+    rgbControl(100, 100, 0, hslToRgb(0, 0, 0), "static")
   else
-    print("Turning off RGB LED")
-    ws2812_effects.stop()
-    ws2812_effects.set_speed(100)
-    ws2812_effects.set_delay(100)
-    ws2812_effects.set_brightness(0)
-    ws2812_effects.set_color(0, 0, 0)
-    ws2812_effects.set_mode("static")
-    ws2812_effects.start()
+    -- print("Turning off RGB LED")
     disableLedTimer:start()
-    print("Turn off PWM mode")
-    pwm.setup(config.pwm, 480, 0)
-    pwm.start(config.pwm)
+    -- print("Turn off PWM mode")
+    rgbControl(100, 100, 0, hslToRgb(0, 0, 0), "static")
+    pwmControl(0)
     effectsTimer:stop()
   end
+  ws2812_effects.start()
 end
 
 changeTimer:register(150, tmr.ALARM_SEMI, function() on(true) end)
@@ -158,10 +155,9 @@ end
 -- Set effect mode and parameter
 function module.setMode(mode, param)
   state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
-  print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
-  print("Turn off PWM mode")
-  pwm.setup(config.pwm, 480, 0)
-  pwm.start(config.pwm)
+  -- print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
+  -- print("Turn off PWM mode")
+  pwmControl(0)
   ws2812_effects.stop()
   if mode == "seven_color_cross_fade" then
     effectsTimer:register(param, tmr.ALARM_AUTO, function()
@@ -169,11 +165,7 @@ function module.setMode(mode, param)
       if state.Hue > 359 then
         state.Hue = 0
       end
-      ws2812_effects.set_speed(100)
-      ws2812_effects.set_delay(100)
-      ws2812_effects.set_brightness(255)
-      ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
-      ws2812_effects.set_mode("static")
+      rgbControl(100, 100, 255, hslToRgb(state.Hue, state.Saturation, state.Brightness), "static")
       ws2812_effects.start()
     end)
     effectsTimer:start()
@@ -183,22 +175,11 @@ function module.setMode(mode, param)
     end
     ws2812.write(strip_buffer)
     effectsTimer:register(param, tmr.ALARM_AUTO, function()
-      ws2812.shift(1,ws2812.SHIFT_CIRCULAR)
+      ws2812.shift(1, ws2812.SHIFT_CIRCULAR)
     end)
     effectsTimer:start()
   else
-    -- state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
-    -- ws2812_effects.stop()
-    -- -- ws2812_effects.set_speed(param)
-    -- ws2812_effects.set_delay(param)
-    -- ws2812_effects.set_brightness(255)
-    -- ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
-    -- ws2812_effects.set_mode(mode)
-    -- ws2812_effects.start()
-    -- print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
-    -- print("Turn off PWM mode")
-    -- pwm.setup(config.pwm, 480, 0)
-    -- pwm.start(config.pwm)
+
   end
 end
 
