@@ -66,12 +66,15 @@ mculed.prototype.configureAccessory = function(accessory) {
 
   if (typeof(accessory.context.model) !== "undefined") {
     // Only for real devices
-    if (accessory.context.model.includes("XCLED")) {
+    if (accessory.context.model.includes("CLED")) {
       accessory
-        .getService(Service.Switch)
+        .getService("Xmas " + accessory.context.displayName)
         .getCharacteristic(Characteristic.On)
         .on('set', this.setXmasOn.bind(accessory));
-    } else if (accessory.context.model.includes("CLED")) {
+      accessory
+        .getService("Mode " + accessory.context.displayName)
+        .getCharacteristic(Characteristic.On)
+        .on('set', this.setModeOn.bind(accessory));
       accessory
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.On)
@@ -243,7 +246,6 @@ mculed.prototype.didFinishLaunching = function() {
       mculed.prototype.mcuModel.call(this, "http://" + service.host + ":" + service.port + "/", function(err, model) {
         if (!err) {
           this.addMcuAccessory(service, model);
-          this.addXmasMcuAccessory(service, model);
         } else {
           this.log("Error Adding MCULED Device", service.name, err.message);
         }
@@ -303,30 +305,51 @@ mculed.prototype.setOn = function(value, callback) {
 /**
  * Turn on and rotate thru the primary colors
  * @kind function
- * @name setXmasOn
+ * @name setModeOn
  */
 
-mculed.prototype.setXmasOn = function(value, callback) {
+mculed.prototype.setModeOn = function(value, callback) {
   if (value) {
-    // Find parent accessory
-
-    var parent = accessories[this.context.parent];
-    // Rotate thru primary colors
-
-    this.context.value = this.context.value + 120;
-
-    if (this.context.value > 359) {
-      this.context.value = 0;
-    }
-
-    parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).setValue(this.context.value);
-    parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).setValue(100);
-    parent.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).setValue(100);
+    // if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
+    this.log("Turn Mode %s %s", this.context.name, value);
+    wsSend.call(this, '{ "cmd": "set", "func": "mode", "value": "traditional", "param": 500 }', function(err) {
+      callback(err);
+    });
 
     // Turn off virtual switch after 3 seconds
 
     setTimeout(function() {
       this.getService(Service.Switch)
+        .setCharacteristic(Characteristic.On, false);
+    }.bind(this), 3000);
+  } else {
+    callback(null, value);
+  }
+};
+
+/**
+ * Turn on and rotate thru the primary colors
+ * @kind function
+ * @name setXmasOn
+ */
+
+mculed.prototype.setXmasOn = function(value, callback) {
+  if (value) {
+
+    this.context.xmasValue = this.context.xmasValue + 120;
+
+    if (this.context.xmasValue > 359) {
+      this.context.xmasValue = 0;
+    }
+
+    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).setValue(this.context.xmasValue);
+    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).setValue(100);
+    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).setValue(100);
+
+    // Turn off virtual switch after 3 seconds
+
+    setTimeout(function() {
+      this.getService("Xmas " + this.context.displayName)
         .setCharacteristic(Characteristic.On, false);
     }.bind(this), 3000);
   }
@@ -441,66 +464,9 @@ mculed.prototype.setColorTemperature = function(value, callback) {
 };
 
 /**
- * Set brightness of nodeMCU device
+ * Add MCU Device
  * @kind function
- * @name setBrightness
- */
-
-mculed.prototype.addXmasMcuAccessory = function(device, model) {
-  // Add a virtual xmas color switch
-  // debug(JSON.stringify(accessories, null, 4));
-
-  if (!accessories["X" + device.name]) {
-    var uuid = UUIDGen.generate("X" + device.name);
-    var displayName;
-    if (this.aliases) {
-      displayName = "Christmas " + this.aliases[device.name];
-    }
-    if (typeof(displayName) === "undefined") {
-      displayName = "Christmas " + device.name;
-    }
-
-    var accessory = new Accessory(displayName, uuid, 10);
-
-    this.log("Adding MCULED Device:", "Christmas " + device.name, displayName, model);
-    accessory.context.model = "X" + model;
-    accessory.context.url = "http://" + device.host + ":" + device.port + "/";
-    accessory.context.name = "X" + device.name;
-    accessory.context.displayName = displayName;
-    accessory.context.parent = device.name;
-    accessory.context.value = 0;
-
-    if (model.includes("CLED")) {
-      accessory
-        .addService(Service.Switch);
-    }
-
-    accessory.getService(Service.AccessoryInformation)
-      .setCharacteristic(Characteristic.Manufacturer, "MCULED")
-      .setCharacteristic(Characteristic.Model, "X" + model)
-      .setCharacteristic(Characteristic.SerialNumber, "Christmas" + device.name)
-      .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
-
-    mculed.prototype.configureAccessory.call(this, accessory);
-    accessories["X" + device.name] = accessory;
-    this.api.registerPlatformAccessories("homebridge-mculed", "mculed", [accessory]);
-  } else {
-    accessory = accessories["X" + device.name];
-
-    // Fix for devices moving on the network
-    if (accessory.context.url !== "http://" + device.host + ":" + device.port + "/") {
-      debug("URL Changed", "Christmas " + device.name);
-      accessory.context.url = "http://" + device.host + ":" + device.port + "/";
-    } else {
-      debug("URL Same", "Christmas " + device.name);
-    }
-  }
-};
-
-/**
- * Set brightness of nodeMCU device
- * @kind function
- * @name setBrightness
+ * @name addMcuAccessory
  */
 
 mculed.prototype.addMcuAccessory = function(device, model) {
@@ -521,10 +487,15 @@ mculed.prototype.addMcuAccessory = function(device, model) {
     accessory.context.url = "http://" + device.host + ":" + device.port + "/";
     accessory.context.name = device.name;
     accessory.context.displayName = displayName;
+    accessory.context.xmasValue = 0;
 
     if (model.includes("CLED")) {
       accessory
         .addService(Service.Lightbulb);
+      accessory.addService(Service.Switch, "Mode " + displayName, "Mode");
+      accessory.addService(Service.Switch, "Xmas " + displayName, "Xmas");
+      //accessory.setPrimaryService(accessory
+      //.getService(Service.Lightbulb));
     }
 
     accessory.getService(Service.AccessoryInformation)

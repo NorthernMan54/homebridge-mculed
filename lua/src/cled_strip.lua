@@ -7,6 +7,7 @@ local strip_buffer = ws2812.newBuffer(24, 3)
 local state = { Hue = 0, Saturation = 0, ColorTemperature = 140; pwm = true, Brightness = 20, On = false }
 local changeTimer = tmr.create()
 local disableLedTimer = tmr.create()
+local effectsTimer = tmr.create()
 
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
@@ -91,6 +92,7 @@ local function on(value)
     print("Turn off PWM mode")
     pwm.setup(config.pwm, 480, 0)
     pwm.start(config.pwm)
+    effectsTimer:stop()
   end
 end
 
@@ -151,12 +153,41 @@ end
 
 -- Set effect mode and parameter
 
-function module.setMode(value,param)
-  state.pwm = true;
-  state.Hue = 0;
-  state.Saturation = 0;
-  state.ColorTemperature = value;
-  changeTimer:start()
+function module.setMode(mode, param)
+  if mode == "seven_color_cross_fade" then
+    state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
+    effectsTimer:register(param, tmr.ALARM_AUTO, function()
+      state.Hue = state.Hue + 1
+      if state.Hue > 359 then
+        state.Hue = 0
+      end
+      ws2812_effects.stop()
+      ws2812_effects.set_speed(100)
+      ws2812_effects.set_delay(100)
+      ws2812_effects.set_brightness(255)
+      ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
+      ws2812_effects.set_mode("static")
+      ws2812_effects.start()
+      print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
+      print("Turn off PWM mode")
+      pwm.setup(config.pwm, 480, 0)
+      pwm.start(config.pwm)
+    end)
+    effectsTimer:start()
+  elseif mode == "traditional" then
+    state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
+    ws2812_effects.stop()
+    ws2812_effects.set_speed(param)
+    ws2812_effects.set_delay(100)
+    ws2812_effects.set_brightness(255)
+    ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
+    ws2812_effects.set_mode("random_color")
+    ws2812_effects.start()
+    print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
+    print("Turn off PWM mode")
+    pwm.setup(config.pwm, 480, 0)
+    pwm.start(config.pwm)
+  end
 end
 
 -- Button press / power toggle

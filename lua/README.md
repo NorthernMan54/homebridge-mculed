@@ -57,7 +57,20 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 -   esptool - Install instructions are here <https://github.com/espressif/esptool>
 -   esplorer - Install instructions are here <https://esp8266.ru/esplorer/>
 
-# nodeMCU Firmware
+# Installation
+
+## OTA Server Prequisites
+
+### Install lua and Lua modules
+
+```
+brew install lua
+luarocks install luasocket
+luarocks install luafilesystem
+luarocks install md5
+luarocks install lua-cjson 2.1.0-1```
+
+## nodeMCU Firmware
 
 1.  Using <http://nodeMCU-build.com>, create a custom firmware containing at least
     these modules:
@@ -68,7 +81,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 2.  Please use esptool to install the float firmware onto your nodeMCU.  There are alot of guides for this, so I won't repeat it here.
 
 
-3.  Run the script lua/luaScript/initialUpload.sh, this will upload all the lua ota provisioning files to your esp8266
+3.  Run the script lua/src/initialUpload.sh, this will upload all the lua ota provisioning files to your esp8266
 
 4.  Start esplorer, connect to the nodeMCU and run the following commands to get the device name
 
@@ -80,7 +93,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 This should return the nodeMCU name, i.e. NODE-AC4957
 
-# Configuration
+## Configuration
 
 1.  WIFI Setup - Copy luaOTA/passwords_sample.lua to luaOTA/passwords.lua and add your wifi SSID and passwords.  Please note
     that the configuration supports multiple wifi networks, one per config line.
@@ -96,7 +109,7 @@ This should return the nodeMCU name, i.e. NODE-AC4957
 
 3.  Copy ESP-NODE-AC545f.json to your nodeMCU's name, and update the file to include your config file.
 
-# Provisioning and Running
+## Provisioning and Running
 
 1.  Start the OTA server with the script, startOtaServer.sh
 
