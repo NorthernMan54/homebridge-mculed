@@ -151,42 +151,54 @@ function module.onButton()
   changeTimer:start()
 end
 
+local function colorGrad(value)
+  local hue = value * 120 % 360
+  return string.char(hslToRgb(hue, 100, 100))
+end
 -- Set effect mode and parameter
-
 function module.setMode(mode, param)
+  state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
+  print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
+  print("Turn off PWM mode")
+  pwm.setup(config.pwm, 480, 0)
+  pwm.start(config.pwm)
+  ws2812_effects.stop()
   if mode == "seven_color_cross_fade" then
-    state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
     effectsTimer:register(param, tmr.ALARM_AUTO, function()
       state.Hue = state.Hue + 1
       if state.Hue > 359 then
         state.Hue = 0
       end
-      ws2812_effects.stop()
       ws2812_effects.set_speed(100)
       ws2812_effects.set_delay(100)
       ws2812_effects.set_brightness(255)
       ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
       ws2812_effects.set_mode("static")
       ws2812_effects.start()
-      print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
-      print("Turn off PWM mode")
-      pwm.setup(config.pwm, 480, 0)
-      pwm.start(config.pwm)
     end)
     effectsTimer:start()
-  elseif mode == "traditional" then
-    state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
-    ws2812_effects.stop()
-    ws2812_effects.set_speed(param)
-    ws2812_effects.set_delay(100)
-    ws2812_effects.set_brightness(255)
-    ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
-    ws2812_effects.set_mode("random_color")
-    ws2812_effects.start()
-    print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
-    print("Turn off PWM mode")
-    pwm.setup(config.pwm, 480, 0)
-    pwm.start(config.pwm)
+  elseif mode == "xmas" then
+    for i = 1, 24 do
+      strip_buffer:set(i, colorGrad(i))
+    end
+    ws2812.write(strip_buffer)
+    effectsTimer:register(param, tmr.ALARM_AUTO, function()
+      ws2812.shift(1,ws2812.SHIFT_CIRCULAR)
+    end)
+    effectsTimer:start()
+  else
+    -- state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
+    -- ws2812_effects.stop()
+    -- -- ws2812_effects.set_speed(param)
+    -- ws2812_effects.set_delay(param)
+    -- ws2812_effects.set_brightness(255)
+    -- ws2812_effects.set_color(hslToRgb(state.Hue, state.Saturation, state.Brightness))
+    -- ws2812_effects.set_mode(mode)
+    -- ws2812_effects.start()
+    -- print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
+    -- print("Turn off PWM mode")
+    -- pwm.setup(config.pwm, 480, 0)
+    -- pwm.start(config.pwm)
   end
 end
 

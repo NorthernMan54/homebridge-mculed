@@ -311,8 +311,12 @@ mculed.prototype.setOn = function(value, callback) {
 mculed.prototype.setModeOn = function(value, callback) {
   if (value) {
     // if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
+
+    // "value": "seven_color_cross_fade", "param": 750
+    // "value": "random_color", "param": 5000
+
     this.log("Turn Mode %s %s", this.context.name, value);
-    wsSend.call(this, '{ "cmd": "set", "func": "mode", "value": "traditional", "param": 500 }', function(err) {
+    wsSend.call(this, '{ "cmd": "set", "func": "mode", "value": "xmas", "param": 5000 }', function(err) {
       callback(err);
     });
 
