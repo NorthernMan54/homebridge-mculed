@@ -72,9 +72,13 @@ mculed.prototype.configureAccessory = function(accessory) {
         .getCharacteristic(Characteristic.On)
         .on('set', this.setXmasOn.bind(accessory));
       accessory
-        .getService("Mode " + accessory.context.displayName)
+        .getService("Fade " + accessory.context.displayName)
         .getCharacteristic(Characteristic.On)
-        .on('set', this.setModeOn.bind(accessory));
+        .on('set', this.setFadeOn.bind(accessory));
+      accessory
+        .getService("Shift " + accessory.context.displayName)
+        .getCharacteristic(Characteristic.On)
+        .on('set', this.setShiftOn.bind(accessory));
       accessory
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.On)
@@ -308,27 +312,39 @@ mculed.prototype.setOn = function(value, callback) {
  * @name setModeOn
  */
 
-mculed.prototype.setModeOn = function(value, callback) {
+function _setModeOn(value, callback, mode) {
   if (value) {
     // if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.On).value) {
 
-    // "value": "seven_color_cross_fade", "param": 750
-    // "value": "random_color", "param": 5000
+    // "value": "fade", "param": 750
+    // "value": "shift", "param": 5000
+
+    // this.log("THIS", JSON.stringify(this, null, 4));
 
     this.log("Turn Mode %s %s", this.context.name, value);
-    wsSend.call(this, '{ "cmd": "set", "func": "mode", "value": "xmas", "param": 5000 }', function(err) {
+    wsSend.call(this, '{ "cmd": "set", "func": "mode", "value": "' + mode.toLowerCase() + '", "param": 750 }', function(err) {
       callback(err);
     });
 
     // Turn off virtual switch after 3 seconds
 
     setTimeout(function() {
-      this.getService(Service.Switch)
+      this.getService(mode + " " + this.context.displayName)
         .setCharacteristic(Characteristic.On, false);
     }.bind(this), 3000);
   } else {
     callback(null, value);
   }
+}
+
+mculed.prototype.setShiftOn = function(value, callback) {
+  // this.log("THIS", JSON.stringify(this, null, 4));
+  _setModeOn.call(this, value, callback, "Shift");
+};
+
+mculed.prototype.setFadeOn = function(value, callback) {
+  // this.log("THIS", JSON.stringify(this, null, 4));
+  _setModeOn.call(this, value, callback, "Fade");
 };
 
 /**
@@ -496,10 +512,9 @@ mculed.prototype.addMcuAccessory = function(device, model) {
     if (model.includes("CLED")) {
       accessory
         .addService(Service.Lightbulb);
-      accessory.addService(Service.Switch, "Mode " + displayName, "Mode");
-      accessory.addService(Service.Switch, "Xmas " + displayName, "Xmas");
-      //accessory.setPrimaryService(accessory
-      //.getService(Service.Lightbulb));
+      accessory.addService(Service.Switch, "Fade " + displayName, "fade");
+      accessory.addService(Service.Switch, "Shift " + displayName, "shift");
+      accessory.addService(Service.Switch, "Xmas " + displayName, "xmas");
     }
 
     accessory.getService(Service.AccessoryInformation)

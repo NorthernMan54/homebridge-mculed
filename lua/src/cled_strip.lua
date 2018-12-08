@@ -12,41 +12,10 @@ local effectsTimer = tmr.create()
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
 local function hslToRgb(h1, s1, l1)
-  print("h1,s1,l1", h1, s1, l1)
-  -- print("Result", color_utils.hsv2grb(h1, s1 * 2.55, l1 * 255))
-return {color_utils.hsv2grb(h1, s1 * 2.55, l1 * 2.55)}
-  -- local r, g, b
+  -- print("h1,s1,l1", h1, s1, l1)
+  local g,r,b = color_utils.hsv2grb(h1, s1 * 2.55, l1 * 2.55)
+return {r,g,b}
 
-  -- local h, s, l = h1 / 360, s1 / 100, l1 / 100 * .5
-
-  -- if s == 0 then
-  -- r, g, b = 255, 255, 255 -- achromatic
-  -- else
-  -- local function hue2rgb(p, q, t)
-  -- if t < 0 then t = t + 1 end
-  -- if t > 1 then t = t - 1 end
-  -- if t < 1 / 6 then return p + (q - p) * 6 * t end
-  -- if t < 1 / 2 then return q end
-  -- if t < 2 / 3 then return p + (q - p) * (2 / 3 - t) * 6 end
-  -- return p
-  -- end
-
-  -- local q
-  -- if l < 0.5 then q = l * (1 + s) else q = l + s - l * s end
-  -- local p = 2 * l - q
-
-  -- r = hue2rgb(p, q, h + 1 / 3) * 255
-  -- g = hue2rgb(p, q, h) * 255
-  -- b = hue2rgb(p, q, h - 1 / 3) * 255
-  -- end
-
-  -- Power limiter, not used
-
-  -- local tp = 255 * 3 / ( r + g + b )
-
-  -- if tp > 1 then tp = 1 end
-
-  -- return math.floor(r * tp * l1 / 100), math.floor(g * tp * l1 / 100), math.floor(b * tp * l1 / 100)
 end
 
 disableLedTimer:register(500, tmr.ALARM_SEMI, function()
@@ -159,7 +128,7 @@ function module.setMode(mode, param)
   -- print("Turn off PWM mode")
   pwmControl(0)
   ws2812_effects.stop()
-  if mode == "seven_color_cross_fade" then
+  if mode == "fade" then
     effectsTimer:register(param, tmr.ALARM_AUTO, function()
       state.Hue = state.Hue + 1
       if state.Hue > 359 then
@@ -169,7 +138,7 @@ function module.setMode(mode, param)
       ws2812_effects.start()
     end)
     effectsTimer:start()
-  elseif mode == "xmas" then
+  elseif mode == "shift" then
     for i = 1, 24 do
       strip_buffer:set(i, colorGrad(i))
     end
