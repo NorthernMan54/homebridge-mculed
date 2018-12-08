@@ -12,11 +12,9 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
       * [Unit 1 - Completed unit](#unit-1---completed-unit)
       * [Unit 2 - Completed unit](#unit-2---completed-unit)
    * [Tools](#tools)
-   * [nodeMCU Firmware](#nodemcu-firmware)
-   * [Configuration](#configuration)
-   * [Provisioning and Running](#provisioning-and-running)
-   * [ESPlorer Snippets](#esplorer-snippets)
-      * [Memory](#memory)
+   * [Installation](#installation)
+      * [OTA Server Prequisites](#ota-server-prequisites)
+         * [Install lua and Lua modules](#install-lua-and-lua-modules)
 
 <!-- Added by: sgracey, at:  -->
 
@@ -39,17 +37,17 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 # Circuit Diagrams
 
 ## Schematic
-![CLED](mculed_v2_perf_schem.jpg)
+![CLED](diagrams/mculed_v2_perf_schem.jpg)
 ## Breadboard layout
-![CLED](mculed_v2_perf_bb.jpg)
+![CLED](diagrams/mculed_v2_perf_bb.jpg)
 ## Actual Breadboard layout
-![Breadboard](IMG_2846-2.JPG)
+![Breadboard](diagrams/IMG_2846-2.JPG)
 ## Unit 1 - layout
-![Perfboard](IMG_2857.jpg)
+![Perfboard](diagrams/IMG_2857.jpg)
 ## Unit 1 - Completed unit
-![Perfboard](IMG_2862.jpg)
+![Perfboard](diagrams/IMG_2862.jpg)
 ## Unit 2 - Completed unit
-![Perfboard](IMG_2890.JPG)
+![Perfboard](diagrams/IMG_2890.JPG)
 # Tools
 
 -   nodeMCU-uploader - Install instructions are here <https://github.com/kmpm/nodeMCU-uploader>
