@@ -12,9 +12,9 @@ local effectsTimer = tmr.create()
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
 local function hslToRgb(h1, s1, l1)
-  -- print("h1,s1,l1", h1, s1, l1)
+  print("h1,s1,l1", h1, s1, l1)
   -- print("Result", color_utils.hsv2grb(h1, s1 * 2.55, l1 * 255))
-return {color_utils.hsv2grb(h1, s1 * 2.55, l1 * 255)}
+return {color_utils.hsv2grb(h1, s1 * 2.55, l1 * 2.55)}
   -- local r, g, b
 
   -- local h, s, l = h1 / 360, s1 / 100, l1 / 100 * .5
@@ -150,7 +150,7 @@ end
 
 local function colorGrad(value)
   local hue = value * 120 % 360
-  return string.char(hslToRgb(hue, 100, 100))
+  return string.char(unpack(hslToRgb(hue, 100, 100)))
 end
 -- Set effect mode and parameter
 function module.setMode(mode, param)
@@ -175,7 +175,8 @@ function module.setMode(mode, param)
     end
     ws2812.write(strip_buffer)
     effectsTimer:register(param, tmr.ALARM_AUTO, function()
-      ws2812.shift(1, ws2812.SHIFT_CIRCULAR)
+      strip_buffer:shift(1, ws2812.SHIFT_CIRCULAR)
+      ws2812.write(strip_buffer)
     end)
     effectsTimer:start()
   else
