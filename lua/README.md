@@ -15,6 +15,11 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
    * [Installation](#installation)
       * [OTA Server Prequisites](#ota-server-prequisites)
          * [Install lua and Lua modules](#install-lua-and-lua-modules)
+      * [nodeMCU Firmware](#nodemcu-firmware)
+      * [Configuration](#configuration)
+      * [Provisioning and Running](#provisioning-and-running)
+   * [ESPlorer Snippets](#esplorer-snippets)
+      * [Memory](#memory)
 
 <!-- Added by: sgracey, at:  -->
 
@@ -66,7 +71,8 @@ brew install lua
 luarocks install luasocket
 luarocks install luafilesystem
 luarocks install md5
-luarocks install lua-cjson 2.1.0-1```
+luarocks install lua-cjson 2.1.0-1
+```
 
 ## nodeMCU Firmware
 
