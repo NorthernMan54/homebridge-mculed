@@ -106,7 +106,7 @@ sudo npm install -g homebridge-mculed
 
 See [README](lua/README.md) in lua directory
 
-# [Documentation](https://northernman54.github.io/homebridge-mculed/)
+# [API Documentation](https://northernman54.github.io/homebridge-mculed/)
 
 # Credits
 
