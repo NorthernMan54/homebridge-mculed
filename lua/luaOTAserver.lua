@@ -107,9 +107,9 @@ get_inventory = function(dir, cpuid)
   end
 
   -- Load the CPU's (or the default) inventory
-  local invtype, inventory = "custom", read_file("%s/ESP-%s.json" % {dir, cpuid})
+  local invtype, inventory = "custom", read_file("otaDeviceConfig/ESP-%s.json" % { cpuid})
   if not inventory then
-    invtype, inventory = "default", read_file(dir .. "/default.json")
+    invtype, inventory = "default", read_file("otaDeviceConfig/default.json")
   end
 
   -- tolerate and remove whitespace formatting, then decode

@@ -8,12 +8,12 @@
     "luaOTA/check.lua",
     "luaOTA/default.lua",
     "luaOTA/passwords.lua",
-    "init.lua",
     "initOta.lua",
     "led.lua",
     "main.lua",
-    "config-NODE-745E70.lua",
+    "config-NODE-DC4492.lua",
     "cled_strip.lua",
-    "websocket.lua"
+    "websocket.lua",
+    "init.lua"
   ]
 }
