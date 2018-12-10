@@ -21,8 +21,8 @@ local function run()
   websocket.createServer(80, function (socket)
     -- This gets executed once a websocket client connects, once per client
     -- websocket ping function resets softwd every 5 minutes
-    tmr.softwd(600)
-    local data
+    -- tmr.softwd(600)
+    -- local data
     --  node.output(function (msg)
     --    return socket.send(msg, 1)
     --  end, 1)
