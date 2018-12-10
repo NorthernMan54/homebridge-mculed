@@ -1,6 +1,7 @@
 {
   "secret": "yoursecret",
   "files": [
+    "config-NODE-AC545F.lua",
     "luaOTA/_doTick.lua",
     "luaOTA/_init.lua",
     "luaOTA/_provision.lua",
@@ -8,12 +9,12 @@
     "luaOTA/check.lua",
     "luaOTA/default.lua",
     "luaOTA/passwords.lua",
-    "init.lua",
     "initOta.lua",
     "led.lua",
     "main.lua",
-    "config-NODE-AC545F.lua",
     "cled_strip.lua",
-    "websocket.lua"
+    "led_strip.lua",
+    "websocket.lua",
+    "init.lua"
   ]
 }

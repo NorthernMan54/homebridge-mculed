@@ -125,7 +125,7 @@ end
 function module.setMode(mode, param)
   state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
   -- print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
-  -- print("Turn off PWM mode")
+  -- print("Turn off PWM mode") 
   pwmControl(0)
   ws2812_effects.stop()
   if mode == "fade" then
