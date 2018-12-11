@@ -2,23 +2,23 @@
 
 local module = {}
 
-local strip_buffer = ws2812.newBuffer(24, 3)
+local sb = ws2812.newBuffer(24, 3)
 
 local state = { Hue = 0, Saturation = 0, ColorTemperature = 140; pwm = true, Brightness = 20, On = false }
-local changeTimer = tmr.create()
-local disableLedTimer = tmr.create()
-local effectsTimer = tmr.create()
+local cTim = tmr.create()
+local dlTim = tmr.create()
+local eTim = tmr.create()
 
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
 local function hslToRgb(h1, s1, l1)
   -- print("h1,s1,l1", h1, s1, l1)
-  local g,r,b = color_utils.hsv2grb(h1, s1 * 2.55, l1 * 2.55)
-return {r,g,b}
-
+  local g, r, b = color_utils.hsv2grb(h1, s1 * 2.55, l1 * 2.55)
+  print("HSL",r, g, b)
+  return r, g, b
 end
 
-disableLedTimer:register(500, tmr.ALARM_SEMI, function()
+dlTim:register(500, tmr.ALARM_SEMI, function()
   local pin = 4
   -- print("disable led")
   ws2812_effects.stop()
@@ -31,12 +31,12 @@ local function pwmControl(value)
   pwm.start(config.pwm)
 end
 
-local function rgbControl(speed, delay, brightness, color, mode)
-  -- print("Color", unpack(color))
+local function rgbControl(speed, delay, brightness, r,g,b, mode)
+  print("Color", color)
   ws2812_effects.set_speed(speed)
   ws2812_effects.set_delay(delay)
   ws2812_effects.set_brightness(brightness)
-  ws2812_effects.set_color(unpack(color))
+  ws2812_effects.set_color(r,g,b)
   ws2812_effects.set_mode(mode)
 end
 
@@ -53,22 +53,22 @@ local function on(value)
     rgbControl(100, 100, 0, hslToRgb(0, 0, 0), "static")
   else
     -- print("Turning off RGB LED")
-    disableLedTimer:start()
+    dlTim:start()
     -- print("Turn off PWM mode")
     rgbControl(100, 100, 0, hslToRgb(0, 0, 0), "static")
     pwmControl(0)
-    effectsTimer:stop()
+    eTim:stop()
   end
   ws2812_effects.start()
 end
 
-changeTimer:register(150, tmr.ALARM_SEMI, function() on(true) end)
+cTim:register(150, tmr.ALARM_SEMI, function() on(true) end)
 
 function module.setHue(value)
   state.Hue = value;
   state.pwm = false;
   state.ColorTemperature = 0;
-  changeTimer:start()
+  cTim:start()
 end
 
 function module.setOn(value)
@@ -77,19 +77,19 @@ function module.setOn(value)
   state.Hue = 0;
   state.Saturation = 0;
   state.ColorTemperature = 140;
-  changeTimer:start()
+  cTim:start()
 end
 
 function module.setSaturation(value)
   state.Saturation = value;
   state.pwm = false;
   state.ColorTemperature = 0;
-  changeTimer:start()
+  cTim:start()
 end
 
 function module.setBrightness(value)
   state.Brightness = value;
-  changeTimer:start()
+  cTim:start()
 end
 
 -- Colour temperature just turns on LED's
@@ -99,7 +99,7 @@ function module.setCT(value)
   state.Hue = 0;
   state.Saturation = 0;
   state.ColorTemperature = value;
-  changeTimer:start()
+  cTim:start()
 end
 
 function module.getStatus()
@@ -114,22 +114,19 @@ function module.onButton()
   else
     state = { Hue = 0, Saturation = 0, ColorTemperature = 140; pwm = true, Brightness = 100, On = true }
   end
-  changeTimer:start()
+  cTim:start()
 end
 
-local function colorGrad(value)
-  local hue = value * 120 % 360
-  return string.char(unpack(hslToRgb(hue, 100, 100)))
-end
 -- Set effect mode and parameter
 function module.setMode(mode, param)
   state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
-  -- print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), strip_buffer:power())
-  -- print("Turn off PWM mode") 
+  -- print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), sb:power())
+  -- print("Turn off PWM mode")
   pwmControl(0)
   ws2812_effects.stop()
   if mode == "fade" then
-    effectsTimer:register(param, tmr.ALARM_AUTO, function()
+    -- Full strip slowly fades across all colors
+    eTim:register(param, tmr.ALARM_AUTO, function()
       state.Hue = state.Hue + 1
       if state.Hue > 359 then
         state.Hue = 0
@@ -137,42 +134,63 @@ function module.setMode(mode, param)
       rgbControl(100, 100, 255, hslToRgb(state.Hue, state.Saturation, state.Brightness), "static")
       ws2812_effects.start()
     end)
-    effectsTimer:start()
-  elseif mode == "shift" then
-    for i = 1, 24 do
-      strip_buffer:set(i, colorGrad(i))
-    end
-    ws2812.write(strip_buffer)
-    effectsTimer:register(param, tmr.ALARM_AUTO, function()
-      strip_buffer:shift(1, ws2812.SHIFT_CIRCULAR)
-      ws2812.write(strip_buffer)
-    end)
-    effectsTimer:start()
-  else
 
-  end
+  elseif mode == "shift" then
+    -- Each section rotates thru the RGB
+    for i = 1, 24 do
+      sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
+    end
+    -- ws2812.write(sb)
+    eTim:register(param, tmr.ALARM_AUTO, function()
+      sb:shift(1, ws2812.SHIFT_CIRCULAR)
+      ws2812.write(sb)
+    end)
+  elseif mode == "slide" then
+    -- Each section slides thru the RGB
+    for i = 1, 24 do
+      sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
+    end
+    -- ws2812.write(sb)
+    eTim:register(1000, tmr.ALARM_AUTO, function()
+      for i = 1, 24 do
+      local hsv = require('hsx')
+      -- print("LED", i, sb:get(i))
+      local hue = hsv.rgb2hsv(sb:get(i))
+      -- print("Hue", i, hue)
+      hue = hue + 1
+      if hue > 359 then
+        hue = 0
+      end
+      -- print("New", i, unpack(hslToRgb(hue, 100, 100)))
+      sb:set(i, unpack(hslToRgb(hue, 100, 100)))
+    end
+    ws2812.write(sb)
+  end)
+
+end
+eTim:start()
 end
 
 -- Button press / power toggle
 
 function module.colorButton()
-  if state.On then
-    state = { Hue = state.Hue + 360 / 12, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = state.Brightness, On = true }
-    if state.Hue > 359 then
-      state.Hue = 0
-    end
-  else
-    state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
+if state.On then
+  state = { Hue = state.Hue + 360 / 12, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = state.Brightness, On = true }
+  if state.Hue > 359 then
+    state.Hue = 0
   end
-  changeTimer:start()
+else
+  state = { Hue = 0, Saturation = 100, ColorTemperature = 0; pwm = false, Brightness = 100, On = true }
+end
+cTim:start()
 end
 
 -- Module init
 
 function module.init(wsserver)
-  ws2812.init()
-  ws2812_effects.init(strip_buffer)
-  on(false)
+ws2812.init()
+ws2812_effects.init(sb)
+on(false)
 end
 
 return module

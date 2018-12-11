@@ -197,7 +197,7 @@ provision = function(esp, config, inventory, fingerprint)
           content = content:gsub("%-%-[^\n]*", "")
           size = #content
         end
-        if ( size < 6000 ) then -- If the file is too large, don't send as a compile file
+        if ( size < 5000 ) then -- If the file is too large, don't send as a compile file
           action = "cm"
         else
           action = "dl"

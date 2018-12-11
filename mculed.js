@@ -80,6 +80,10 @@ mculed.prototype.configureAccessory = function(accessory) {
         .getCharacteristic(Characteristic.On)
         .on('set', this.setShiftOn.bind(accessory));
       accessory
+        .getService("Slide " + accessory.context.displayName)
+        .getCharacteristic(Characteristic.On)
+        .on('set', this.setSlideOn.bind(accessory));
+      accessory
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.On)
         .on('set', this.setOn.bind(accessory));
@@ -318,6 +322,7 @@ function _setModeOn(value, callback, mode) {
 
     // "value": "fade", "param": 750
     // "value": "shift", "param": 5000
+    // "value": "slide", "param": 750
 
     // this.log("THIS", JSON.stringify(this, null, 4));
 
@@ -342,6 +347,11 @@ mculed.prototype.setShiftOn = function(value, callback) {
   _setModeOn.call(this, value, callback, "Shift");
 };
 
+mculed.prototype.setSlideOn = function(value, callback) {
+  // this.log("THIS", JSON.stringify(this, null, 4));
+  _setModeOn.call(this, value, callback, "Slide");
+};
+
 mculed.prototype.setFadeOn = function(value, callback) {
   // this.log("THIS", JSON.stringify(this, null, 4));
   _setModeOn.call(this, value, callback, "Fade");
@@ -355,7 +365,6 @@ mculed.prototype.setFadeOn = function(value, callback) {
 
 mculed.prototype.setXmasOn = function(value, callback) {
   if (value) {
-
     this.context.xmasValue = this.context.xmasValue + 120;
 
     if (this.context.xmasValue > 359) {
@@ -514,6 +523,7 @@ mculed.prototype.addMcuAccessory = function(device, model) {
         .addService(Service.Lightbulb);
       accessory.addService(Service.Switch, "Fade " + displayName, "fade");
       accessory.addService(Service.Switch, "Shift " + displayName, "shift");
+      accessory.addService(Service.Switch, "Slide " + displayName, "Slide");
       accessory.addService(Service.Switch, "Xmas " + displayName, "xmas");
     }
 
