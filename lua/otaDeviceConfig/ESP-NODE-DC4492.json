@@ -15,7 +15,6 @@
     "cled_strip.lua",
     "led_strip.lua",
     "websocket.lua",
-    "hsv.lua",
     "hsx.lua",
     "init.lua"
   ]

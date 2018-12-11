@@ -14,7 +14,7 @@ local eTim = tmr.create()
 local function hslToRgb(h1, s1, l1)
   -- print("h1,s1,l1", h1, s1, l1)
   local g, r, b = color_utils.hsv2grb(h1, s1 * 2.55, l1 * 2.55)
-  print("HSL",r, g, b)
+  -- print("HSL",r, g, b)
   return r, g, b
 end
 
@@ -31,12 +31,12 @@ local function pwmControl(value)
   pwm.start(config.pwm)
 end
 
-local function rgbControl(speed, delay, brightness, r,g,b, mode)
-  print("Color", color)
+local function rgbControl(speed, delay, brightness, color, mode)
+  --print("Color", r,g,b,mode)
   ws2812_effects.set_speed(speed)
   ws2812_effects.set_delay(delay)
   ws2812_effects.set_brightness(brightness)
-  ws2812_effects.set_color(r,g,b)
+  ws2812_effects.set_color(unpack(color))
   ws2812_effects.set_mode(mode)
 end
 
@@ -44,18 +44,18 @@ local function on(value)
   ws2812_effects.stop()
   if value == true and state.On == true and state.pwm == false then
     -- print("hslToRgb",hslToRgb(state.Hue, state.Saturation, state.Brightness))
-    rgbControl(100, 100, 255, hslToRgb(state.Hue, state.Saturation, state.Brightness), "static")
+    rgbControl(100, 100, 255, {hslToRgb(state.Hue, state.Saturation, state.Brightness)}, "static")
     pwmControl(0)
   elseif value == true and state.On == true and state.pwm == true then
     -- print("Turning on White PWM LED", state.Brightness)
     -- print("hslToRgb",hslToRgb(state.Hue, state.Saturation, state.Brightness))
     pwmControl(state.Brightness * 10)
-    rgbControl(100, 100, 0, hslToRgb(0, 0, 0), "static")
+    rgbControl(100, 100, 0, {hslToRgb(0, 0, 0)}, "static")
   else
     -- print("Turning off RGB LED")
     dlTim:start()
     -- print("Turn off PWM mode")
-    rgbControl(100, 100, 0, hslToRgb(0, 0, 0), "static")
+    rgbControl(100, 100, 0, {hslToRgb(0, 0, 0)}, "static")
     pwmControl(0)
     eTim:stop()
   end
@@ -131,7 +131,7 @@ function module.setMode(mode, param)
       if state.Hue > 359 then
         state.Hue = 0
       end
-      rgbControl(100, 100, 255, hslToRgb(state.Hue, state.Saturation, state.Brightness), "static")
+      rgbControl(100, 100, 255, {hslToRgb(state.Hue, state.Saturation, state.Brightness)}, "static")
       ws2812_effects.start()
     end)
 
@@ -151,7 +151,7 @@ function module.setMode(mode, param)
       sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
     end
     -- ws2812.write(sb)
-    eTim:register(1000, tmr.ALARM_AUTO, function()
+    eTim:register(1500, tmr.ALARM_AUTO, function()
       for i = 1, 24 do
       local hsv = require('hsx')
       -- print("LED", i, sb:get(i))
@@ -161,8 +161,8 @@ function module.setMode(mode, param)
       if hue > 359 then
         hue = 0
       end
-      -- print("New", i, unpack(hslToRgb(hue, 100, 100)))
-      sb:set(i, unpack(hslToRgb(hue, 100, 100)))
+      -- print("New", i, hslToRgb(hue, 100, 100))
+      sb:set(i, hslToRgb(hue, 100, 100))
     end
     ws2812.write(sb)
   end)

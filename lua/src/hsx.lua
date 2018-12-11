@@ -16,7 +16,6 @@
  Lua 5.1+, LuaJIT
 
  LICENSE
-
  See end of file for license information.
 
 --]]
