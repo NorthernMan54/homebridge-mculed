@@ -11,7 +11,6 @@ gc(); gc()
 local function getbuf() -- upval: buf, table
   if #buf > 0 then return table.remove(buf, 1) end -- else return nil
 end
-
 -- Process a provisioning request record
 local function receiveRec(socket, rec) -- upval: self, buf, crypto
   -- Note that for 2nd and subsequent responses, we assme that the service has
@@ -122,10 +121,19 @@ local function receiveRec(socket, rec) -- upval: self, buf, crypto
       file.writeline(json.encode(cmd))
       file.close()
       socket:close()
-      print("Restarting to load new application")
-      tmr.create():alarm(2000, tmr.ALARM_SINGLE, function()
-        node.restart() -- reboot just schedules a restart
-      end)
+      -- print("Restarting to load new application")
+      package.loaded["luaOTA/_provision"]=nil
+      package.loaded["luaOTA.check"]=nil
+      package.loaded["init"]=nil
+      local compilelua = "luaOTA/compile.lua"
+      if file.exists(compilelua) then
+        dofile(compilelua)(compilelua)
+      end
+      compilelua = nil
+      dofile("luaOTA/compile.lc")()
+      --tmr.create():alarm(2000, tmr.ALARM_SINGLE, function()
+        --node.restart() -- reboot just schedules a restart
+      --end)
       return
     end
   end

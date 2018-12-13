@@ -9,6 +9,7 @@
     "luaOTA/check.lua",
     "luaOTA/default.lua",
     "luaOTA/passwords.lua",
+    "luaOTA/compile.lua",
     "initOta.lua",
     "led.lua",
     "main.lua",

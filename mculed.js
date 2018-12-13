@@ -84,6 +84,10 @@ mculed.prototype.configureAccessory = function(accessory) {
         .getCharacteristic(Characteristic.On)
         .on('set', this.setSlideOn.bind(accessory));
       accessory
+        .getService("Slip " + accessory.context.displayName)
+        .getCharacteristic(Characteristic.On)
+        .on('set', this.setSlipOn.bind(accessory));
+      accessory
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.On)
         .on('set', this.setOn.bind(accessory));
@@ -184,7 +188,7 @@ function onMessage(accessory, response) {
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.Brightness).updateValue(message[k]);
         break;
-      case "Saturation":
+      case "sat":
         // this.log("Setting %s saturation to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
@@ -196,7 +200,7 @@ function onMessage(accessory, response) {
           .getService(Service.Lightbulb)
           .getCharacteristic(Characteristic.Hue).updateValue(message[k]);
         break;
-      case "ColorTemperature":
+      case "cTemp":
         // this.log("Setting %s ColorTemperature to %s", accessory.context.name, message[k]);
         accessory
           .getService(Service.Lightbulb)
@@ -322,7 +326,8 @@ function _setModeOn(value, callback, mode) {
 
     // "value": "fade", "param": 750
     // "value": "shift", "param": 5000
-    // "value": "slide", "param": 750
+    // "value": "slide", "param": 1500
+    // "value": "slip", "param": 1500
 
     // this.log("THIS", JSON.stringify(this, null, 4));
 
@@ -350,6 +355,11 @@ mculed.prototype.setShiftOn = function(value, callback) {
 mculed.prototype.setSlideOn = function(value, callback) {
   // this.log("THIS", JSON.stringify(this, null, 4));
   _setModeOn.call(this, value, callback, "Slide");
+};
+
+mculed.prototype.setSlipOn = function(value, callback) {
+  // this.log("THIS", JSON.stringify(this, null, 4));
+  _setModeOn.call(this, value, callback, "Slip");
 };
 
 mculed.prototype.setFadeOn = function(value, callback) {
@@ -524,6 +534,7 @@ mculed.prototype.addMcuAccessory = function(device, model) {
       accessory.addService(Service.Switch, "Fade " + displayName, "fade");
       accessory.addService(Service.Switch, "Shift " + displayName, "shift");
       accessory.addService(Service.Switch, "Slide " + displayName, "Slide");
+      accessory.addService(Service.Switch, "Slip " + displayName, "Slip");
       accessory.addService(Service.Switch, "Xmas " + displayName, "xmas");
     }
 

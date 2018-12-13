@@ -1,6 +1,7 @@
 --SAFETRIM
 
 print("Last failure", node.bootreason());
+
 DEBUG = false
 PDEBUG = false
 tmr.create():alarm(1000, tmr.ALARM_SINGLE, function()

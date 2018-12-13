@@ -44,7 +44,7 @@ function self.sign(arg) --upval: crypto, json, self
 end
 
 function self.startApp(arg) --upval: gc, self, tmr, wifi
-  --package.loaded["luaOTA.check"]=nil
+  package.loaded["luaOTA.check"]=nil
   gc();gc()
   tmr.unregister(0)
   self.socket = nil

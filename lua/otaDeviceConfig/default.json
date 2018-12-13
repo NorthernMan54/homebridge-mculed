@@ -8,6 +8,7 @@
     "luaOTA/check.lua",
     "luaOTA/default.lua",
     "luaOTA/passwords.lua",
+    "luaOTA/compile.lua",
     "led_strip.lua",
     "initOta.lua",
     "led.lua",

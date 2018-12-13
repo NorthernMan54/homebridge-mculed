@@ -41,7 +41,7 @@ local function run()
             mod.setBrightness(cmd["value"])
           elseif cmd["func"] == "hue" then
             mod.setHue(cmd["value"])
-          elseif cmd["func"] == "saturation" then
+          elseif cmd["func"] == "sat" then
             mod.setSaturation(cmd["value"])
           elseif cmd["func"] == "mode" then
             mod.setMode(cmd["value"], cmd["param"])

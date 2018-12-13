@@ -69,7 +69,13 @@ local function main ()
     -- receive the opening request
     local config = receive_and_parse(esp)
     if config and config.a == "HI" then
-      print ("Processing provision check from ESP-"..config.id)
+      local date_table = os.date("*t")
+      local ms = string.match(tostring(os.clock()), "%d%.(%d+)")
+      local hour, minute, second = date_table.hour, date_table.min, date_table.sec
+      local year, month, day = date_table.year, date_table.month, date_table.wday
+      local result = string.format("%d-%d-%d %d:%d:%d:%s", year, month, day, hour, minute, second, ms)
+
+      print (result.." - Processing provision check from ESP-"..config.id)
       local inventory, fingerprint = get_inventory(src_dir, config.id)
       -- Process the ESP request
       if config.chk and config.chk == fingerprint then
@@ -197,11 +203,11 @@ provision = function(esp, config, inventory, fingerprint)
           content = content:gsub("%-%-[^\n]*", "")
           size = #content
         end
-        if ( size < 5000 ) then -- If the file is too large, don't send as a compile file
-          action = "cm"
-        else
+        -- if ( size > 1 ) then -- If the file is too large, don't send as a compile file
+          -- action = "cm"
+        -- else
           action = "dl"
-        end
+        -- end
       else
         action = "dl"
       end
