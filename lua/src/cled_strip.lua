@@ -9,6 +9,7 @@ local dlTim = tmr.create()
 local eTim = tmr.create()
 local hsv = require('hsx')
 
+
 dlTim:register(500, tmr.ALARM_SEMI, function()
   local pin = 4
   ws2812_effects.stop()
@@ -109,14 +110,14 @@ end
 local function slide()
   eTim:register(1500, tmr.ALARM_AUTO, function()
     for i = 1, 24 do
-    print("LED", i, sb:get(i))
+    -- print("LED", i, sb:get(i))
     local hue = hsv.rgb2hsv(sb:get(i))
-    print("Hue", i, hue)
+    -- print("Hue", i, hue)
     hue = hue + 1
     if hue > 359 then
       hue = 0
     end
-    print("New", i, hsv.hslToRgb(hue, 100, 100))
+    -- print("New", i, hsv.hslToRgb(hue, 100, 100))
     sb:set(i, hsv.hslToRgb(hue, 100, 100))
   end
   ws2812.write(sb)

@@ -68,15 +68,6 @@ function self.socket_send(socket, rec, opt_buffer)
 return socket:send(self.sign(rec) .. (opt_buffer or ''))
 end
 
---turn off leds
---function o()
---  ws2812.init()
---  local sb = ws2812.newBuffer(24, 3)
---  sb:fill(0, 0, 0)
---  ws2812.write(sb)
---  sb=nil
---end
-
 self.post(function() -- upval: self
 -- This config check is to prevent a double execution if the
 -- user invokes with "require 'luaOTA/check':_init( etc>)" form

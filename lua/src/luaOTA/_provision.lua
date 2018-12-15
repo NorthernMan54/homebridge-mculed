@@ -121,16 +121,18 @@ local function receiveRec(socket, rec) -- upval: self, buf, crypto
       file.writeline(json.encode(cmd))
       file.close()
       socket:close()
-      -- print("Restarting to load new application")
       package.loaded["luaOTA/_provision"]=nil
       package.loaded["luaOTA.check"]=nil
       package.loaded["init"]=nil
-      local compilelua = "luaOTA/compile.lua"
-      if file.exists(compilelua) then
-        dofile(compilelua)(compilelua)
-      end
-      compilelua = nil
-      dofile("luaOTA/compile.lc")()
+      print("Compiling updated modules")
+      tmr.create():alarm(5000, tmr.ALARM_SINGLE, function()
+        local compilelua = "luaOTA/compile.lua"
+        if file.exists(compilelua) then
+          dofile(compilelua)(compilelua)
+        end
+        compilelua = nil
+        dofile("luaOTA/compile.lc")()
+      end)
       --tmr.create():alarm(2000, tmr.ALARM_SINGLE, function()
         --node.restart() -- reboot just schedules a restart
       --end)
