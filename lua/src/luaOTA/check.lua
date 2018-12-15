@@ -57,6 +57,12 @@ function self.startApp(arg) --upval: gc, self, tmr, wifi
     self = nil
     --print("arg",arg)
     tmr.create():alarm(2000, tmr.ALARM_SINGLE, function()
+      local compilelua = "luaOTA/compile.lua"
+      if file.exists(compilelua) then
+        dofile(compilelua)(compilelua)
+      end
+      compilelua = nil
+      dofile("luaOTA/compile.lc")()
       print("Running program",appMod,appMethod)
       log("pre: require", node.heap())
       require(appMod)[appMethod](arg)

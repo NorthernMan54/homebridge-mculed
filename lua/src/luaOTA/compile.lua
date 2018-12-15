@@ -5,18 +5,25 @@
 -- Skip init.lua!
 
 return function(filename)
+  local reboot = false
     local function compileAndRemoveIfNeeded(f)
         if file.exists(f) then
             print('Compiling:', f)
             collectgarbage()
-            tmr.wdclr()
+            -- tmr.wdclr()
             print("Heap Available: C " .. node.heap())
             node.compile(f)
+            reboot = true
             file.remove(f)
-            print("done")
+            -- print("done")
             collectgarbage()
         end
     end
+
+    package.loaded["luaOTA._provision"]=nil
+    package.loaded["luaOTA.check"]=nil
+    package.loaded["init"]=nil
+    collectgarbage();collectgarbage()
 
     if filename then
         compileAndRemoveIfNeeded(filename)
@@ -32,8 +39,12 @@ return function(filename)
 
     compileAndRemoveIfNeeded = nil
     collectgarbage()
-    print("Compile completed, rebooting")
-    tmr.create():alarm(2000, tmr.ALARM_SINGLE, function()
-      node.restart() -- reboot just schedules a restart
-    end)
+    if(reboot) then
+      print("Compile completed, rebooting")
+      node.restart()
+      -- tmr.create():alarm(2000, tmr.ALARM_SINGLE, function()
+        -- node.restart() -- reboot just schedules a restart
+      -- end)
+    end
+    print("Heap Available: D " .. node.heap())
 end

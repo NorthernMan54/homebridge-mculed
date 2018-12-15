@@ -1,5 +1,4 @@
 --SAFETRIM
--- function _provision(self,socket,first_rec)
 
 local self, socket, first_rec = ...
 local crypto, file, json, node, table = crypto, file, sjson, node, table
@@ -121,21 +120,20 @@ local function receiveRec(socket, rec) -- upval: self, buf, crypto
       file.writeline(json.encode(cmd))
       file.close()
       socket:close()
-      package.loaded["luaOTA/_provision"]=nil
-      package.loaded["luaOTA.check"]=nil
-      package.loaded["init"]=nil
-      print("Compiling updated modules")
-      tmr.create():alarm(5000, tmr.ALARM_SINGLE, function()
-        local compilelua = "luaOTA/compile.lua"
-        if file.exists(compilelua) then
-          dofile(compilelua)(compilelua)
-        end
-        compilelua = nil
-        dofile("luaOTA/compile.lc")()
+
+      print("Rebooting to clean up")
+
+      -- tmr.create():alarm(5000, tmr.ALARM_SINGLE, function()
+      --  local compilelua = "luaOTA/compile.lua"
+      --  if file.exists(compilelua) then
+      --    dofile(compilelua)(compilelua)
+      --  end
+      --  compilelua = nil
+      --  dofile("luaOTA/compile.lc")()
+      -- end)
+      tmr.create():alarm(2000, tmr.ALARM_SINGLE, function()
+        node.restart() -- reboot just schedules a restart
       end)
-      --tmr.create():alarm(2000, tmr.ALARM_SINGLE, function()
-        --node.restart() -- reboot just schedules a restart
-      --end)
       return
     end
   end

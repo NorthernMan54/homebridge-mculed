@@ -7,7 +7,7 @@ local wifi, net = wifi, net
 local sta = wifi.sta
 local config, log, startApp = self.config, self.log, self.startApp
 local tick_count = 0
-local lua_mdns
+local lua_mdns, conn
 local gc=collectgarbage
 
 local function socket_close(socket) --upval: self, startApp

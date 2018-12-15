@@ -5,11 +5,8 @@ local mod
 local module = {}
 
 local function run()
-  if PDEBUG then
-    dofile("websocket.lc")
-  else
-    dofile("websocket.lc")
-  end
+
+  dofile("websocket.lc")
 
   local responseTimer = tmr.create()
   responseTimer:register(60, tmr.ALARM_SEMI, function()
@@ -72,7 +69,9 @@ local function run()
         -- Not a json message
         print("Not a json message, ignoring")
       end
+      collectgarbage();collectgarbage()
     end
+  -- end of websocket server function
   end)
   return(responseTimer)
 end

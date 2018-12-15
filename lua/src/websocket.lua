@@ -128,6 +128,7 @@ do
           return conn:send(data, onSend)
         end
         waiting = false
+        collectgarbage();collectgarbage()
       end
 
       function socket.send(...) -- Client function
@@ -156,7 +157,8 @@ do
           local extra, payload, opcode = decode(buffer)
           if not extra then return end
           buffer = extra
-
+          -- print("OP",conn:getpeer())
+          -- print(opcode,payload)
           if opcode == 9 then  -- WebSocket ping message
             tmr.softwd(600)
             socket.send(" ",0xA)   -- Pong message

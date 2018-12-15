@@ -138,6 +138,7 @@ function openSocket(accessory) {
     this.log("Repopening closed connection", accessory.context.name);
     setTimeout(function() {
       openSocket.call(this, accessory);
+      sockets[accessory.context.name]
     }.bind(this), 10000);
   }.bind(this));
 
@@ -155,16 +156,22 @@ function openSocket(accessory) {
     sockets[accessory.context.name].send('{ "cmd": "get", "func": "status" }');
   }.bind(this));
 
+  // this.log.debug("keepAlive", keepAlive[accessory.context.name]);
+
+  clearInterval(keepAlive[accessory.context.name]);
+  // console.trace("Here I am!");
+
   keepAlive[accessory.context.name] = setInterval(function ping() {
-    // this.log.debug("ping", accessory.context.name, sockets[accessory.context.name].readyState);
+    // this.log.debug("ping-1", accessory.context.name, sockets[accessory.context.name].readyState);
     if (sockets[accessory.context.name].readyState === WebSocket.OPEN) {
+      this.log.debug("ping-2", accessory.context.name, sockets[accessory.context.name].readyState);
       sockets[accessory.context.name].ping(" ");
     } else { //
       accessory
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.On).updateValue(new Error("Not responding"));
     }
-  }, 10000);
+  }.bind(this), 10000);
 }
 
 /**
