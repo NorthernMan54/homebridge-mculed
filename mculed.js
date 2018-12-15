@@ -471,7 +471,7 @@ mculed.prototype.setSaturation = function(value, callback) {
   } else {
     if (value !== this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value) {
       this.log("Turn SAT %s %s", this.context.name, value, this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).value);
-      wsSend.call(this, '{ "cmd": "set", "func": "saturation", "value": ' + value + ' }', function(err) {
+      wsSend.call(this, '{ "cmd": "set", "func": "sat", "value": ' + value + ' }', function(err) {
         callback(err);
       });
     } else {

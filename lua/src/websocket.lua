@@ -100,12 +100,12 @@ do
   -- Broadcast message to all websocket clients
 
   function websocket.send(message)
-    print("Heap Available: 1 " .. node.heap())
+    -- print("Heap Available: 1 " .. node.heap())
     for i, client in pairs(clients) do
-      print("Heap Available: 2 " .. node.heap())
+      -- print("Heap Available: 2 " .. node.heap())
       print("Sending to client", i)
       client.send(message)
-      print("Heap Available: 3 " .. node.heap())
+      -- print("Heap Available: 3 " .. node.heap())
     end
   end
 
