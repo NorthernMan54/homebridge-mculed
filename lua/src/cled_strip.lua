@@ -9,9 +9,86 @@ local dlTim = tmr.create()
 local eTim = tmr.create()
 -- local hsv = require('hsx')
 
+-- local function hslToRgb(h1, s1, l1)
+--  local g, r, b = color_utils.hsv2grb(h1, s1 * 2.55, l1 * 2.55)
+--  print("setting",r,g,b)
+--  return r, g, b
+-- end
+
+-- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
+
 local function hslToRgb(h1, s1, l1)
-  local g, r, b = color_utils.hsv2grb(h1, s1 * 2.55, l1 * 2.55)
-  return r, g, b
+  local r, g, b
+
+  local h, s, l = h1 / 360, s1 / 100, l1 / 100 * .5
+
+  if s == 0 then
+    r, g, b = 255, 255, 255 -- achromatic
+  else
+    local function hue2rgb(p, q, t)
+      if t < 0 then t = t + 1 end
+      if t > 1 then t = t - 1 end
+      if t < 1 / 6 then return p + (q - p) * 6 * t end
+      if t < 1 / 2 then return q end
+      if t < 2 / 3 then return p + (q - p) * (2 / 3 - t) * 6 end
+      return p
+    end
+
+    local q
+    if l < 0.5 then q = l * (1 + s) else q = l + s - l * s end
+    local p = 2 * l - q
+
+    r = hue2rgb(p, q, h + 1 / 3) * 255
+    g = hue2rgb(p, q, h) * 255
+    b = hue2rgb(p, q, h - 1 / 3) * 255
+  end
+
+  -- Power limiter, not used
+
+  local tp = 255 * 1 / ( r + g + b )
+
+  if tp > 1 then tp = 1 end
+
+  return math.floor(r * tp * l1 / 100), math.floor(g * tp * l1 / 100), math.floor(b * tp * l1 / 100)
+end
+
+
+-- local function rgb2hsv( r, g, b )
+--  local min, max, abs = math.min, math.max, math.abs
+--  local M, m = max( r, g, b ), min( r, g, b )
+--  local C = M - m
+--  local K = 1.0 / (6.0 * C)
+--  local h = 0.0
+--  if C ~= 0.0 then
+--    if M == r then h = ((g - b) * K) % 1.0
+--    elseif M == g then h = (b - r) * K + 1.0 / 3.0
+--    else h = (r - g) * K + 2.0 / 3.0
+--    end
+--  end
+--  -- Hue should be in degrees
+--  h = math.floor(h * 360 + .5)
+--  return h, M == 0.0 and 0.0 or C / M, M
+-- end
+
+function rgb2hsl( r, g, b )
+  local min, max, abs = math.min, math.max, math.abs
+  local M, m = max( r, g, b ), min( r, g, b )
+  local C = M - m
+  local K = 1.0 / (6 * C)
+  local h = 0
+  if C ~= 0 then
+    if M == r then h = ((g - b) * K) % 1.0
+    elseif M == g then h = (b - r) * K + 1.0 / 3.0
+    else h = (r - g) * K + 2.0 / 3.0
+    end
+  end
+  local l = 0.5 * (M + m)
+  local s = 0
+  if l > 0 and l < 1 then
+    s = C / (1 - abs(l + l - 1))
+  end
+  h = math.floor(h * 360 + .5)
+  return h, s, l
 end
 
 dlTim:register(500, tmr.ALARM_SEMI, function()
@@ -114,63 +191,62 @@ end
 local function slide()
   eTim:register(1500, tmr.ALARM_AUTO, function()
     for i = 1, 24 do
-      -- print("LED", i, sb:get(i))
-      local r,g,b = sb:get(i)
-      local hue = color_utils.grb2hsv(g,r,b)
-      -- print("Hue", i, hue)
-      hue = hue + 1
-      if hue > 359 then
-        hue = 0
-      end
-      -- print("New", i, hslToRgb(hue, 100, 100))
-      sb:set(i, hslToRgb(hue, 100, 100))
+    -- print("LED", i, sb:get(i))
+    local hue, s, l = rgb2hsl(sb:get(i))
+    -- print("Hue", i, hue, s, l)
+    hue = hue + 2
+    if hue > 359 then
+      hue = 0
     end
-    ws2812.write(sb)
-  end)
+    -- print("New", i, hslToRgb(hue, 100, 100))
+    sb:set(i, hslToRgb(hue, 100, 100))
+  end
+  ws2812.write(sb)
+end)
 end
 
 -- Set effect mode and parameter
 
 function module.setMode(mode, param)
-  state = { Hue = 0, sat = 100, cTemp = 0; pwm = false, Brightness = 100, On = true }
-  -- print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), sb:power())
-  -- print("Turn off PWM mode")
-  pwmControl(0)
-  ws2812_effects.stop()
-  if mode == "fade" then
-    -- Full strip slowly fades across all colors
-    eTim:register(param, tmr.ALARM_AUTO, function()
-      state.Hue = state.Hue + 1
-      if state.Hue > 359 then
-        state.Hue = 0
-      end
-      rgbControl(100, 100, 255, {hslToRgb(state.Hue, state.sat, state.Brightness)}, "static")
-      ws2812_effects.start()
-    end)
-  elseif mode == "shift" then
-    -- Each section rotates thru the RGB
-    for i = 1, 24 do
-      sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
+state = { Hue = 0, sat = 100, cTemp = 0; pwm = false, Brightness = 100, On = true }
+-- print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), sb:power())
+-- print("Turn off PWM mode")
+pwmControl(0)
+ws2812_effects.stop()
+if mode == "fade" then
+  -- Full strip slowly fades across all colors
+  eTim:register(param, tmr.ALARM_AUTO, function()
+    state.Hue = state.Hue + 1
+    if state.Hue > 239 then
+      state.Hue = 0
     end
-    -- ws2812.write(sb)
-    eTim:register(param, tmr.ALARM_AUTO, function()
-      sb:shift(1, ws2812.SHIFT_CIRCULAR)
-      ws2812.write(sb)
-    end)
-  elseif mode == "slide" then
-    -- Each section slides thru the RGB
-    for i = 1, 24 do
-      sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
-    end
-    slide()
-  elseif mode == "slip" then
-    -- Slip the whole strip thru the color spectrum
-    for i = 1, 24 do
-      sb:set(i, hslToRgb(i * 5, 100, 100))
-    end
-    slide()
+    rgbControl(100, 100, 255, {hslToRgb(state.Hue, state.sat, state.Brightness)}, "static")
+    ws2812_effects.start()
+  end)
+elseif mode == "shift" then
+  -- Each section rotates thru the RGB
+  for i = 1, 24 do
+    sb:set(i, hslToRgb(i * 120 % 240, 100, 100))
   end
-  eTim:start()
+  -- ws2812.write(sb)
+  eTim:register(param, tmr.ALARM_AUTO, function()
+    sb:shift(1, ws2812.SHIFT_CIRCULAR)
+    ws2812.write(sb)
+  end)
+elseif mode == "slide" then
+  -- Each section slides thru the RGB
+  for i = 1, 24 do
+    sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
+  end
+  slide()
+elseif mode == "slip" then
+  -- Slip the whole strip thru the color spectrum
+  for i = 1, 24 do
+    sb:set(i, hslToRgb(i * 5, 100, 100))
+  end
+  slide()
+end
+eTim:start()
 end
 
 -- Button press / power toggle
