@@ -8,7 +8,7 @@ function ctrl_c() {
 
 OS=`uname -s`
 if [[ "$OS" == 'Darwin' ]]; then
-  dns-sd -R "My Test" _mculedProv._tcp. local 8266 &
+  dns-sd -R "My Test" _mculedTestProv._tcp. local 8266 &
   mdns=$!
 elif [[ "$OS" == 'Linux' ]]; then
   avahi-publish  -R "My Test" _nodeProvision._tcp. 8266 &
