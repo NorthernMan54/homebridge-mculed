@@ -17,7 +17,7 @@ Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB
    * [Installation - homebridge-mculed](#installation---homebridge-mculed)
    * [Configuration - homebridge-mculed](#configuration---homebridge-mculed)
    * [Provisioning/Configuration - NodeMCU](#provisioningconfiguration---nodemcu)
-   * [<a href="https://northernman54.github.io/homebridge-mculed/" rel="nofollow">Documentation</a>](#documentation)
+   * [<a href="https://northernman54.github.io/homebridge-mculed/" rel="nofollow">API Documentation</a>](#api-documentation)
    * [Credits](#credits)
 
 <!-- Added by: sgracey, at:  -->

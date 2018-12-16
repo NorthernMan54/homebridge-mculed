@@ -217,7 +217,7 @@ if mode == "fade" then
   -- Full strip slowly fades across all colors
   eTim:register(param, tmr.ALARM_AUTO, function()
     state.Hue = state.Hue + 1
-    if state.Hue > 239 then
+    if state.Hue > 359 then
       state.Hue = 0
     end
     rgbControl(100, 100, 255, {hslToRgb(state.Hue, state.sat, state.Brightness)}, "static")
@@ -226,7 +226,7 @@ if mode == "fade" then
 elseif mode == "shift" then
   -- Each section rotates thru the RGB
   for i = 1, 24 do
-    sb:set(i, hslToRgb(i * 120 % 240, 100, 100))
+    sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
   end
   -- ws2812.write(sb)
   eTim:register(param, tmr.ALARM_AUTO, function()
@@ -236,7 +236,7 @@ elseif mode == "shift" then
 elseif mode == "slide" then
   -- Each section slides thru the RGB
   for i = 1, 24 do
-    sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
+    sb:set(i, hslToRgb(i * 120 % 240, 100, 100))
   end
   slide()
 elseif mode == "slip" then
