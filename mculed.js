@@ -67,26 +67,41 @@ mculed.prototype.configureAccessory = function(accessory) {
   if (typeof(accessory.context.model) !== "undefined") {
     // Only for real devices
     if (accessory.context.model.includes("CLED")) {
-      accessory
-        .getService("Xmas " + accessory.context.displayName)
-        .getCharacteristic(Characteristic.On)
-        .on('set', this.setXmasOn.bind(accessory));
-      accessory
-        .getService("Fade " + accessory.context.displayName)
-        .getCharacteristic(Characteristic.On)
-        .on('set', this.setFadeOn.bind(accessory));
-      accessory
-        .getService("Shift " + accessory.context.displayName)
-        .getCharacteristic(Characteristic.On)
-        .on('set', this.setShiftOn.bind(accessory));
-      accessory
-        .getService("Slide " + accessory.context.displayName)
-        .getCharacteristic(Characteristic.On)
-        .on('set', this.setSlideOn.bind(accessory));
-      accessory
-        .getService("Slip " + accessory.context.displayName)
-        .getCharacteristic(Characteristic.On)
-        .on('set', this.setSlipOn.bind(accessory));
+      if (accessory
+        .getService("Xmas " + accessory.context.displayName)) {
+        accessory
+          .getService("Xmas " + accessory.context.displayName)
+          .getCharacteristic(Characteristic.On)
+          .on('set', this.setXmasOn.bind(accessory));
+      }
+      if (accessory
+        .getService("Fade " + accessory.context.displayName)) {
+        accessory
+          .getService("Fade " + accessory.context.displayName)
+          .getCharacteristic(Characteristic.On)
+          .on('set', this.setFadeOn.bind(accessory));
+      }
+      if (accessory
+        .getService("Shift " + accessory.context.displayName)) {
+        accessory
+          .getService("Shift " + accessory.context.displayName)
+          .getCharacteristic(Characteristic.On)
+          .on('set', this.setShiftOn.bind(accessory));
+      }
+      if (accessory
+        .getService("Slide " + accessory.context.displayName)) {
+        accessory
+          .getService("Slide " + accessory.context.displayName)
+          .getCharacteristic(Characteristic.On)
+          .on('set', this.setSlideOn.bind(accessory));
+      }
+      if (accessory
+        .getService("Slip " + accessory.context.displayName)) {
+        accessory
+          .getService("Slip " + accessory.context.displayName)
+          .getCharacteristic(Characteristic.On)
+          .on('set', this.setSlipOn.bind(accessory));
+      }
       accessory
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.On)

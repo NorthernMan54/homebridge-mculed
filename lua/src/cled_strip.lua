@@ -191,18 +191,18 @@ end
 local function slide()
   eTim:register(1500, tmr.ALARM_AUTO, function()
     for i = 1, 24 do
-    -- print("LED", i, sb:get(i))
-    local hue, s, l = rgb2hsl(sb:get(i))
-    -- print("Hue", i, hue, s, l)
-    hue = hue + 2
-    if hue > 359 then
-      hue = 0
+      -- print("LED", i, sb:get(i))
+      local hue, s, l = rgb2hsl(sb:get(i))
+      -- print("Hue", i, hue, s, l)
+      hue = hue + 2
+      if hue > 359 then
+        hue = 0
+      end
+      -- print("New", i, hslToRgb(hue, 100, 100))
+      sb:set(i, hslToRgb(hue, 100, 100))
     end
-    -- print("New", i, hslToRgb(hue, 100, 100))
-    sb:set(i, hslToRgb(hue, 100, 100))
-  end
-  ws2812.write(sb)
-end)
+    ws2812.write(sb)
+  end)
 end
 
 -- Set effect mode and parameter
@@ -228,7 +228,7 @@ elseif mode == "shift" then
   for i = 1, 24 do
     sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
   end
-  -- ws2812.write(sb)
+  ws2812.write(sb)
   eTim:register(param, tmr.ALARM_AUTO, function()
     sb:shift(1, ws2812.SHIFT_CIRCULAR)
     ws2812.write(sb)
@@ -238,11 +238,15 @@ elseif mode == "slide" then
   for i = 1, 24 do
     sb:set(i, hslToRgb(i * 120 % 240, 100, 100))
   end
-  slide()
+  ws2812.write(sb)
+  eTim:register(param, tmr.ALARM_AUTO, function()
+    sb:shift(1, ws2812.SHIFT_CIRCULAR)
+    ws2812.write(sb)
+  end)
 elseif mode == "slip" then
   -- Slip the whole strip thru the color spectrum
   for i = 1, 24 do
-    sb:set(i, hslToRgb(i * 5, 100, 100))
+    sb:set(i, hslToRgb(i * 120 % 240, 100, 100))
   end
   slide()
 end
