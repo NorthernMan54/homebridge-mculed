@@ -199,7 +199,7 @@ local function slide()
         hue = 0
       end
       -- print("New", i, hslToRgb(hue, 100, 100))
-      sb:set(i, hslToRgb(hue, 100, 100))
+      sb:set(i, hslToRgb(hue, 100, state.Brightness))
     end
     ws2812.write(sb)
   end)
@@ -226,7 +226,7 @@ if mode == "fade" then
 elseif mode == "shift" then
   -- Each section rotates thru the RGB
   for i = 1, 24 do
-    sb:set(i, hslToRgb(i * 120 % 360, 100, 100))
+    sb:set(i, hslToRgb(i * 120 % 360, 100, state.Brightness))
   end
   ws2812.write(sb)
   eTim:register(param, tmr.ALARM_AUTO, function()
@@ -236,7 +236,7 @@ elseif mode == "shift" then
 elseif mode == "slide" then
   -- Each section slides thru the RGB
   for i = 1, 24 do
-    sb:set(i, hslToRgb(i * 120 % 240, 100, 100))
+    sb:set(i, hslToRgb(i * 120 % 240, 100, state.Brightness))
   end
   ws2812.write(sb)
   eTim:register(param, tmr.ALARM_AUTO, function()
@@ -246,7 +246,7 @@ elseif mode == "slide" then
 elseif mode == "slip" then
   -- Slip the whole strip thru the color spectrum
   for i = 1, 24 do
-    sb:set(i, hslToRgb(i * 120 % 240, 100, 100))
+    sb:set(i, hslToRgb(i * 120 % 240, 100, state.Brightness))
   end
   slide()
 end
