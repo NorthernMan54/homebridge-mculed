@@ -103,14 +103,14 @@ local function localControl(callback)
   local function onChange()
     if gpio.read(config.onButton) == 0 then
       mod.onButton()
-      callback:start()
+      -- callback:start()
     end
   end
 
   local function colorChange()
     if gpio.read(config.colorButton) == 0 then
       mod.colorButton()
-      callback:start()
+      -- callback:start()
     end
   end
   gpio.mode(config.onButton, gpio.INT, gpio.PULLUP)
@@ -123,6 +123,7 @@ function module.start()
   mod = require('cled_strip')
   mod.init("null")
   run()
+  localControl("null")
 end
 
 return module
