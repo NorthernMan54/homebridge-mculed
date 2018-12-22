@@ -1,7 +1,7 @@
 {
   "secret": "yoursecret",
   "files": [
-    "config-NODE-AC545F.lua",
+    "config-NODE-745E70.lua",
     "led.lua",
     "main.lua",
     "cled_strip.lua",
