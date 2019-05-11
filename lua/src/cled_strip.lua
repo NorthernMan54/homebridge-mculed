@@ -2,7 +2,7 @@
 
 local module = {}
 
-local sb = ws2812.newBuffer(24, 3)
+local sb = ws2812.newBuffer(config.ledCount, 3)
 local state = { Hue = 0, sat = 0, cTemp = 140; pwm = true, Brightness = 20, On = false }
 local cTim = tmr.create()
 local dlTim = tmr.create()
@@ -190,7 +190,7 @@ end
 
 local function slide()
   eTim:register(1500, tmr.ALARM_AUTO, function()
-    for i = 1, 24 do
+    for i = 1, config.ledCount do
       -- print("LED", i, sb:get(i))
       local hue, s, l = rgb2hsl(sb:get(i))
       -- print("Hue", i, hue, s, l)
@@ -225,7 +225,7 @@ if mode == "fade" then
   end)
 elseif mode == "shift" then
   -- Each section rotates thru the RGB
-  for i = 1, 24 do
+  for i = 1, config.ledCount do
     sb:set(i, hslToRgb(i * 120 % 360, 100, state.Brightness))
   end
   ws2812.write(sb)
@@ -235,7 +235,7 @@ elseif mode == "shift" then
   end)
 elseif mode == "slide" then
   -- Each section slides thru the RGB
-  for i = 1, 24 do
+  for i = 1, config.ledCount do
     sb:set(i, hslToRgb(i * 120 % 240, 100, state.Brightness))
   end
   ws2812.write(sb)
@@ -245,7 +245,7 @@ elseif mode == "slide" then
   end)
 elseif mode == "slip" then
   -- Slip the whole strip thru the color spectrum
-  for i = 1, 24 do
+  for i = 1, config.ledCount do
     sb:set(i, hslToRgb(i * 120 % 240, 100, state.Brightness))
   end
   slide()

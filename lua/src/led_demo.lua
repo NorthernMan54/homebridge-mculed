@@ -2,7 +2,7 @@
 
 local module = {}
 
-local strip_buffer = ws2812.newBuffer(24, 3)
+local strip_buffer = ws2812.newBuffer(50, 3)
 local state = { hue = 360, saturation = 100, ct = true, value = 20, brightness = 20, on = false }
 local changeTimer = tmr.create()
 
