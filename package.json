@@ -24,7 +24,7 @@
     "homebridge": ">=0.2.0"
   },
   "devDependencies": {
-    "documentation": "11.0.0"
+    "documentation": "12.1.2"
   },
   "dependencies": {
     "debug": "^4.1.1",
