@@ -102,6 +102,10 @@ mculed.prototype.configureAccessory = function(accessory) {
           .getCharacteristic(Characteristic.On)
           .on('set', this.setSlipOn.bind(accessory));
       }
+
+      accessory
+        .getService(Service.Lightbulb).isPrimaryService = true;
+
       accessory
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.On)
