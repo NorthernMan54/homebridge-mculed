@@ -4,9 +4,9 @@ local module = {}
 
 local sb = ws2812.newBuffer(config.ledCount, 3)
 local state = { Hue = 0, sat = 0, cTemp = 140; pwm = true, Brightness = 20, On = false }
-local cTim = tmr.create()
-local dlTim = tmr.create()
-local eTim = tmr.create()
+local cTim = tmr.create() -- debouce commands
+local dlTim = tmr.create() -- turn off after 1/2 seconds
+local eTim = tmr.create() -- effects timer
 -- local hsv = require('hsx')
 
 -- local function hslToRgb(h1, s1, l1)
@@ -214,7 +214,7 @@ state = { Hue = 0, sat = 100, cTemp = 0; pwm = false, Brightness = 100, On = tru
 pwmControl(0)
 ws2812_effects.stop()
 if mode == "fade" then
-  -- Full strip slowly fades across all colors
+  -- Full strip slowly fades across all colors starting with RED
   eTim:register(param, tmr.ALARM_AUTO, function()
     state.Hue = state.Hue + 1
     if state.Hue > 359 then
@@ -245,6 +245,12 @@ elseif mode == "slide" then
   end)
 elseif mode == "slip" then
   -- Slip the whole strip thru the color spectrum
+  for i = 1, config.ledCount do
+    sb:set(i, hslToRgb(i * 120 % 240, 100, state.Brightness))
+  end
+  slide()
+elseif mode == "twinkle" then
+  -- Random twinkle
   for i = 1, config.ledCount do
     sb:set(i, hslToRgb(i * 120 % 240, 100, state.Brightness))
   end

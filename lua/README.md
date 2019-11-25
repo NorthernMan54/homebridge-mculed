@@ -68,6 +68,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 ```
 brew install lua
+brew install luarocks
 luarocks install luasocket
 luarocks install luafilesystem
 luarocks install md5

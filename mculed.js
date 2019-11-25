@@ -102,9 +102,16 @@ mculed.prototype.configureAccessory = function(accessory) {
           .getCharacteristic(Characteristic.On)
           .on('set', this.setSlipOn.bind(accessory));
       }
-
       accessory
         .getService(Service.Lightbulb).isPrimaryService = true;
+
+      if (accessory
+        .getService("Twinkle " + accessory.context.displayName)) {
+        accessory
+          .getService("Twinkle " + accessory.context.displayName)
+          .getCharacteristic(Characteristic.On)
+          .on('set', this.setTwinkleOn.bind(accessory));
+      }
 
       accessory
         .getService(Service.Lightbulb)
@@ -388,6 +395,11 @@ mculed.prototype.setSlipOn = function(value, callback) {
   _setModeOn.call(this, value, callback, "Slip");
 };
 
+mculed.prototype.setTwinkleOn = function(value, callback) {
+  // this.log("THIS", JSON.stringify(this, null, 4));
+  _setModeOn.call(this, value, callback, "Twinkle");
+};
+
 mculed.prototype.setFadeOn = function(value, callback) {
   // this.log("THIS", JSON.stringify(this, null, 4));
   _setModeOn.call(this, value, callback, "Fade");
@@ -409,7 +421,9 @@ mculed.prototype.setXmasOn = function(value, callback) {
 
     this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Hue).setValue(this.context.xmasValue);
     this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Saturation).setValue(100);
-    this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).setValue(100);
+    if (this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).value < 10) {
+      this.getService(Service.Lightbulb).getCharacteristic(Characteristic.Brightness).setValue(100);
+    }
 
     // Turn off virtual switch after 3 seconds
 
@@ -561,6 +575,7 @@ mculed.prototype.addMcuAccessory = function(device, model) {
       accessory.addService(Service.Switch, "Shift " + displayName, "shift");
       accessory.addService(Service.Switch, "Slide " + displayName, "Slide");
       accessory.addService(Service.Switch, "Slip " + displayName, "Slip");
+      accessory.addService(Service.Switch, "Twinkle " + displayName, "Twinkle");
       accessory.addService(Service.Switch, "Xmas " + displayName, "xmas");
     }
 
