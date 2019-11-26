@@ -11,7 +11,7 @@ local function wifi_start(list_aps)
       if passwords.SSID and passwords.SSID[key] then
         wifi.sta.config(passwords.SSID[key])
         wifi.sta.connect()
-        print("Connecting to " .. key .. " ...")
+        -- print("Connecting to " .. key .. " ...")
         found = 1
       end
     end

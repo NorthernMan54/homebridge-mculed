@@ -66,7 +66,7 @@ mculed.prototype.configureAccessory = function(accessory) {
 
   if (typeof(accessory.context.model) !== "undefined") {
     // Only for real devices
-    if (accessory.context.model.includes("CLED")) {
+    if (accessory.context.model.includes("LED")) {
       if (accessory
         .getService("Xmas " + accessory.context.displayName)) {
         accessory
@@ -129,13 +129,15 @@ mculed.prototype.configureAccessory = function(accessory) {
         .getService(Service.Lightbulb)
         .getCharacteristic(Characteristic.Saturation)
         .on('set', this.setSaturation.bind(accessory));
-      accessory
-        .getService(Service.Lightbulb)
-        .getCharacteristic(Characteristic.ColorTemperature)
-        .setProps({
-          minValue: 0
-        })
-        .on('set', this.setColorTemperature.bind(accessory));
+      if (accessory.context.model.includes("CLED")) {
+        accessory
+          .getService(Service.Lightbulb)
+          .getCharacteristic(Characteristic.ColorTemperature)
+          .setProps({
+            minValue: 0
+          })
+          .on('set', this.setColorTemperature.bind(accessory));
+      }
       // Only open a socket connection for CLED devices
       if (typeof(accessory.context.url) !== "undefined") {
         openSocket.call(this, accessory);
@@ -235,9 +237,11 @@ function onMessage(accessory, response) {
         break;
       case "cTemp":
         // this.log("Setting %s ColorTemperature to %s", accessory.context.name, message[k]);
-        accessory
-          .getService(Service.Lightbulb)
-          .getCharacteristic(Characteristic.ColorTemperature).updateValue(message[k]);
+        if (accessory.context.model.includes("CLED")) {
+          accessory
+            .getService(Service.Lightbulb)
+            .getCharacteristic(Characteristic.ColorTemperature).updateValue(message[k]);
+        }
         break;
       case "pwm":
         // No need to action pwm
@@ -568,7 +572,7 @@ mculed.prototype.addMcuAccessory = function(device, model) {
     accessory.context.displayName = displayName;
     accessory.context.xmasValue = 0;
 
-    if (model.includes("CLED")) {
+    if (model.includes("LED")) {
       accessory
         .addService(Service.Lightbulb);
       accessory.addService(Service.Switch, "Fade " + displayName, "fade");

@@ -7,7 +7,7 @@ local function start()
   if config.ledState == 0 then
     return
   end
- 
+
   gpio.mode(config.ledBlue, gpio.OUTPUT)
   gpio.mode(config.ledRed, gpio.OUTPUT)
 
@@ -48,7 +48,7 @@ local function start()
 end
 
 function module.boot()
-  print("Connecting to network")
+  -- print("Connecting to network")
   mode = 0
   start()
 end

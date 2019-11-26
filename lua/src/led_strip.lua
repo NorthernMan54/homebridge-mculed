@@ -11,7 +11,7 @@ local function run()
   local responseTimer = tmr.create()
   responseTimer:register(60, tmr.ALARM_SEMI, function()
     local state = sjson.encode(mod.getStatus())
-    print("Sending", state)
+    -- print("Sending", state)
     websocket.send(state) -- update State to all websocket clients
   end)
 
@@ -23,14 +23,14 @@ local function run()
     --  node.output(function (msg)
     --    return socket.send(msg, 1)
     --  end, 1)
-    print("New websocket client connected")
+    -- print("New websocket client connected")
 
     function socket.onmessage(payload, opcode)
-      print("received", payload, opcode)
+      -- print("received", payload, opcode)
       local s, cmd; s, cmd = pcall(sjson.decode, payload)
       if type(cmd) == 'table' then
         --print("decoded", sjson.encode(cmd))
-        print("Command", cmd["cmd"], cmd["func"])
+        -- print("Command", cmd["cmd"], cmd["func"])
         if cmd["cmd"] == "set" then
           if cmd["func"] == "on" then
             mod.setOn(cmd["value"])
@@ -53,21 +53,21 @@ local function run()
             local majorVer, minorVer, devVer, chipid, flashid, flashsize, flashmode, flashspeed = node.info()
             local response =
             "{ \"Hostname\": \""..config.ID.."\", \"Model\": \""..config.Model.."\", \"Version\": \""..config.Version.."\", \"Firmware\": \""..majorVer.."."..minorVer.."."..devVer.."\" }"
-            print("Sending", response)
+            -- print("Sending", response)
             socket.send(response)
           elseif cmd["func"] == "status" then
             local state = sjson.encode(mod.getStatus())
-            print("Sending", state)
+            -- print("Sending", state)
             socket.send(state)
           else
-            print("Unknown function", cmd["func"])
+            -- print("Unknown function", cmd["func"])
           end
         else
-          print("Unknown command", cmd["cmd"])
+          -- print("Unknown command", cmd["cmd"])
         end
       else
         -- Not a json message
-        print("Not a json message, ignoring")
+        -- print("Not a json message, ignoring")
       end
       collectgarbage();collectgarbage()
     end
@@ -121,6 +121,7 @@ end
 
 function module.start()
   mod = require('cled_strip')
+  math.randomseed( os.time() )
   mod.init("null")
   run()
   localControl("null")

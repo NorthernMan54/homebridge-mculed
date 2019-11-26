@@ -2,8 +2,8 @@
 
 local module = {}
 -- Options are DHT or DHT-YL, used by homebridge to determine if moisture data is valid.
-module.Model = "CLED"
-module.Version = "2.2"
+module.Model = "RGBLED"
+module.Version = "2.3"
 
 module.ID = wifi.sta.gethostname()
 module.mdnsName = "mculed"

@@ -3,17 +3,12 @@
 local module = {}
 
 local sb = ws2812.newBuffer(config.ledCount, 3)
-local state = { Hue = 0, sat = 0, cTemp = 140; pwm = true, Brightness = 20, On = false }
+local state = { Hue = 0, sat = 0, cTemp = 140; pwm = true, Brightness = 50, On = false }
 local cTim = tmr.create() -- debouce commands
 local dlTim = tmr.create() -- turn off after 1/2 seconds
 local eTim = tmr.create() -- effects timer
--- local hsv = require('hsx')
-
--- local function hslToRgb(h1, s1, l1)
---  local g, r, b = color_utils.hsv2grb(h1, s1 * 2.55, l1 * 2.55)
---  print("setting",r,g,b)
---  return r, g, b
--- end
+local tTim = tmr.create() -- Twinkle timer
+local twinkle = false
 
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
@@ -52,24 +47,6 @@ local function hslToRgb(h1, s1, l1)
   return math.floor(r * tp * l1 / 100), math.floor(g * tp * l1 / 100), math.floor(b * tp * l1 / 100)
 end
 
-
--- local function rgb2hsv( r, g, b )
---  local min, max, abs = math.min, math.max, math.abs
---  local M, m = max( r, g, b ), min( r, g, b )
---  local C = M - m
---  local K = 1.0 / (6.0 * C)
---  local h = 0.0
---  if C ~= 0.0 then
---    if M == r then h = ((g - b) * K) % 1.0
---    elseif M == g then h = (b - r) * K + 1.0 / 3.0
---    else h = (r - g) * K + 2.0 / 3.0
---    end
---  end
---  -- Hue should be in degrees
---  h = math.floor(h * 360 + .5)
---  return h, M == 0.0 and 0.0 or C / M, M
--- end
-
 function rgb2hsl( r, g, b )
   local min, max, abs = math.min, math.max, math.abs
   local M, m = max( r, g, b ), min( r, g, b )
@@ -94,6 +71,7 @@ end
 dlTim:register(500, tmr.ALARM_SEMI, function()
   local pin = 4
   ws2812_effects.stop()
+  ws2812.write(sb, sb)
 end)
 
 local function pwmControl(value)
@@ -114,19 +92,21 @@ local function on(value)
   if value == true and state.On == true and state.pwm == false then
     -- print("hslToRgb",hslToRgb(state.Hue, state.sat, state.Brightness))
     rgbControl(100, 100, 255, {hslToRgb(state.Hue, state.sat, state.Brightness)}, "static")
+    ws2812.write(sb, sb)
     pwmControl(0)
   elseif value == true and state.On == true and state.pwm == true then
-    -- print("Turning on White PWM LED", state.Brightness)
-    -- print("hslToRgb",hslToRgb(state.Hue, state.sat, state.Brightness))
     pwmControl(state.Brightness * 10)
     rgbControl(100, 100, 0, {hslToRgb(0, 0, 0)}, "static")
+    ws2812.write(sb, sb)
   else
     -- print("Turning off RGB LED")
     dlTim:start()
     -- print("Turn off PWM mode")
     rgbControl(100, 100, 0, {hslToRgb(0, 0, 0)}, "static")
+    ws2812.write(sb, sb)
     pwmControl(0)
     eTim:stop()
+    tTim:stop()
   end
   ws2812_effects.start()
 end
@@ -142,7 +122,11 @@ end
 
 function module.setOn(value)
   state.On = value;
-  state.pwm = true;
+  if string.find(config.Model, "CLED") then
+    state.pwm = true;
+  else
+    state.pwm = false;
+  end
   state.Hue = 0;
   state.sat = 0;
   state.cTemp = 140;
@@ -161,8 +145,6 @@ function module.setBrightness(value)
   cTim:start()
 end
 
--- Colour temperature just turns on LED's
-
 function module.setCT(value)
   state.pwm = true;
   state.Hue = 0;
@@ -175,8 +157,6 @@ function module.getStatus()
   return state
 end
 
--- Button press / power toggle
-
 function module.onButton()
   if state.On then
     state.On = false;
@@ -186,33 +166,33 @@ function module.onButton()
   cTim:start()
 end
 
--- slide colors across the whole strip
-
 local function slide()
   eTim:register(1500, tmr.ALARM_AUTO, function()
     for i = 1, config.ledCount do
-      -- print("LED", i, sb:get(i))
-      local hue, s, l = rgb2hsl(sb:get(i))
-      -- print("Hue", i, hue, s, l)
-      hue = hue + 2
-      if hue > 359 then
-        hue = 0
-      end
-      -- print("New", i, hslToRgb(hue, 100, 100))
-      sb:set(i, hslToRgb(hue, 100, state.Brightness))
+    -- print("LED", i, sb:get(i))
+    local hue, s, l = rgb2hsl(sb:get(i))
+    -- print("Hue", i, hue, s, l)
+    hue = hue + 2
+    if hue > 359 then
+      hue = 0
     end
-    ws2812.write(sb)
-  end)
+    -- print("New", i, hslToRgb(hue, 100, 100))
+    sb:set(i, hslToRgb(hue, 100, state.Brightness))
+  end
+  ws2812.write(sb, sb)
+end)
 end
 
 -- Set effect mode and parameter
 
 function module.setMode(mode, param)
-state = { Hue = 0, sat = 100, cTemp = 0; pwm = false, Brightness = 100, On = true }
--- print("Turning on RGB LED", hslToRgb(state.Hue, state.Saturation, state.Brightness), sb:power())
--- print("Turn off PWM mode")
+state = { Hue = 0, sat = 100, cTemp = 0; pwm = false, Brightness = state.Brightness, On = true }
+if state.Brightness < 10 then
+  state.Brightness = 100
+end
 pwmControl(0)
 ws2812_effects.stop()
+tTim:stop()
 if mode == "fade" then
   -- Full strip slowly fades across all colors starting with RED
   eTim:register(param, tmr.ALARM_AUTO, function()
@@ -228,20 +208,20 @@ elseif mode == "shift" then
   for i = 1, config.ledCount do
     sb:set(i, hslToRgb(i * 120 % 360, 100, state.Brightness))
   end
-  ws2812.write(sb)
+  ws2812.write(sb, sb)
   eTim:register(param, tmr.ALARM_AUTO, function()
     sb:shift(1, ws2812.SHIFT_CIRCULAR)
-    ws2812.write(sb)
+    ws2812.write(sb, sb)
   end)
 elseif mode == "slide" then
   -- Each section slides thru the RGB
   for i = 1, config.ledCount do
     sb:set(i, hslToRgb(i * 120 % 240, 100, state.Brightness))
   end
-  ws2812.write(sb)
+  ws2812.write(sb, sb)
   eTim:register(param, tmr.ALARM_AUTO, function()
     sb:shift(1, ws2812.SHIFT_CIRCULAR)
-    ws2812.write(sb)
+    ws2812.write(sb, sb)
   end)
 elseif mode == "slip" then
   -- Slip the whole strip thru the color spectrum
@@ -251,10 +231,21 @@ elseif mode == "slip" then
   slide()
 elseif mode == "twinkle" then
   -- Random twinkle
-  for i = 1, config.ledCount do
-    sb:set(i, hslToRgb(i * 120 % 240, 100, state.Brightness))
-  end
-  slide()
+  -- twinkle = true
+  -- tTim:register(500, tmr.ALARM_AUTO, function()
+  --  if twinkle then
+  --    twinkle = false
+  --    bulb = math.random(config.ledCount)
+  --    current = sb:get(bulb)
+  --    sb:set(bulb, {0, 0, 0 })
+  --  else
+  --    twinkle = true
+  --    sb:set(bulb, current)
+  --  end
+  --  sb:shift(1, ws2812.SHIFT_CIRCULAR)
+  --  ws2812.write(sb, sb)
+  -- end)
+  -- tTim:start()
 end
 eTim:start()
 end
@@ -263,12 +254,12 @@ end
 
 function module.colorButton()
 if state.On then
-  state = { Hue = state.Hue + 360 / 12, sat = 100, cTemp = 0; pwm = false, Brightness = state.Brightness, On = true }
-  if state.Hue > 359 then
-    state.Hue = 0
-  end
+state = { Hue = state.Hue + 360 / 12, sat = 100, cTemp = 0; pwm = false, Brightness = state.Brightness, On = true }
+if state.Hue > 359 then
+  state.Hue = 0
+end
 else
-  state = { Hue = 0, sat = 100, cTemp = 0; pwm = false, Brightness = 100, On = true }
+state = { Hue = 0, sat = 100, cTemp = 0; pwm = false, Brightness = 100, On = true }
 end
 cTim:start()
 end
@@ -276,7 +267,8 @@ end
 -- Module init
 
 function module.init(wsserver)
-ws2812.init()
+node.output(nil, 0)
+ws2812.init(ws2812.MODE_DUAL)
 ws2812_effects.init(sb)
 on(false)
 end

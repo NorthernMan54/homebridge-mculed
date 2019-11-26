@@ -103,7 +103,7 @@ do
     -- print("Heap Available: 1 " .. node.heap())
     for i, client in pairs(clients) do
       -- print("Heap Available: 2 " .. node.heap())
-      print("Sending to client", i)
+      -- print("Sending to client", i)
       client.send(message)
       -- print("Heap Available: 3 " .. node.heap())
     end
@@ -114,7 +114,7 @@ do
     local connections = 0
     net.createServer(net.TCP):listen(port, function(conn)
       -- This is executed with every websocket client connection
-      print("Client", conn:getpeer())
+      -- print("Client", conn:getpeer())
       local buffer = false
       local socket = {}
       local queue = {}
@@ -142,7 +142,7 @@ do
       end
 
       conn:on("disconnection", function(_, message)
-        print("Socket disconnected", connection)
+        -- print("Socket disconnected", connection)
         clients[connection] = nil
         conn = nil
         socket = nil
