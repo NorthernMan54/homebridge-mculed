@@ -223,25 +223,19 @@ elseif mode == "twinkle" then
   local bulb = {}
   local bValue = {}
   local twinkle = true
-  -- print("Twinkle")
-  eTim:register(2000, tmr.ALARM_AUTO, function()
-    -- print("Twinkle?", twinkle)
+  local tBulb = 3
+  eTim:register(750, tmr.ALARM_AUTO, function()
     if twinkle then
       twinkle = false
-      for i=1,15 do
+      for i=1,tBulb do
         bulb[i] = node.random(config.ledCount)
         bValue[i] = {sb:get(bulb[i])}
-        -- print("bulb off?", bulb, bValue)
-        -- print("twinkle off")
-        sb:set(bulb[i], {0, 0, 0})
+        sb:set(bulb[i], {128, 128, 128})
       end
     else
-      -- print("bulb on?", bulb, bValue)
-      for i=1,10 do
+      for i=1,tBulb do
         sb:set(bulb[i], bValue[i])
       end
-
-      -- print("twinkle on")
       twinkle = true
     end
     ws2812.write(sb, sb)
