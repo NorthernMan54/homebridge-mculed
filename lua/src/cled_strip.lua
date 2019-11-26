@@ -8,7 +8,6 @@ local cTim = tmr.create() -- debouce commands
 local dlTim = tmr.create() -- turn off after 1/2 seconds
 local eTim = tmr.create() -- effects timer
 local tTim = tmr.create() -- Twinkle timer
-local twinkle = false
 
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
@@ -106,7 +105,7 @@ local function on(value)
     ws2812.write(sb, sb)
     pwmControl(0)
     eTim:stop()
-    tTim:stop()
+    -- tTim:stop()
   end
   ws2812_effects.start()
 end
@@ -192,18 +191,8 @@ if state.Brightness < 10 then
 end
 pwmControl(0)
 ws2812_effects.stop()
-tTim:stop()
-if mode == "fade" then
-  -- Full strip slowly fades across all colors starting with RED
-  eTim:register(param, tmr.ALARM_AUTO, function()
-    state.Hue = state.Hue + 1
-    if state.Hue > 359 then
-      state.Hue = 0
-    end
-    rgbControl(100, 100, 255, {hslToRgb(state.Hue, state.sat, state.Brightness)}, "static")
-    ws2812_effects.start()
-  end)
-elseif mode == "shift" then
+-- tTim:stop()
+if mode == "shift" then
   -- Each section rotates thru the RGB
   for i = 1, config.ledCount do
     sb:set(i, hslToRgb(i * 120 % 360, 100, state.Brightness))
@@ -230,22 +219,27 @@ elseif mode == "slip" then
   end
   slide()
 elseif mode == "twinkle" then
-  -- Random twinkle
-  -- twinkle = true
-  -- tTim:register(500, tmr.ALARM_AUTO, function()
-  --  if twinkle then
-  --    twinkle = false
-  --    bulb = math.random(config.ledCount)
-  --    current = sb:get(bulb)
-  --    sb:set(bulb, {0, 0, 0 })
-  --  else
-  --    twinkle = true
-  --    sb:set(bulb, current)
-  --  end
-  --  sb:shift(1, ws2812.SHIFT_CIRCULAR)
-  --  ws2812.write(sb, sb)
-  -- end)
-  -- tTim:start()
+  -- Each section slides thru the RGB
+  local bulb, bValue
+  local twinkle = true
+  -- print("Twinkle")
+  eTim:register(1000, tmr.ALARM_AUTO, function()
+    -- print("Twinkle?", twinkle)
+    if twinkle then
+      twinkle = false
+      bulb = node.random(config.ledCount)
+      bValue = {sb:get(bulb)}
+      -- print("bulb off?", bulb, bValue)
+      -- print("twinkle off")
+      sb:set(bulb, {0, 0, 0})
+    else
+      -- print("bulb on?", bulb, bValue)
+      sb:set(bulb, bValue)
+      -- print("twinkle on")
+      twinkle = true
+    end
+    ws2812.write(sb, sb)
+  end)
 end
 eTim:start()
 end
@@ -267,7 +261,7 @@ end
 -- Module init
 
 function module.init(wsserver)
-node.output(nil, 0)
+-- node.output(nil, 0)
 ws2812.init(ws2812.MODE_DUAL)
 ws2812_effects.init(sb)
 on(false)

@@ -575,7 +575,7 @@ mculed.prototype.addMcuAccessory = function(device, model) {
     if (model.includes("LED")) {
       accessory
         .addService(Service.Lightbulb);
-      accessory.addService(Service.Switch, "Fade " + displayName, "fade");
+      // accessory.addService(Service.Switch, "Fade " + displayName, "fade");
       accessory.addService(Service.Switch, "Shift " + displayName, "shift");
       accessory.addService(Service.Switch, "Slide " + displayName, "Slide");
       accessory.addService(Service.Switch, "Slip " + displayName, "Slip");

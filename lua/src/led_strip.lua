@@ -121,7 +121,6 @@ end
 
 function module.start()
   mod = require('cled_strip')
-  math.randomseed( os.time() )
   mod.init("null")
   run()
   localControl("null")
