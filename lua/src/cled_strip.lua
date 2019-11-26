@@ -220,21 +220,27 @@ elseif mode == "slip" then
   slide()
 elseif mode == "twinkle" then
   -- Each section slides thru the RGB
-  local bulb, bValue
+  local bulb = {}
+  local bValue = {}
   local twinkle = true
   -- print("Twinkle")
-  eTim:register(1000, tmr.ALARM_AUTO, function()
+  eTim:register(2000, tmr.ALARM_AUTO, function()
     -- print("Twinkle?", twinkle)
     if twinkle then
       twinkle = false
-      bulb = node.random(config.ledCount)
-      bValue = {sb:get(bulb)}
-      -- print("bulb off?", bulb, bValue)
-      -- print("twinkle off")
-      sb:set(bulb, {0, 0, 0})
+      for i=1,15 do
+        bulb[i] = node.random(config.ledCount)
+        bValue[i] = {sb:get(bulb[i])}
+        -- print("bulb off?", bulb, bValue)
+        -- print("twinkle off")
+        sb:set(bulb[i], {0, 0, 0})
+      end
     else
       -- print("bulb on?", bulb, bValue)
-      sb:set(bulb, bValue)
+      for i=1,10 do
+        sb:set(bulb[i], bValue[i])
+      end
+
       -- print("twinkle on")
       twinkle = true
     end
