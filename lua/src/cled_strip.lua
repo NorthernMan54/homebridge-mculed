@@ -223,13 +223,16 @@ elseif mode == "twinkle" then
   local bulb = {}
   local bValue = {}
   local twinkle = true
-  local tBulb = 3
-  eTim:register(750, tmr.ALARM_AUTO, function()
+  local tBulb = 10
+  eTim:register(500, tmr.ALARM_AUTO, function()
     if twinkle then
       twinkle = false
       for i=1,tBulb do
-        bulb[i] = node.random(config.ledCount)
+        bulb[i] = math.floor(node.random(config.ledCount))
         bValue[i] = {sb:get(bulb[i])}
+      end
+      -- Incase of duplicate bulb's don't over write
+      for i=1,tBulb do
         sb:set(bulb[i], {128, 128, 128})
       end
     else
