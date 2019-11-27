@@ -3,8 +3,8 @@
 LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 <!--ts-->
-   * [Hardware](#hardware)
-   * [Circuit Diagrams](#circuit-diagrams)
+   * [Hardware - CLED](#hardware---cled)
+   * [Circuit Diagrams - CLED](#circuit-diagrams---cled)
       * [Schematic](#schematic)
       * [Breadboard layout](#breadboard-layout)
       * [Actual Breadboard layout](#actual-breadboard-layout)
@@ -12,6 +12,11 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
       * [Unit 1 - Completed unit](#unit-1---completed-unit)
       * [Unit 2 - Completed unit](#unit-2---completed-unit)
    * [Tools](#tools)
+   * [Hardware - RGBLED](#hardware---rgbled)
+   * [Circuit Diagrams - RGBLED](#circuit-diagrams---rgbled)
+      * [Schematic](#schematic-1)
+      * [Stripboard layout](#stripboard-layout)
+      * [Unit 1 - layout](#unit-1---layout-1)
    * [Installation](#installation)
       * [OTA Server Prequisites](#ota-server-prequisites)
          * [Install lua and Lua modules](#install-lua-and-lua-modules)
@@ -25,7 +30,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 <!--te-->
 
-# Hardware
+# Hardware - CLED
 
 1.  Bill of materials
     -   nodeMCU / esp8266 dev kit
@@ -39,7 +44,7 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
     -   FQP30N06L N-Channel MOSFET
     -   Case - Hammond 1593NBK
 
-# Circuit Diagrams
+# Circuit Diagrams - CLED
 
 ## Schematic
 ![CLED](diagrams/mculed_v2_perf_schem.jpg)
@@ -59,6 +64,27 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 -   lua - Install instructions are here <https://www.lua.org/download.html>
 -   esptool - Install instructions are here <https://github.com/espressif/esptool>
 -   esplorer - Install instructions are here <https://esp8266.ru/esplorer/>
+
+# Hardware - RGBLED
+
+1.  Bill of materials
+    -   50pcs DC5V 12mm WS2811 IC RGB Led Module Christmas String Green wire Waterproof IP68
+    -   nodeMCU / esp8266 dev kit
+    -   74HCT245 - Level Shifter replacement
+    -   1000uf 25V capacitor
+    -   2 x 470 Ohm Resistor
+    -   5 VDC 3 Amp Power Supply
+    -   2.1 MM DC Chassis Mount
+    -   Case - Hammond 1593NBK
+
+# Circuit Diagrams - RGBLED
+
+## Schematic
+![RGBLED](diagrams/mculed_v3_strip_schem.jpg)
+## Stripboard layout
+![RGBLED](diagrams/mculed_v3_strip_bb.jpg)
+## Unit 1 - layout
+![Unit 1](diagrams/IMG_4175.JPG)
 
 # Installation
 
@@ -110,6 +136,10 @@ This should return the nodeMCU name, i.e. NODE-AC4957
 
 ```
     module.Model = "CLED"
+```
+or
+```
+    module.Model = "RGBLED"
 ```
 
 3.  Copy ESP-NODE-AC545f.json to your nodeMCU's name, and update the file to include your config file.

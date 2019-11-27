@@ -1,21 +1,21 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset='utf-8' />
-  <title>homebridge-mculed 0.0.13 | Documentation</title>
-  <meta name='viewport' content='width=device-width,initial-scale=1'>
-  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
-  <link href='assets/style.css' type='text/css' rel='stylesheet' />
-  <link href='assets/github.css' type='text/css' rel='stylesheet' />
-  <link href='assets/split.css' type='text/css' rel='stylesheet' />
+  <meta charset='utf-8'>
+  <title>homebridge-mculed 0.0.14 | Documentation</title>
   <meta name='description' content='Homebridge platform plugin that support&#39;s a network of nodemcu&#39;s to control various devices.'>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='assets/bass.css' rel='stylesheet'>
+  <link href='assets/style.css' rel='stylesheet'>
+  <link href='assets/github.css' rel='stylesheet'>
+  <link href='assets/split.css' rel='stylesheet'>
 </head>
 <body class='documentation m0'>
     <div class='flex'>
       <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
         <div class='py1 px2'>
           <h3 class='mb0 no-anchor'>homebridge-mculed</h3>
-          <div class='mb1'><code>0.0.13</code></div>
+          <div class='mb1'><code>0.0.14</code></div>
           <input
             placeholder='Filter'
             id='filter-input'
@@ -197,7 +197,7 @@
             </ul>
           </div>
           <div class='mt1 h6 quiet'>
-            <a href='http://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
+            <a href='https://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
           </div>
         </div>
       </div>
@@ -219,10 +219,7 @@
 
   <p>Homebridge plugin to connect to nodeMCU devices via websockets</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>mculed(log: any, config: aliases, api: any)</div>
-   
   
   
 
@@ -291,8 +288,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -310,10 +310,7 @@
 
   <p>Called on startup of Homebridge, once per accessory</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>configureAccessory()</div>
-   
   
   
 
@@ -322,6 +319,8 @@
   
   
   
+  
+
   
 
   
@@ -341,6 +340,7 @@
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -358,10 +358,7 @@
 
   <p>This function opens a socket connection to the nodeMCU device</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>openSocket(accessory: any)</div>
-   
   
   
 
@@ -400,8 +397,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -419,10 +419,7 @@
 
   <p>Parsing of messages received nodeMCU devices</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>onMessage(accessory: any, response: any)</div>
-   
   
   
 
@@ -469,8 +466,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -488,10 +488,7 @@
 
   <p>Send message to nodeMCU device</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>wsSend(message: any, callback: any)</div>
-   
   
   
 
@@ -538,8 +535,11 @@
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -559,10 +559,7 @@
 Discover mculed devices using mDNS/Bonjour
 Creates homebridge device, once per discovered accessory</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>didFinishLaunching()</div>
-   
   
   
 
@@ -571,6 +568,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -590,6 +589,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -607,10 +607,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Call nodeMCU device and return configuration string</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>mcuModel(url: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, callback: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">function</a>)</div>
-   
   
   
 
@@ -659,8 +656,11 @@ Creates homebridge device, once per discovered accessory</p>
   
 
   
+
+  
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -678,10 +678,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Turn on nodeMCU device</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>setOn()</div>
-   
   
   
 
@@ -690,6 +687,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -709,6 +708,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -726,10 +726,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Turn on and rotate thru the primary colors</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>setModeOn()</div>
-   
   
   
 
@@ -738,6 +735,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -757,6 +756,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -774,10 +774,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Turn on and rotate thru the primary colors</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>setXmasOn()</div>
-   
   
   
 
@@ -786,6 +783,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -805,6 +804,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -822,10 +822,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Set brightness of nodeMCU device</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>setBrightness()</div>
-   
   
   
 
@@ -834,6 +831,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -853,6 +852,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -870,10 +870,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Set hue of nodeMCU device</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>setHue()</div>
-   
   
   
 
@@ -882,6 +879,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -901,6 +900,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -918,10 +918,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Set color saturation of nodeMCU device</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>setSaturation()</div>
-   
   
   
 
@@ -930,6 +927,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -949,6 +948,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -966,10 +966,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Set color temperature of nodeMCU device</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>setColorTemperature()</div>
-   
   
   
 
@@ -978,6 +975,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -997,6 +996,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -1014,10 +1014,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Add MCU Device</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>addMcuAccessory()</div>
-   
   
   
 
@@ -1026,6 +1023,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -1045,6 +1044,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -1062,10 +1062,7 @@ Creates homebridge device, once per discovered accessory</p>
 
   <p>Reset switch checks if each device is on the network and if it isn't found, removes it</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>addResetSwitch()</div>
-   
   
   
 
@@ -1074,6 +1071,8 @@ Creates homebridge device, once per discovered accessory</p>
   
   
   
+  
+
   
 
   
@@ -1093,6 +1092,7 @@ Creates homebridge device, once per discovered accessory</p>
   
 </section>
 
+          
         
           
           <section class='p2 mb2 clearfix bg-white minishadow'>
@@ -1111,10 +1111,7 @@ Creates homebridge device, once per discovered accessory</p>
   <p>Am using the Identify function to validate a device, and if it doesn't respond
 remove it from the config</p>
 
- 
-  
     <div class='pre p1 fill-light mt0'>Identify()</div>
-   
   
   
 
@@ -1123,6 +1120,8 @@ remove it from the config</p>
   
   
   
+  
+
   
 
   
@@ -1142,6 +1141,7 @@ remove it from the config</p>
   
 </section>
 
+          
         
       </div>
     </div>
