@@ -5,9 +5,9 @@ local module = {}
 local sb = ws2812.newBuffer(config.ledCount, 3)
 local state = { Hue = 0, sat = 0, cTemp = 140; pwm = true, Brightness = 50, On = false }
 local cTim = tmr.create() -- debouce commands
-local dlTim = tmr.create() -- turn off after 1/2 seconds
+-- local dlTim = tmr.create() -- turn off after 1/2 seconds
 local eTim = tmr.create() -- effects timer
-local tTim = tmr.create() -- Twinkle timer
+
 
 -- Borrowed from https://github.com/EmmanuelOga/columns/blob/master/utils/color.lua
 
@@ -67,11 +67,11 @@ function rgb2hsl( r, g, b )
   return h, s, l
 end
 
-dlTim:register(500, tmr.ALARM_SEMI, function()
-  local pin = 4
-  ws2812_effects.stop()
-  ws2812.write(sb, sb)
-end)
+-- dlTim:register(500, tmr.ALARM_SEMI, function()
+--  local pin = 4
+--  ws2812_effects.stop()
+--  ws2812.write(sb, sb)
+-- end)
 
 local function pwmControl(value)
   pwm.setup(config.pwm, 480, value)
@@ -98,10 +98,9 @@ local function on(value)
     rgbControl(100, 100, 0, {hslToRgb(0, 0, 0)}, "static")
     ws2812.write(sb, sb)
   else
-    -- print("Turning off RGB LED")
-    dlTim:start()
     -- print("Turn off PWM mode")
     rgbControl(100, 100, 0, {hslToRgb(0, 0, 0)}, "static")
+    ws2812_effects.stop()
     ws2812.write(sb, sb)
     pwmControl(0)
     eTim:stop()
@@ -223,25 +222,30 @@ elseif mode == "twinkle" then
   local bulb = {}
   local bValue = {}
   local twinkle = true
-  local tBulb = 10
+  local tBulb = 5
+  local tTim = tmr.create() -- Twinkle timer
   eTim:register(500, tmr.ALARM_AUTO, function()
-    if twinkle then
-      twinkle = false
+    -- if twinkle then
+    --  twinkle = false
       for i=1,tBulb do
         bulb[i] = math.floor(node.random(config.ledCount))
         bValue[i] = {sb:get(bulb[i])}
       end
       -- Incase of duplicate bulb's don't over write
       for i=1,tBulb do
-        sb:set(bulb[i], {128, 128, 128})
+        sb:set(bulb[i], {0, 0, 0})
       end
-    else
-      for i=1,tBulb do
-        sb:set(bulb[i], bValue[i])
-      end
-      twinkle = true
-    end
-    ws2812.write(sb, sb)
+      ws2812.write(sb, sb)
+    -- else
+      tTim:register(200, tmr.ALARM_SINGLE, function()
+        for i=1,tBulb do
+          sb:set(bulb[i], bValue[i])
+        end
+        ws2812.write(sb, sb)
+        twinkle = true
+      end)
+      tTim:start()
+    -- end
   end)
 end
 eTim:start()
