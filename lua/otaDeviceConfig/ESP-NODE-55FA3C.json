@@ -1,0 +1,13 @@
+{
+  "secret": "yoursecret",
+  "files": [
+    "config-NODE-55FA3C.lua",
+    "led.lua",
+    "main.lua",
+    "cled_strip.lua",
+    "led_strip.lua",
+    "websocket.lua",
+    "hsx.lua",
+    "init.lua"
+  ]
+}
