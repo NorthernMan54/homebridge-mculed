@@ -4,6 +4,25 @@ local mod
 
 local module = {}
 
+
+local function cmdParse(cmd)
+  if cmd["func"] == "on" then
+    mod.setOn(cmd["value"])
+  elseif cmd["func"] == "brightness" then
+    mod.setBrightness(cmd["value"])
+  elseif cmd["func"] == "hue" then
+    mod.setHue(cmd["value"])
+  elseif cmd["func"] == "sat" then
+    mod.setSaturation(cmd["value"])
+  elseif cmd["func"] == "mode" then
+    mod.setMode(cmd["value"], cmd["param"])
+  elseif cmd["func"] == "ct" then
+    mod.setCT(cmd["value"])
+  else
+    print("Unknown function", cmd["func"])
+  end
+end
+
 local function run()
 
   dofile("websocket.lc")
@@ -32,21 +51,7 @@ local function run()
         --print("decoded", sjson.encode(cmd))
         -- print("Command", cmd["cmd"], cmd["func"])
         if cmd["cmd"] == "set" then
-          if cmd["func"] == "on" then
-            mod.setOn(cmd["value"])
-          elseif cmd["func"] == "brightness" then
-            mod.setBrightness(cmd["value"])
-          elseif cmd["func"] == "hue" then
-            mod.setHue(cmd["value"])
-          elseif cmd["func"] == "sat" then
-            mod.setSaturation(cmd["value"])
-          elseif cmd["func"] == "mode" then
-            mod.setMode(cmd["value"], cmd["param"])
-          elseif cmd["func"] == "ct" then
-            mod.setCT(cmd["value"])
-          else
-            print("Unknown function", cmd["func"])
-          end
+          cmdParse(cmd)
           responseTimer:start()
         elseif cmd["cmd"] == "get" then
           if cmd["func"] == "id" then
@@ -119,11 +124,24 @@ local function localControl(callback)
   gpio.trig(config.colorButton, "both", debounce(colorChange))
 end
 
+local function runDemo()
+  print("DEMO")
+  local cmd = {}
+
+  cmd["func"] = "mode"
+  cmd["value"] = "shift"
+  cmd["param"] = 750
+  cmdParse(cmd)
+end
+
 function module.start()
   mod = require('cled_strip')
   mod.init("null")
   run()
   localControl("null")
+  if config.demo == true then
+    runDemo()
+  end
 end
 
 return module
