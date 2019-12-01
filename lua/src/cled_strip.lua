@@ -67,11 +67,6 @@ function rgb2hsl( r, g, b )
   return h, s, l
 end
 
--- dlTim:register(500, tmr.ALARM_SEMI, function()
---  local pin = 4
---  ws2812_effects.stop()
---  ws2812.write(sb, sb)
--- end)
 
 local function pwmControl(value)
   pwm.setup(config.pwm, 480, value)
@@ -194,7 +189,11 @@ ws2812_effects.stop()
 if mode == "shift" then
   -- Each section rotates thru the RGB
   for i = 1, config.ledCount do
-    sb:set(i, hslToRgb(i * 120 % 360, 100, state.Brightness))
+    if i * 120 % 360 == 240 then
+      sb:set(i, hslToRgb(227, 10, state.Brightness))
+    else
+      sb:set(i, hslToRgb(i * 120 % 360, 100, state.Brightness))
+    end
   end
   ws2812.write(sb, sb)
   eTim:register(param, tmr.ALARM_AUTO, function()
