@@ -17,6 +17,9 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
       * [Schematic](#schematic-1)
       * [Stripboard layout](#stripboard-layout)
       * [Unit 1 - layout](#unit-1---layout-1)
+      * [XMAS 2019 Final](#xmas-2019-final)
+         * [LED Control Module](#led-control-module)
+         * [Controller](#controller)
    * [Installation](#installation)
       * [OTA Server Prequisites](#ota-server-prequisites)
          * [Install lua and Lua modules](#install-lua-and-lua-modules)
@@ -85,6 +88,18 @@ LUA programs for a nodeMCU device to control a RGB+W LED Strip
 ![RGBLED](diagrams/mculed_v3_strip_bb.jpg)
 ## Unit 1 - layout
 ![Unit 1](diagrams/IMG_4175.JPG)
+
+## XMAS 2019 Final ##
+
+### LED Control Module ###
+
+For the final version for XMAS 2019, I switched to the ![ESPPixelStick](https://github.com/forkineye/ESPixelStick) firmware rather than roll my own code.  While this worked really well, it did have an issue when rebooting and getting stuck in AP mode, also the ESP website was problematic.  Next year am thinking to reflash with WLED.
+
+For hooking up the strips, I changed the plan at the last minute and ended up connecting both strips end to end.  And then looping back to the esp8266 for power injection at the end of the strip.
+
+### Controller ###
+
+To control the lights, I used ![Falcon Player](https://github.com/FalconChristmas/fpp) running on a RPI, and to design the sequence I used xlights running from Bart.
 
 # Installation
 
