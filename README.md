@@ -2,11 +2,18 @@
 
 Homebridge Plugin for NodeMCU Based ws2812/sm16703p led strip controller for RGB+W led strips
 
+# NOTICE: I'm in the process of deprecating my usage of this plugin.
+
+And in the process of migrating all my devices to the [Tasmota](https://tasmota.github.io/docs/) firmware and the [homebridge-tasmota](https://github.com/NorthernMan54/homebridge-tasmota) plugin.  With the transition I'm not changing my devices, just flashing them with Tasmota.
+
+If someone wants to take over ownership of this codebase and repository, please let me know.
+
 ![Device](lua/diagrams/IMG_2874.jpg)
 
 # Table of Contents
 
 <!--ts-->
+   * [NOTICE: I'm in the process of deprecating my usage of this plugin.](#notice-im-in-the-process-of-deprecating-my-usage-of-this-plugin)
    * [Table of Contents](#table-of-contents)
    * [Design Concept](#design-concept)
    * [Backlog and Roadmap](#backlog-and-roadmap)
