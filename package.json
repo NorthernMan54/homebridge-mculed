@@ -4,7 +4,6 @@
   "description": "Homebridge platform plugin that support's a network of nodemcu's to control various devices.",
   "main": "mculed.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "document": "documentation build mculed.js -f html -o docs --config documentation.yml;./gh-md-toc --insert README.md;./gh-md-toc --insert lua/README.md"
   },
   "repository": {
@@ -12,11 +11,8 @@
     "url": "git+https://github.com/NorthernMan54/homebridge-mculed.git"
   },
   "keywords": [
-    "nodemcu",
-    "ws2812",
     "led",
     "esp8266",
-    "homebridge-plugin",
     "sm16703p"
   ],
   "engines": {
