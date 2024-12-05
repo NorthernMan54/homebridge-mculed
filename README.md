@@ -13,21 +13,9 @@ If someone wants to take over ownership of this codebase and repository, please 
 # Table of Contents
 
 <!--ts-->
-   * [NOTICE: I'm in the process of deprecating my usage of this plugin.](#notice-im-in-the-process-of-deprecating-my-usage-of-this-plugin)
-   * [Table of Contents](#table-of-contents)
-   * [Design Concept](#design-concept)
-   * [Backlog and Roadmap](#backlog-and-roadmap)
-      * [Backlog - plugin](#backlog---plugin)
-      * [Backlog - nodemcu](#backlog---nodemcu)
-      * [Roadmap](#roadmap)
-   * [Supported configurations/devices](#supported-configurationsdevices)
-   * [Installation - homebridge-mculed](#installation---homebridge-mculed)
-   * [Configuration - homebridge-mculed](#configuration---homebridge-mculed)
-   * [Provisioning/Configuration - NodeMCU](#provisioningconfiguration---nodemcu)
-   * [<a href="https://northernman54.github.io/homebridge-mculed/" rel="nofollow">API Documentation</a>](#api-documentation)
-   * [Credits](#credits)
 
-<!-- Added by: sgracey, at:  -->
+
+<!-- Added by: runner, at: 2024-12-05T14:58+00:00 -->
 
 <!--te-->
 

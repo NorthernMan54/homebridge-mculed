@@ -3,33 +3,9 @@
 LUA programs for a nodeMCU device to control a RGB+W LED Strip
 
 <!--ts-->
-   * [Hardware - CLED](#hardware---cled)
-   * [Circuit Diagrams - CLED](#circuit-diagrams---cled)
-      * [Schematic](#schematic)
-      * [Breadboard layout](#breadboard-layout)
-      * [Actual Breadboard layout](#actual-breadboard-layout)
-      * [Unit 1 - layout](#unit-1---layout)
-      * [Unit 1 - Completed unit](#unit-1---completed-unit)
-      * [Unit 2 - Completed unit](#unit-2---completed-unit)
-   * [Tools](#tools)
-   * [Hardware - RGBLED](#hardware---rgbled)
-   * [Circuit Diagrams - RGBLED](#circuit-diagrams---rgbled)
-      * [Schematic](#schematic-1)
-      * [Stripboard layout](#stripboard-layout)
-      * [Unit 1 - layout](#unit-1---layout-1)
-      * [XMAS 2019 Final](#xmas-2019-final)
-         * [LED Control Module](#led-control-module)
-         * [Controller](#controller)
-   * [Installation](#installation)
-      * [OTA Server Prequisites](#ota-server-prequisites)
-         * [Install lua and Lua modules](#install-lua-and-lua-modules)
-      * [nodeMCU Firmware](#nodemcu-firmware)
-      * [Configuration](#configuration)
-      * [Provisioning and Running](#provisioning-and-running)
-   * [ESPlorer Snippets](#esplorer-snippets)
-      * [Memory](#memory)
 
-<!-- Added by: sgracey, at:  -->
+
+<!-- Added by: runner, at: 2024-12-05T14:58+00:00 -->
 
 <!--te-->
 
