@@ -26,7 +26,7 @@
     "debug": "^4.1.1",
     "bonjour": "^=3.5.0",
     "ws": "^=8.0.0",
-    "ip": "^=1.1.5"
+    "ip": "^=2.0.1"
   },
   "author": "NorthernMan54",
   "license": "Apache-2.0",
