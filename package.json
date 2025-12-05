@@ -23,7 +23,7 @@
     "documentation": "13.2.5"
   },
   "dependencies": {
-    "debug": "^4.1.1",
+    "debug": "^4.4.3",
     "bonjour": "^=3.5.0",
     "ws": "^=8.0.0",
     "ip": "^=2.0.1"
