@@ -25,7 +25,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "bonjour": "^=3.5.0",
-    "ws": "^=8.0.0",
+    "ws": "^=8.20.0",
     "ip": "^=2.0.1"
   },
   "author": "NorthernMan54",
